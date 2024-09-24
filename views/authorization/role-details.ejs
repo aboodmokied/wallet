@@ -1,0 +1,30 @@
+<%- include('../components/top.ejs') %>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-primary">
+        <div class="inner">
+            <h3><%= locals.role.name %></h3>
+        </div>
+        </div>
+    </div>
+    
+</div>
+    <%- include('../components/permissionsTable.ejs',{
+        tableTitle:'Role Permissions',
+        type:'rolePermissions',
+        permissions:locals.rolePermissions
+    }) %>
+    <%- include('../components/permissionsTable.ejs',{
+        tableTitle:'Available Permissions',
+        type:'availablePermissions',
+        permissions:locals.availablePermissions
+    }) %>
+
+<div style="display: flex; justify-content: end;">
+    <form action="/cms/role/<%= locals.role.id %>" method="POST">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" class="btn btn-block btn-danger m-3 <%= locals.role.isMain?'disabled':'' %>" style="width: 200px;">Delete Role</button>
+    </form>
+</div>
+<%- include('../components/buttom.ejs') %>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdminLTE 3 | <%= locals.pageTitle %></title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="/index2.html"><b>Admin</b>LTE</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <% if(locals.guards.length>1){ %> 
+      <div style="margin-bottom: 10px; display: flex; gap: 5px; flex-direction: row; align-items: center;">
+          <% for(let guard of locals.guards){ %>
+          <a href="/auth/login/<%= guard %>" class="m-0 btn btn-block <%= locals.currentGuard==guard ? 'btn-secondary' : 'btn-outline-secondary' %>"><%= guard %></a>
+          <% } %>
+        </div>
+        <hr>
+        <% } %>
+      <p class="login-box-msg">Login to start your session</p>
+      <%- include('../components/errors.ejs') %>
+      <form action="/auth/login" method="POST">
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" placeholder="Email" name="email" value="<%= locals.old?.email ?? ''%>">
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Password" name="password" value="<%= locals.old?.password ?? ''%>">
+          
+        </div>
+        <input type="hidden" name="guard" value="<%= locals.currentGuard %>">
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+      <hr>
+      <div class="social-auth-links text-center mt-2 mb-3">
+          <a href="/auth/google/login/<%= locals.currentGuard %>" class="btn btn-block btn-danger">
+            <i class="fa-brands fa-google"></i> Login using Gmail
+          </a>
+      </div>
+      <p class="my-1">
+        <a href="/auth/password-reset/<%= locals.currentGuard %>/request" style="text-decoration: none;">I forgot my password</a>
+      </p>
+      <p class="my-1">
+        <a href="/auth/register/<%= locals.currentGuard %>" style="text-decoration: none;">Create new account</a>
+      </p>
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/dist/js/adminlte.min.js"></script>
+</body>
+</html>

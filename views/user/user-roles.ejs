@@ -1,0 +1,111 @@
+<%- include('../components/top.ejs') %>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-primary">
+        <div class="inner">
+            <h3><%= locals.user.name %></h3>
+        </div>
+        </div>
+    </div>
+    
+</div>
+<div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+          <h3 class="card-title">User Roles</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th style="width: 70px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(let role of locals.userRoles){ %>
+              <tr>
+                <td><%= role.name %></td>
+                <td>
+                    <form action="/cms/user-roles/revokeRole" method="POST">
+                        <!-- userId,guard,roleId -->
+                         <input type="hidden" name="userId" value="<%= locals.user.id %>">
+                         <input type="hidden" name="roleId" value="<%= role.id %>">
+                         <input type="hidden" name="guard" value="<%= locals.user.guard %>">
+                        <button type="submit" class="btn btn-block btn-danger m-0 <%= role.isMain?'disabled':'' %>">Revoke</button>
+                    </form>
+                </td>
+              </tr>
+              <% } %> 
+            
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <ul class="pagination pagination-sm m-0 float-right">
+              <li class="page-item"><a class="page-link" href="#">«</a></li>
+              <li class="page-item"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">»</a></li>
+            </ul>
+          </div>
+      </div>
+    </div>
+  </div>
+  
+    <div class="col-md-12">
+        <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Available Roles</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table table-bordered">
+            <thead>
+                <tr>
+                <th>Role</th>
+                <th style="width: 70px">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let role of locals.userAvailableRoles){ %>
+                <tr>
+                    <td><%= role.name %></td>
+                    <td>
+                        <form action="/cms/user-roles/assignRole" method="POST">
+                            <!-- userId,guard,roleId -->
+                            <input type="hidden" name="userId" value="<%= locals.user.id %>">
+                            <input type="hidden" name="roleId" value="<%= role.id %>">
+                            <input type="hidden" name="guard" value="<%= locals.user.guard %>">
+                            <button type="submit" class="btn btn-block btn-primary m-0 <%= role.isMain?'disabled':'' %>">Assign</button>
+                        </form>
+                    </td>
+                </tr>
+                <% } %> 
+                
+            </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer clearfix">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <ul class="pagination pagination-sm m-0 float-right">
+                <li class="page-item"><a class="page-link" href="#">«</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">»</a></li>
+                </ul>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+
+
+<%- include('../components/buttom.ejs') %>

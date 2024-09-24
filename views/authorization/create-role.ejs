@@ -1,0 +1,26 @@
+<%- include('../components/top.ejs') %>
+<div class="col-md-12">
+    <!-- general form elements -->
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">Create New Role</h3>
+      </div>
+      <!-- /.card-header -->
+      <!-- form start -->
+      <form method="POST" action="/cms/role">
+        <div class="card-body">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Role Name</label>
+            <input type="text" name="name" value="<%= locals.old?.name ?? '' %>" class="form-control" id="exampleInputEmail1" placeholder="Enter Role Name">
+          </div>
+        </div>
+        <!-- /.card-body -->
+
+        <div class="card-footer">
+          <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+<%- include('../components/buttom.ejs') %>

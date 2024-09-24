@@ -1,0 +1,54 @@
+<div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+          <h3 class="card-title"><%= tableTitle ?? "Roles" %></h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th style="width: 70px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(let role of roles){ %>
+              <tr>
+                <td><%= role.name %></td>
+                <td>
+                    <button type="button" class="btn btn-block btn-primary m-0"><a href="/cms/role/<%= role.id %>" style="text-decoration: none; color: white;">View</a></button>
+                </td>
+              </tr>
+              <% } %> 
+            
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+        <% if(tableTitle!='System Roles'){ %>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="/cms/role/create">Create New Role</a>
+            <ul class="pagination pagination-sm m-0 float-right">
+              <li class="page-item"><a class="page-link" href="#">«</a></li>
+              <li class="page-item"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">»</a></li>
+            </ul>
+          </div>
+          <% }else{ %>
+            <ul class="pagination pagination-sm m-0 float-right">
+              <li class="page-item"><a class="page-link" href="#">«</a></li>
+              <li class="page-item"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">»</a></li>
+            </ul>
+            <% } %>
+
+        
+      </div>
+    </div>
+  </div>
