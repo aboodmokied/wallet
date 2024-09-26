@@ -28,9 +28,14 @@ const User=Application.connection.define('user',{
         allowNull:false,
         unique:true
     },
+    phone:{
+        type:DataTypes.STRING,
+        allowNull:false,
+        unique:true
+    },
     guard:{
         type:DataTypes.STRING,
-        defaultValue:'student'
+        defaultValue:'user'
     },
     verified:{
         type:DataTypes.BOOLEAN,
