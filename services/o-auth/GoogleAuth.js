@@ -1,5 +1,7 @@
 const jwt=require('jsonwebtoken');
 const axios=require('axios');
+const authConfig = require('../../config/authConfig');
+const { DataTypes } = require('sequelize');
 
 
 const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -14,7 +16,25 @@ class GoogleAuth{
         /**
          * update the schema => googleOAuth, password(allowNull) 
          * */    
+        const guards=authConfig.guards;
+        for(let guard in guards){
+            const guardObj=guards[guard];
+            if(guardObj.oauth){
+                const model=authConfig.providers[guardObj.provider]?.model;
+                if(!model)throw new Error('Model Not Found');
+                model.rawAttributes.password={
+                    type:DataTypes.STRING,
+                    allowNull:true
+                }; 
+                model.rawAttributes.googleOAuth={
+                    type: DataTypes.BOOLEAN,
+                    defaultValue:true, 
+                };
+                model.refreshAttributes(); 
+            }
+        }
     }
+
     redirectToGoogleAuth(res,savedValues){
         const state = encodeURIComponent(JSON.stringify({ ...savedValues }));
         const queryParams = new URLSearchParams({
