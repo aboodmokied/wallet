@@ -25,12 +25,12 @@ const User=Application.connection.define('user',{
     // },
     national_id:{
         type:DataTypes.STRING,
-        allowNull:false,
+        allowNull:true,
         unique:true
     },
     phone:{
         type:DataTypes.STRING,
-        allowNull:false,
+        allowNull:true,
         unique:true
     },
     guard:{

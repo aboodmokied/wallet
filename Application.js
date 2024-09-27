@@ -48,6 +48,7 @@ class Application {
     this.#defineMiddlewares();
     this.#defineRoutes();
     this.#applyApiAuth();
+    this.#defineGoogleOauth();
     await this.#database.migrate(); // sync database
     await this.#defineApiAuth();
     await this.#defineAuthorization();
@@ -130,9 +131,12 @@ class Application {
     mail.applyMailing(Student);
   }
 
-  // async #test(){
-
-  // }
+  #defineGoogleOauth(){
+    const GoogleAuth = require("./services/o-auth/GoogleAuth");
+    const googleOauth=new GoogleAuth();
+    googleOauth.setup();
+  }
+  
 }
 
 module.exports = Application;

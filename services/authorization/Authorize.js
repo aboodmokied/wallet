@@ -7,7 +7,6 @@ const authConfig = require("../../config/authConfig");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const Application = require("../../Application");
 const bcrypt=require('bcryptjs');
-const SuperAdmin = require("../../models/SuperAdmin");
 const Admin = require("../../models/Admin");
 
 class Authorize{

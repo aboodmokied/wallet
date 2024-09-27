@@ -7,9 +7,6 @@ module.exports={
             username:process.env.DB_USER,
             password:process.env.DB_PASSWORD,
             host:process.env.DB_HOST,
-                host:'localhost',
-                password:'197508a',
-                username:'root',
         },
         "mysql-testing":{
             dialect:'mysql',
@@ -17,9 +14,6 @@ module.exports={
             username:process.env.DB_USER,
             password:process.env.DB_PASSWORD,
             host:process.env.DB_HOST,
-                host:'localhost',
-                password:'197508a',
-                username:'root',
         },
         // ...
     }

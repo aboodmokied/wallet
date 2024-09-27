@@ -1,4 +1,3 @@
-const SuperAdmin = require("../models/SuperAdmin");
 const tryCatch = require("../util/tryCatch");
 
 const userToLocals=tryCatch(async(req,res,next)=>{

@@ -20,8 +20,8 @@ const authConfig = {
     },
     user: {
       name: "user",
-      oauth: false,
-      drivers: ["token"],
+      oauth: true,
+      drivers: ["token","session"],
       registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "users", // mainProvider: contain all users types
       role: {
