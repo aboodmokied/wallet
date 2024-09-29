@@ -2,10 +2,11 @@ const { DataTypes, Op, Model } = require("sequelize");
 const Application = require("../Application");
 const SystemUser = require("./SystemUser");
 
-class User extends SystemUser{};
 
+class User extends SystemUser{
 
-// console.log(User.myName);
+};
+
 
 User.init({
     national_id:{
@@ -23,14 +24,25 @@ User.init({
         defaultValue:'user'
     },
 },{
-    sequelize:Application.connection
+    sequelize:Application.connection,
+    defaultScope:{
+        attributes:{exclude:['password']}
+    },
+    scopes:{
+        withPassword:{
+            attributes:{}
+        }
+    }
 });
+
+
+// console.log('After init User',User.rawAttributes);
 
 
 
 // Object.setPrototypeOf(User.prototype,SystemUser.prototype);
 
-User.rawAttributes={...SystemUser.rawAttributes,...User.rawAttributes};
+// User.rawAttributes={...SystemUser.rawAttributes,...User.rawAttributes};
 
 // const User=Application.connection.define('user',{
     

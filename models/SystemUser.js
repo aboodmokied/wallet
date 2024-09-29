@@ -1,14 +1,36 @@
 const Application = require("../Application");
 const { DataTypes, Model } = require("sequelize");
 
-class SystemUser extends Model {}
+class SystemUser extends Model {
+  static myRawAttributes={};
+
+  static get rawAttributes(){
+    return this.myRawAttributes;
+  };
+
+  static set rawAttributes(attributes){
+    this.myRawAttributes={...this.myRawAttributes,...attributes};
+  }
+
+  test(){
+    console.log('Suiiiiii')
+  }
+}
+
+
+
 
 SystemUser.init(
   {
+    id:{
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true
+    },
     email: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(30),
       allowNull: false,
-      unique: true,
+      unique:true
     },
     name: {
       type: DataTypes.STRING(30),
@@ -25,7 +47,7 @@ SystemUser.init(
   },
   {
     sequelize: Application.connection,
-    tableName: undefined,
+    timestamps:false,
     defaultScope: {
       attributes: { exclude: ["password"] },
     },
@@ -37,7 +59,8 @@ SystemUser.init(
   }
 );
 
-
+// SystemUser.rawAttributes
+// console.log(SystemUser.getAttributes());
 // const SystemUser = Application.connection.define("system_user", {
 //     email:{
 //         type:DataTypes.STRING,

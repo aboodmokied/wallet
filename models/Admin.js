@@ -6,6 +6,7 @@ class Admin extends SystemUser{
 
 }
 
+
 Admin.init({
     isSuper:{
         type:DataTypes.BOOLEAN,
@@ -16,7 +17,15 @@ Admin.init({
         defaultValue:'admin'
     },
 },{
-    sequelize:Application.connection
+    sequelize:Application.connection,
+    defaultScope:{
+        attributes:{exclude:['password']}
+    },
+    scopes:{
+        withPassword:{
+            attributes:{}
+        }
+    }
 });
 
 // const Admin=Application.connection.define('admin',{
