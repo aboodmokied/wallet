@@ -19,7 +19,6 @@ class SystemUser extends Model {
 
 
 
-
 SystemUser.init(
   {
     id:{
@@ -58,6 +57,9 @@ SystemUser.init(
     },
   }
 );
+
+SystemUser.afterSync('drop table',function(){this.drop()});
+
 
 // SystemUser.rawAttributes
 // console.log(SystemUser.getAttributes());
