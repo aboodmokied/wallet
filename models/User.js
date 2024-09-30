@@ -1,28 +1,14 @@
-const { DataTypes, Op } = require("sequelize");
+const { DataTypes, Op, Model } = require("sequelize");
 const Application = require("../Application");
+const SystemUser = require("./SystemUser");
 
-const User=Application.connection.define('user',{
-    email:{
-        type:DataTypes.STRING,
-        allowNull:false,
-        unique:true
-    },
-    // googleOAuth:{
-    //     type: DataTypes.BOOLEAN,
-    //     defaultValue:false, 
-    // },
-    name:{
-        type:DataTypes.STRING(30),
-        allowNull:false,
-    },
-    password:{  
-        type:DataTypes.STRING,
-        allowNull:false 
-    },
-    // password:{  
-    //     type:DataTypes.STRING,
-    //     allowNull:true // Will be null if the user signed up via OAuth
-    // },
+
+class User extends SystemUser{
+
+};
+
+
+User.init({
     national_id:{
         type:DataTypes.STRING,
         allowNull:true,
@@ -37,11 +23,8 @@ const User=Application.connection.define('user',{
         type:DataTypes.STRING,
         defaultValue:'user'
     },
-    verified:{
-        type:DataTypes.BOOLEAN,
-        defaultValue:false
-    }
 },{
+    sequelize:Application.connection,
     defaultScope:{
         attributes:{exclude:['password']}
     },
@@ -50,7 +33,44 @@ const User=Application.connection.define('user',{
             attributes:{}
         }
     }
-})
+});
+
+
+// console.log('After init User',User.rawAttributes);
+
+
+
+// Object.setPrototypeOf(User.prototype,SystemUser.prototype);
+
+// User.rawAttributes={...SystemUser.rawAttributes,...User.rawAttributes};
+
+// const User=Application.connection.define('user',{
+    
+//     // googleOAuth:{
+//     //     type: DataTypes.BOOLEAN,
+//     //     defaultValue:false, 
+//     // },
+    
+//     // password:{  
+//     //     type:DataTypes.STRING,
+//     //     allowNull:true // Will be null if the user signed up via OAuth
+//     // },
+//     national_id:{
+//         type:DataTypes.STRING,
+//         allowNull:true,
+//         unique:true
+//     },
+//     phone:{
+//         type:DataTypes.STRING,
+//         allowNull:true,
+//         unique:true
+//     },
+//     guard:{
+//         type:DataTypes.STRING,
+//         defaultValue:'user'
+//     },
+    
+// },)
 
 module.exports=User;
 

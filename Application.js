@@ -57,6 +57,7 @@ class Application {
     this.#applyMailing();
   }
 
+
   #defineSettings() {
     const rootPath = require.main.path;
     const path = require("path");
@@ -100,11 +101,16 @@ class Application {
   }
   #applyApiAuth() {
     const ApiAuth = require("./services/api-authentication/ApiAuth");
-    const Student = require("./models/User");
-    const Admin = require("./models/Admin");
     const apiAuth = new ApiAuth();
-    apiAuth.applyApiAuth(Student);
-    apiAuth.applyApiAuth(Admin);
+    const authConfig = require("./config/authConfig");
+    const guards=authConfig.guards;
+    for(let guard in guards){
+      const guardObj=guards[guard];
+      if(guardObj.drivers.includes['token']){
+        const model=authConfig.providers[guardObj.provider]?.model;
+        apiAuth.applyApiAuth(model);
+      }
+    }
   }
   async #defineAuthorization() {
     const Authorize = require("./services/authorization/Authorize");
@@ -112,11 +118,9 @@ class Application {
   }
   #applyAuthorization() {
     const Authorize = require("./services/authorization/Authorize");
-    const Student = require("./models/User");
-    const Admin = require("./models/Admin");
+    const SystemUser = require("./models/SystemUser");
     const authorize = new Authorize();
-    authorize.applyAuthorization(Admin);
-    authorize.applyAuthorization(Student);
+    authorize.applyAuthorization(SystemUser);
   }
   #defineMailing() {
     const Mail = require("./services/mail/Mail");
@@ -124,11 +128,9 @@ class Application {
   }
   #applyMailing() {
     const Mail = require("./services/mail/Mail");
-    const Student = require("./models/User");
-    const Admin = require("./models/Admin");
+    const SystemUser = require("./models/SystemUser");
     const mail = new Mail();
-    mail.applyMailing(Admin);
-    mail.applyMailing(Student);
+    mail.applyMailing(SystemUser);
   }
 
   #defineGoogleOauth(){
