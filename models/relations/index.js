@@ -1,3 +1,4 @@
+const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const AccessToken = require("../AccessToken");
 const AuthClient = require("../AuthClient");
 const Charging = require("../Charging");
@@ -56,7 +57,7 @@ Wallet.belongsTo(User,{
 });
 
 // create a wallet automatically when new user was registered 
-User.afterCreate('Create User Wallet',async(user)=>{
+User.afterCreate('Create User Wallet',async(user,{})=>{
     await Wallet.create({user_id:user.id});
 });
 
@@ -132,4 +133,22 @@ Transfer.hasOne(Transaction,{
     foreignKey:'transaction_id'
 })
 
+// after create transaction, create payment,transfer,charging automatically
+Transaction.afterCreate('Create Transaction Type',async(transaction)=>{
+    switch(transaction.operation_type){
+        case 'charging':
+            // create charging row by its payload
+        break;
+        case 'payment':
+            // create payment row by its payload
+        break;
+        case 'transfer':
+            // create transfer row by its payload
+        break;
+        default:
+            throw new BadRequestError('Not Supprted Operation Type');
+    }
+
+    // the problem: how to pass data from request into the hook
+});
 
