@@ -1,7 +1,9 @@
 const AccessToken = require("../AccessToken");
 const AuthClient = require("../AuthClient");
+const Charging = require("../Charging");
 const Payment = require("../Payment");
 const Transaction = require("../Transaction");
+const Transfer = require("../Transfer");
 const User = require("../User");
 const Wallet = require("../Wallet");
 
@@ -43,31 +45,91 @@ AccessToken.belongsTo(AuthClient,{
 
 
 // // user - wallet
-// User.hasMany(Wallet,{
-//     foreignKey:'user_id',
-//     onDelete:"CASCADE"
-// });
+User.hasMany(Wallet,{
+    foreignKey:'user_id',
+    onDelete:"CASCADE"
+});
 
-// Wallet.belongsTo(User,{
-//     foreignKey:'user_id',
-//     onDelete:"CASCADE"
-// });
+Wallet.belongsTo(User,{
+    foreignKey:'user_id',
+    onDelete:"CASCADE"
+});
 
-// // User.afterCreate
+// create a wallet automatically when new user was registered 
+User.afterCreate('Create User Wallet',async(user)=>{
+    await Wallet.create({user_id:user.id});
+});
 
 
 
 
 // // User,Wallet - transaction
-// User.hasMany(Transaction,{
-//     foreignKey:'user_id',
-//     onDelete:''
-// })
+User.hasMany(Transaction,{
+    foreignKey:'user_id',
+    onDelete:'NO ACTION'
+})
+
+Transaction.belongsTo(User,{
+    foreignKey:'user_id',
+    onDelete:'NO ACTION'
+})
+
+Wallet.hasMany(Transaction,{
+    foreignKey:'wallet_id',
+    onDelete:'NO ACTION'
+})
+
+Transaction.belongsTo(Wallet,{
+    foreignKey:'wallet_id',
+    onDelete:'NO ACTION'
+})
 
 // // user,wallet - payment
-// User.hasMany(Payment,{
-//     foreignKey:''
-// })    
+User.hasMany(Payment,{
+    foreignKey:'user_id',
+    onDelete:'NO ACTION'
+})
 
+Payment.belongsTo(User,{
+    foreignKey:'user_id',
+    onDelete:'NO ACTION'
+})
+
+Wallet.hasMany(Payment,{
+    foreignKey:'wallet_id',
+    onDelete:'NO ACTION'
+})
+
+Payment.belongsTo(Wallet,{
+    foreignKey:'wallet_id',
+    onDelete:'NO ACTION'
+})   
+
+
+// transaction - payment,transfer,charging
+
+Transaction.hasOne(Payment,{
+    foreignKey:'operation_id'
+});
+
+Payment.hasOne(Transaction,{
+    foreignKey:'transaction_id'
+})
+
+Transaction.hasOne(Charging,{
+    foreignKey:'operation_id'
+});
+
+Charging.hasOne(Transaction,{
+    foreignKey:'transaction_id'
+})
+
+Transaction.hasOne(Transfer,{
+    foreignKey:'operation_id'
+});
+
+Transfer.hasOne(Transaction,{
+    foreignKey:'transaction_id'
+})
 
 

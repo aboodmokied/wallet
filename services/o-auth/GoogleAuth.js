@@ -28,7 +28,7 @@ class GoogleAuth{
                 }; 
                 model.rawAttributes.googleOAuth={
                     type: DataTypes.BOOLEAN,
-                    defaultValue:true, 
+                    defaultValue:false, 
                 };
                 model.refreshAttributes(); 
             }
