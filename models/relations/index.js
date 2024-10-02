@@ -57,7 +57,7 @@ Wallet.belongsTo(User,{
 });
 
 // create a wallet automatically when new user was registered 
-User.afterCreate('Create User Wallet',async(user,{})=>{
+User.afterCreate('Create User Wallet',async(user)=>{
     await Wallet.create({user_id:user.id});
 });
 
@@ -134,21 +134,66 @@ Transfer.hasOne(Transaction,{
 })
 
 // after create transaction, create payment,transfer,charging automatically
-Transaction.afterCreate('Create Transaction Type',async(transaction)=>{
-    switch(transaction.operation_type){
-        case 'charging':
-            // create charging row by its payload
-        break;
-        case 'payment':
-            // create payment row by its payload
-        break;
-        case 'transfer':
-            // create transfer row by its payload
-        break;
-        default:
-            throw new BadRequestError('Not Supprted Operation Type');
-    }
+// Transaction.afterCreate('Create Transaction Type',async(transaction,{customData})=>{
+    
+//     switch(transaction.operation_type){
+//         case 'charging':
+//             // create charging row by its payload
+//         break;
+//         case 'payment':
+//             // create payment row by its payload
+//         break;
+//         case 'transfer':
+//             // create transfer row by its payload
+//         break;
+//         default:
+//             throw new BadRequestError('Not Supprted Operation Type');
+//     }
 
-    // the problem: how to pass data from request into the hook
+//     // the problem: how to pass data from request into the hook
+// });
+
+Payment.afterCreate('Create transaction record after payment operation',async(payment,{customData})=>{
+    const {amount,old_balance,current_balance,verification_code,date,wallet_id,user_id}=customData;
+    await Transaction.create({
+        amount,
+        old_balance,
+        current_balance,
+        verification_code,
+        date,
+        wallet_id,
+        user_id,
+        oprtation_type:'payment',
+        operation_id:payment.id        
+    });
 });
 
+Transfer.afterCreate('Create transaction record after transfer operation',async(transfer,{customData})=>{
+    const {amount,old_balance,current_balance,verification_code,date,wallet_id,user_id}=customData;
+    await Transaction.create({
+        amount,
+        old_balance,
+        current_balance,
+        verification_code,
+        date,
+        wallet_id,
+        user_id,
+        oprtation_type:'transfer',
+        operation_id:transfer.id        
+    });
+});
+
+Charging.afterCreate('Create transaction record after charging operation',async(charging,{customData})=>{
+    const {amount,old_balance,current_balance,verification_code,date,wallet_id,user_id}=customData;
+    await Transaction.create({
+        amount,
+        old_balance,
+        current_balance,
+        verification_code,
+        date,
+        wallet_id,
+        user_id,
+        oprtation_type:'charging',
+        operation_id:charging.id        
+    });
+});
