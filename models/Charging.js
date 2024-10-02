@@ -14,6 +14,10 @@ const Charging = Application.connection.define("charging", {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
+  verified_at: {
+    type: DataTypes.BIGINT,
+    defaultValue: null,
+  },
   charging_point_id: {
     type: DataTypes.BIGINT,
     allowNull: false,

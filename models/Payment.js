@@ -14,6 +14,10 @@ const Payment=Application.connection.define('payment',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
+    verified_at: {
+        type: DataTypes.BIGINT,
+        defaultValue: null,
+      },
     company_id:{
         type:DataTypes.BIGINT,
         allowNull:false
