@@ -21,7 +21,7 @@ const Transaction=Application.connection.define('transation',{
     verified_at:{
         type:DataTypes.BIGINT,
         defaultValue:null
-    },
+    }, 
     operation_type:{
         type:DataTypes.STRING,
         allowNull:false
@@ -34,14 +34,22 @@ const Transaction=Application.connection.define('transation',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    wallet_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false
-    },
-    user_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false
-    }
+    // wallet_id:{
+    //     type:DataTypes.BIGINT,
+    //     allowNull:false
+    // },
+    // user_id:{
+    //     type:DataTypes.BIGINT,
+    //     allowNull:false
+    // },
+    // target_user_id:{
+    //     type:DataTypes.BIGINT,
+    //     defaultValue:null
+    // },
+    // target_wallet_id:{
+    //     type:DataTypes.BIGINT,
+    //     defaultValue:null
+    // }
 })
 
 module.exports=Transaction;

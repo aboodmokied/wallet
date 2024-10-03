@@ -57,23 +57,54 @@ User.afterCreate("Create User Wallet", async (user) => {
 });
 
 // // User,Wallet - transaction
+
+
+// ** problem: how to set multi foreignKey for the same model
 User.hasMany(Transaction, {
   foreignKey: "user_id",
+  as:'sourceTransactions',
+  onDelete: "NO ACTION",
+});
+User.hasMany(Transaction, {
+  foreignKey: "target_user_id",
+  as:'targetTransactions',
   onDelete: "NO ACTION",
 });
 
-Transaction.belongsTo(User, {
+Transaction.belongsTo(User,{
   foreignKey: "user_id",
+  as:'sourceUser',
+  onDelete: "NO ACTION",
+})
+
+Transaction.belongsTo(User,{
+  foreignKey: "user_id",
+  as:'targerUser',
+  onDelete: "NO ACTION",
+})
+
+
+Wallet.hasMany(Transaction, {
+  foreignKey: "wallet_id",
+  as:'sourceTransactions',
   onDelete: "NO ACTION",
 });
 
 Wallet.hasMany(Transaction, {
-  foreignKey: "wallet_id",
+  foreignKey: "target_wallet_id",
+  as:'targetTransactions',
   onDelete: "NO ACTION",
 });
 
 Transaction.belongsTo(Wallet, {
   foreignKey: "wallet_id",
+  as:'sourceWallet',
+  onDelete: "NO ACTION",
+});
+
+Transaction.belongsTo(Wallet, {
+  foreignKey: "target_wallet_id",
+  as:'targetWallet',
   onDelete: "NO ACTION",
 });
 
@@ -259,3 +290,4 @@ Charging.afterCreate(
     });
   }
 );
+
