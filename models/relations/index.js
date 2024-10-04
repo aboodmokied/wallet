@@ -2,6 +2,7 @@ const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const AccessToken = require("../AccessToken");
 const AuthClient = require("../AuthClient");
 const Charging = require("../Charging");
+const ChargingPoint = require("../ChargingPoint");
 const Payment = require("../Payment");
 const Transaction = require("../Transaction");
 const Transfer = require("../Transfer");
@@ -290,4 +291,15 @@ Charging.afterCreate(
     });
   }
 );
+
+
+// ChargingPoint Charging
+ChargingPoint.hasMany(Charging,{
+  foreignKey:'charging_point_id',
+  onDelete:'NO ACTION'
+});
+Charging.belongsTo(ChargingPoint,{
+  foreignKey:'charging_point_id',
+  onDelete:'NO ACTION'
+});
 
