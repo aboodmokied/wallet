@@ -10,10 +10,10 @@ const Charging = Application.connection.define("charging", {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
-  transaction_id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-  },
+  // transaction_id: {
+  //   type: DataTypes.BIGINT,
+  //   allowNull: false,
+  // },
   verified_at: {
     type: DataTypes.BIGINT,
     defaultValue: null,

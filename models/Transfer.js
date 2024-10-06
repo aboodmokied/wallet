@@ -10,10 +10,10 @@ const Transfer = Application.connection.define("transfer", {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
-  transaction_id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-  },
+  // transaction_id: {
+  //   type: DataTypes.BIGINT,
+  //   allowNull: false,
+  // },
   target_id: {
     type: DataTypes.BIGINT,
     allowNull: false,

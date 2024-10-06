@@ -38,6 +38,16 @@ const authConfig = {
         name: "charging-point",
       },
     },
+    company: {
+      name: "company",
+      oauth: false,
+      drivers: ["token","session"],
+      registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
+      provider: "companies", // mainProvider: contain all users types
+      role: {
+        name: "company",
+      },
+    },
   },
   providers: {
     admins: {
@@ -51,6 +61,10 @@ const authConfig = {
     chargingPoints: {
       driver: "Sequelize",
       model: require("../models/ChargingPoint"),
+    },
+    companies: {
+      driver: "Sequelize",
+      model: require("../models/Company"),
     },
 
   },

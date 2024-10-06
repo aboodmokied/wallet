@@ -1,8 +1,12 @@
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const AccessToken = require("../AccessToken");
 const AuthClient = require("../AuthClient");
+const Category = require("../Category");
 const Charging = require("../Charging");
 const ChargingPoint = require("../ChargingPoint");
+const Company = require("../Company");
+const CompanyTransaction = require("../CompanyTransaction");
+const CompanyWallet = require("../CompanyWallet");
 const Payment = require("../Payment");
 const Transaction = require("../Transaction");
 const Transfer = require("../Transfer");
@@ -131,29 +135,28 @@ Payment.belongsTo(Wallet, {
 });
 
 // transaction - payment,transfer,charging
-
 Transaction.hasOne(Payment, {
-  foreignKey: "operation_id",
+  foreignKey: "transaction_id",
 });
 
 Payment.hasOne(Transaction, {
-  foreignKey: "transaction_id",
+  foreignKey: "operation_id",
 });
 
 Transaction.hasOne(Charging, {
-  foreignKey: "operation_id",
+  foreignKey: "transaction_id",
 });
 
 Charging.hasOne(Transaction, {
-  foreignKey: "transaction_id",
-});
-
-Transaction.hasOne(Transfer, {
   foreignKey: "operation_id",
 });
 
-Transfer.hasOne(Transaction, {
+Transaction.hasOne(Transfer, {
   foreignKey: "transaction_id",
+});
+
+Transfer.hasOne(Transaction, {
+  foreignKey: "operation_id",
 });
 
 // after create transaction, create payment,transfer,charging automatically
@@ -301,5 +304,98 @@ ChargingPoint.hasMany(Charging,{
 Charging.belongsTo(ChargingPoint,{
   foreignKey:'charging_point_id',
   onDelete:'NO ACTION'
+});
+
+
+// Company - CompanyWallet 
+
+Company.hasMany(CompanyWallet,{
+  foreignKey:'company_wallet_id',
+  onDelete:'CASCADE',
+});
+
+CompanyWallet.belongsTo(Company,{
+  foreignKey:'company_wallet_id',
+  onDelete:'CASCADE',
+});
+
+// Company,CompanyWallet - CompanyTransaction
+Company.hasMany(CompanyTransaction,{
+  foreignKey:'company_id',
+  onDelete:'NO ACTION'
+});
+
+CompanyTransaction.belongsTo(Company,{
+  foreignKey:'company_id',
+  onDelete:'NO ACTION'
+});
+
+
+CompanyWallet.hasMany(CompanyTransaction,{
+  foreignKey:'company_wallet_id',
+  onDelete:'NO ACTION'
+});
+
+CompanyTransaction.belongsTo(CompanyWallet,{
+  foreignKey:'company_wallet_id',
+  onDelete:'NO ACTION'
+});
+
+// Company,CompanyWallet, - payment
+Company.hasMany(Payment,{
+  foreignKey:'company_id',
+  onDelete:'NO ACTION'
+});
+
+Payment.belongsTo(Company,{
+  foreignKey:'company_id',
+  onDelete:'NO ACTION'
+});
+
+
+CompanyWallet.hasMany(Payment,{
+  foreignKey:'company_wallet_id',
+  onDelete:'NO ACTION'
+});
+
+Payment.belongsTo(CompanyWallet,{
+  foreignKey:'company_wallet_id',
+  onDelete:'NO ACTION'
+});
+
+// Company - Category
+Category.hasMany(Company,{
+  foreignKey:'category_id'
+});
+
+Company.belongsTo(Category,{
+  foreignKey:'category_id'
+});
+
+
+// Payment - CompanyTransactions,Company,CompanyWallet
+
+CompanyTransaction.hasOne(Payment,{
+  foreignKey:'company_transaction_id'
+});
+
+Payment.hasOne(CompanyTransaction,{
+  foreignKey:'payment_id'
+});
+
+Company.hasOne(Payment,{
+  foreignKey:'company_id'
+});
+
+Payment.hasOne(Company,{
+  foreignKey:'payment_id'
+});
+
+CompanyWallet.hasOne(Payment,{
+  foreignKey:'company_wallet_id'
+});
+
+Payment.hasOne(CompanyWallet,{
+  foreignKey:'payment_id'
 });
 
