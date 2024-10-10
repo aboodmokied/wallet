@@ -28,13 +28,13 @@ const Wallet = require("../Wallet");
 
 // AccessToken - User
 
-// User.hasMany(AccessToken,{
-//     foreignKey:'userId',
-// })
+User.hasMany(AccessToken,{
+    foreignKey:'userId',
+})
 
-// AccessToken.belongsTo(User,{
-//     foreignKey:'userId',
-// })
+AccessToken.belongsTo(User,{
+    foreignKey:'userId',
+})
 
 // AccessToken - AuthClient
 AuthClient.hasMany(AccessToken, {
@@ -46,19 +46,20 @@ AccessToken.belongsTo(AuthClient, {
 });
 
 // // user - wallet
-User.hasMany(Wallet, {
+User.hasOne(Wallet, {
   foreignKey: "user_id",
   onDelete: "CASCADE",
 });
 
-Wallet.belongsTo(User, {
-  foreignKey: "user_id",
+Wallet.hasOne(User, {
+  foreignKey: "wallet_id",
   onDelete: "CASCADE",
 });
 
 // create a wallet automatically when new user was registered
 User.afterCreate("Create User Wallet", async (user) => {
-  await Wallet.create({ user_id: user.id });
+  const wallet=await Wallet.create({ user_id: user.id });
+  await user.update({wallet_id:wallet.id});
 });
 
 // // User,Wallet - transaction
@@ -139,25 +140,25 @@ Transaction.hasOne(Payment, {
   foreignKey: "transaction_id",
 });
 
-Payment.hasOne(Transaction, {
-  foreignKey: "operation_id",
-});
+// Payment.hasOne(Transaction, {
+//   foreignKey: "operation_id",
+// });
 
 Transaction.hasOne(Charging, {
   foreignKey: "transaction_id",
 });
 
-Charging.hasOne(Transaction, {
-  foreignKey: "operation_id",
-});
+// Charging.hasOne(Transaction, {
+//   foreignKey: "operation_id",
+// });
 
 Transaction.hasOne(Transfer, {
   foreignKey: "transaction_id",
 });
 
-Transfer.hasOne(Transaction, {
-  foreignKey: "operation_id",
-});
+// Transfer.hasOne(Transaction, {
+//   foreignKey: "operation_id",
+// });
 
 // after create transaction, create payment,transfer,charging automatically
 // Transaction.afterUpdate('Create Transaction Operation (charging,payment,transfer) afeter transaction verification',async(transaction,{customData})=>{
@@ -190,35 +191,35 @@ Transfer.hasOne(Transaction, {
 //     }
 // });
 
-Transaction.afterUpdate(
-  "Verify the operation after verify the transaction",
-  async (transaction) => {
-    if (transaction.verified_at) {
-      switch (transaction.operation_type) {
-        case "charging":
-          await Charging.update(
-            { verified_at: transaction.verified_at },
-            { where: { id: transaction.operation_id } }
-          );
-          break;
-        case "payment":
-          await Payment.update(
-            { verified_at: transaction.verified_at },
-            { where: { id: transaction.operation_id } }
-          );
-          break;
-        case "transfer":
-          await Transfer.update(
-            { verified_at: transaction.verified_at },
-            { where: { id: transaction.operation_id } }
-          );
-          break;
-        default:
-          throw new BadRequestError("Not Supprted Operation Type");
-      }
-    }
-  }
-);
+// Transaction.afterUpdate(
+//   "Verify the operation after verify the transaction",
+//   async (transaction) => {
+//     if (transaction.verified_at) {
+//       switch (transaction.operation_type) {
+//         case "charging":
+//           await Charging.update(
+//             { verified_at: transaction.verified_at },
+//             { where: { id: transaction.operation_id } }
+//           );
+//           break;
+//         case "payment":
+//           await Payment.update(
+//             { verified_at: transaction.verified_at },
+//             { where: { id: transaction.operation_id } }
+//           );
+//           break;
+//         case "transfer":
+//           await Transfer.update(
+//             { verified_at: transaction.verified_at },
+//             { where: { id: transaction.operation_id } }
+//           );
+//           break;
+//         default:
+//           throw new BadRequestError("Not Supprted Operation Type");
+//       }
+//     }
+//   }
+// );
 
 Payment.afterCreate(
   "Create transaction record after payment operation",
@@ -255,18 +256,14 @@ Transfer.afterCreate(
       verification_code,
       wallet_id,
       user_id,
+
     } = customData;
-    await Transaction.create({
-      amount,
-      old_balance,
-      current_balance,
-      verification_code,
-      date: transfer.date,
-      wallet_id,
-      user_id,
-      oprtation_type: "transfer",
+    const transaction=await Transaction.create({
+      ...customData,     
+      operation_type: "transfer",
       operation_id: transfer.id,
     });
+    await transfer.update({transaction_id:transaction.id});
   }
 );
 
@@ -399,3 +396,58 @@ Payment.hasOne(CompanyWallet,{
   foreignKey:'payment_id'
 });
 
+// create CompanyTransaction after veirfy the payment transaction 
+Transaction.afterUpdate(
+  "create CompanyTransaction after veirfy the payment transaction",
+  async (transaction) => {
+    if (transaction.operation_type=='payment'&&transaction.verified_at) {
+        const count=await CompanyTransaction.count({where:{payment_id:transaction.operation_id}});
+        if(!count){
+          const paymentOperation=await Payment.findByPk(transaction.operation_id,{
+            include:[CompanyWallet,Company]
+          });
+          console.log(paymentOperation);
+          const {companyWallet} = paymentOperation;
+          const newBalance=companyWallet.balance + transaction.amount;
+          await CompanyTransaction.create({
+            amount:transaction.amount,
+            old_balance:companyWallet.balance,
+            current_balance:newBalance,
+            date:transaction.date,
+            company_id:paymentOperation.company_id,
+            company_wallet_id:companyWallet.id,
+            payment_id:paymentOperation.id
+          });
+          await CompanyWallet.update({amount:newBalance},{where:{id:companyWallet.id}});
+        }
+    }
+  }
+);
+
+// update wallets after verify the transaction
+// Transaction.afterUpdate(
+//   "create CompanyTransaction after veirfy the payment transaction",
+//   async (transaction) => {
+//     if (transaction.operation_type=='payment'&&transaction.verified_at) {
+//         const count=await CompanyTransaction.count({where:{payment_id:transaction.operation_id}});
+//         if(!count){
+//           const paymentOperation=await Payment.findByPk(transaction.operation_id,{
+//             include:[CompanyWallet,Company]
+//           });
+//           console.log(paymentOperation);
+//           const {companyWallet} = paymentOperation;
+//           const newBalance=companyWallet.balance + transaction.amount;
+//           await CompanyTransaction.create({
+//             amount:transaction.amount,
+//             old_balance:companyWallet.balance,
+//             current_balance:newBalance,
+//             date:transaction.date,
+//             company_id:paymentOperation.company_id,
+//             company_wallet_id:companyWallet.id,
+//             payment_id:paymentOperation.id
+//           });
+//           await CompanyWallet.update({amount:newBalance},{where:{id:companyWallet.id}});
+//         }
+//     }
+//   }
+// );

@@ -18,7 +18,7 @@ const verifyEmailToken = require('../services/mail/middlewares/verifyEmailToken'
 const webRoutes=express.Router();
 
 webRoutes.get('/',isAuthenticated,async(req,res,next)=>{
-    const wallets=await req.user.getWallets()
+    const wallets=await req.user.getWallet()
     console.log({user:req.user,wallets})
     res.render('auth/message',{
         pageTitle:'Test',

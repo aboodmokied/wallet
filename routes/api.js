@@ -2,6 +2,7 @@ const express = require("express");
 const tryCatch = require("../util/tryCatch");
 const apiRoutes = express.Router();
 const authController = require("../controllers/api/authController");
+const transactionController = require("../controllers/api/transactionController");
 const oAuthController = require("../controllers/oAuthController");
 const verifyToken = require("../services/api-authentication/middlewares/verifyToken");
 const validateRequest = require("../validation/middlewares/validateRequest");
@@ -64,4 +65,7 @@ apiRoutes.get(
   authController.verifyEmail
 );
 
+
+
+apiRoutes.post('/transfer',verifyToken,transactionController.transfer);
 module.exports = apiRoutes;

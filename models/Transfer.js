@@ -22,10 +22,10 @@ const Transfer = Application.connection.define("transfer", {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
-  verified_at: {
-    type: DataTypes.BIGINT,
-    defaultValue: null,
-  },
+  // verified_at: {
+  //   type: DataTypes.BIGINT,
+  //   defaultValue: null,
+  // },
   info: {
     type: DataTypes.TEXT,
     allowNull: true,
