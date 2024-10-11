@@ -26,6 +26,10 @@ const Transaction=Application.connection.define('transation',{
         type:DataTypes.STRING,
         allowNull:false
     },
+    operation_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
     date:{
         type:DataTypes.BIGINT,
         allowNull:false

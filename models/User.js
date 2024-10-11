@@ -15,7 +15,7 @@ User.init({
         unique:true
     },
     phone:{
-        type:DataTypes.STRING,
+        type:DataTypes.STRING(30),
         allowNull:true,
         unique:true
     },

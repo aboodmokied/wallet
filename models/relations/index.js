@@ -4,6 +4,7 @@ const AuthClient = require("../AuthClient");
 const Category = require("../Category");
 const Charging = require("../Charging");
 const ChargingPoint = require("../ChargingPoint");
+const ChargingPointTransaction = require("../ChargingPointTransaction");
 const Company = require("../Company");
 const CompanyTransaction = require("../CompanyTransaction");
 const CompanyWallet = require("../CompanyWallet");
@@ -302,6 +303,30 @@ Charging.belongsTo(ChargingPoint,{
   foreignKey:'charging_point_id',
   onDelete:'NO ACTION'
 });
+
+ChargingPoint.hasMany(ChargingPointTransaction,{
+  foreignKey:'charging_point_id',
+  onDelete:'NO ACTION'
+});
+ChargingPointTransaction.belongsTo(ChargingPoint,{
+  foreignKey:'charging_point_id',
+  onDelete:'NO ACTION'
+});
+
+
+Charging.hasOne(ChargingPointTransaction,{
+  foreignKey:'charging_id',
+})
+
+ChargingPointTransaction.hasOne(Charging,{
+  foreignKey:'charging_point_transaction_id',
+})
+
+
+
+
+
+// Charging - user
 
 
 // Company - CompanyWallet 
