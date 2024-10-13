@@ -1,5 +1,6 @@
 const transactionConfig = require("../../config/transactionConfig");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
+const Charging = require("../../models/Charging");
 const ChargingPointTransaction = require("../../models/ChargingPointTransaction");
 const Company = require("../../models/Company");
 const CompanyTransaction = require("../../models/CompanyTransaction");
@@ -18,18 +19,33 @@ class TransactionBuilder {
     let operation;
     const { id } = req.user;
     const { amount } = req.body;
-    const userWallet = await req.user.getWallet();
-    const customData = {
-      amount,
-      old_balance: userWallet.balance,
-      current_balance: userWallet.balance - amount,
-      verification_code: "123132",
-      wallet_id: userWallet.id,
-      user_id: id,
-      date: Date.now(),
-      // target_user_id:targetUser.id,
-      // target_wallet_id:targetUser.wallet_id,
-    };
+    let userWallet=operationType=='charging'?undefined:req.user.getWallet();
+    let customData;
+    if(operationType=='charging'){
+      customData = {
+        amount,
+        old_balance: undefined,
+        current_balance: undefined,
+        verification_code: "123132",
+        wallet_id: undefined,
+        user_id: undefined,
+        date: Date.now(),
+        // target_user_id:targetUser.id,
+        // target_wallet_id:targetUser.wallet_id,
+      };
+    }else{
+      customData = {
+        amount,
+        old_balance: userWallet.balance,
+        current_balance: userWallet.balance - amount,
+        verification_code: "123132",
+        wallet_id: userWallet.id,
+        user_id: id,
+        date: Date.now(),
+        // target_user_id:targetUser.id,
+        // target_wallet_id:targetUser.wallet_id,
+      };
+    }
     switch (operationType) {
       case "transfer":
         const { target_phone, info } = req.body;
@@ -65,6 +81,22 @@ class TransactionBuilder {
           company_wallet_id: targetCompany.company_wallet_id,
         };
         operation = await Payment.create(paymentOperationData, { customData });
+        break;
+      case "charging":
+        const { target_phone:target_user_phone } = req.body;
+        const chargingPoint=req.user;
+        const targetUserInstance=await User.findOne({where:{phone:target_user_phone}});
+        const targetUserWalletInstance=await targetUserInstance.getWallet();
+        customData.old_balance=targetUserWalletInstance.balance;
+        customData.current_balance=targetUserWalletInstance.balance + amount;
+        customData.wallet_id=targetUserWalletInstance.id;
+        customData.user_id=targetUserInstance.id;
+        const chargingOperationData = {
+          wallet_id: targetUserWalletInstance.id,
+          user_id: targetUserInstance.id,
+          charging_point_id: chargingPoint.id,
+        };
+        operation = await Charging.create(chargingOperationData, { customData });
         break;
       default:
         throw new BadRequestError("operation not provided");

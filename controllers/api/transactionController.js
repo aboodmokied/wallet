@@ -28,6 +28,16 @@ exports.payment=tryCatch(async(req,res,next)=>{
     }});
 });
 
+exports.charging=tryCatch(async(req,res,next)=>{
+    const opertaion=await transactionBuilder.build(req,'charging');
+    const transaction=await Transaction.findByPk(opertaion.transaction_id);
+    res.status(200).send({status:true,result:{
+        message:'Operation Succeed, Verify it.',
+        opertaion,
+        transaction
+    }});
+});
+
 
 exports.verifyTransaction=tryCatch(async(req,res,next)=>{
     const {transactionId,verificationCode}=req.body;

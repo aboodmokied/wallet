@@ -69,6 +69,7 @@ apiRoutes.get(
 
 apiRoutes.post('/transfer',verifyToken,transactionController.transfer);
 apiRoutes.post('/payment',verifyToken,transactionController.payment);
+apiRoutes.post('/charging',verifyToken,transactionController.charging);
 
 apiRoutes.post('/verify-transaction',verifyToken,transactionController.verifyTransaction);
 module.exports = apiRoutes;
