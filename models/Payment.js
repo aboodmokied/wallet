@@ -10,6 +10,14 @@ const Payment=Application.connection.define('payment',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
+    company_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
+    company_wallet_id:{
+        type:DataTypes.BIGINT,
+        allowNull:false
+    },
 })
 
 module.exports=Payment;

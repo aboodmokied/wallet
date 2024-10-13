@@ -4,6 +4,7 @@ const ChargingPointTransaction = require("../../models/ChargingPointTransaction"
 const Company = require("../../models/Company");
 const CompanyTransaction = require("../../models/CompanyTransaction");
 const CompanyWallet = require("../../models/CompanyWallet");
+const Payment = require("../../models/Payment");
 const Transfer = require("../../models/Transfer");
 const User = require("../../models/User");
 const Wallet = require("../../models/Wallet");
@@ -49,6 +50,22 @@ class TransactionBuilder {
         customData.target_wallet_id = targetUser.wallet_id;
         operation = await Transfer.create(operationData, { customData });
         break;
+      case "payment":
+        const { target_company_phone } = req.body;
+        if (userWallet.balance < amount) {
+          throw new BadRequestError("Your Balance Not Enough");
+        }
+        const targetCompany = await Company.findOne({
+          where: { phone: target_company_phone },
+        });
+        const paymentOperationData = {
+          wallet_id: userWallet.id,
+          user_id: id,
+          company_id: targetCompany.id,
+          company_wallet_id: targetCompany.company_wallet_id,
+        };
+        operation = await Payment.create(paymentOperationData, { customData });
+        break;
       default:
         throw new BadRequestError("operation not provided");
     }
@@ -61,7 +78,6 @@ class TransactionBuilder {
     const { operation_type, operation_id, amount } = transaction;
     const OperationModel = transactionConfig.operations[operation_type]?.model;
     const operationInsatance = await OperationModel.findByPk(operation_id);
-    console.log(transaction);
     const sourceWallet = await transaction.getSourceWallet();
     // const target=await operationInsatance.getTarget();
     // const targetWallet=await operationInsatance.getTargetWallet();
@@ -74,10 +90,11 @@ class TransactionBuilder {
         succeed=true;
         break;
       case "payment":
-        const { compoany_wallet_id,company_id } = operationInsatance;
+        const { company_wallet_id,company_id } = operationInsatance;
         // const companyInstance=await Company.findByPk(company_id);
+        console.log({operationInsatance});
         const targetCompanyWallet = await CompanyWallet.findByPk(
-          compoany_wallet_id
+          company_wallet_id
         );
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
         const companyTransaction=await CompanyTransaction.create({ 
@@ -86,10 +103,12 @@ class TransactionBuilder {
             current_balance:targetCompanyWallet.balance + amount,
             date:transaction.date,
             company_id,
-            compoany_wallet_id,
+            company_wallet_id,
             payment_id:operationInsatance.id
          });
-        await operationInsatance.update({company_transaction_id:companyTransaction.id});
+        // await operationInsatance.update({company_transaction_id:companyTransaction.id});
+        operationInsatance.company_transaction_id=companyTransaction.id;
+        await operationInsatance.save();
         await targetCompanyWallet.update({
           balance: targetCompanyWallet.balance + amount,
         });

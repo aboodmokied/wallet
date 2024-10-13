@@ -18,6 +18,17 @@ exports.transfer=tryCatch(async(req,res,next)=>{
 });
 
 
+exports.payment=tryCatch(async(req,res,next)=>{
+    const opertaion=await transactionBuilder.build(req,'payment');
+    const transaction=await Transaction.findByPk(opertaion.transaction_id);
+    res.status(200).send({status:true,result:{
+        message:'Operation Succeed, Verify it.',
+        opertaion,
+        transaction
+    }});
+});
+
+
 exports.verifyTransaction=tryCatch(async(req,res,next)=>{
     const {transactionId,verificationCode}=req.body;
     const transaction=await Transaction.findByPk(transactionId);
@@ -32,12 +43,12 @@ exports.verifyTransaction=tryCatch(async(req,res,next)=>{
         throw new BadRequestError('Invalid Verification Code');
     }
     const result=await transaction.update({verified_at:Date.now()});
-    const operationModel=transactionConfig.operations[transaction.operation_type]?.model;
-    const operation=await operationModel.findByPk(transaction.operation_id);
     const succeed=await transactionBuilder.perform(transaction);
     if(!succeed){
         throw new Error('Server Error, Something went wrong.');
     }
+    const operationModel=transactionConfig.operations[transaction.operation_type]?.model;
+    const operation=await operationModel.findByPk(transaction.operation_id);
     res.status(200).send({status:true,result:{
         message:'Transaction Verified Succefully',
         operation,

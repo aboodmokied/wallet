@@ -7,7 +7,15 @@ class Company extends SystemUser{
 };
 
 Company.init({
-
+    phone:{
+        type:DataTypes.STRING(30),
+        allowNull:true,
+        unique:true
+    },
+    guard:{
+        type:DataTypes.STRING,
+        defaultValue:'company'
+    },
 },{
     sequelize:Application.connection,
     defaultScope:{
