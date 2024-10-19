@@ -12,7 +12,7 @@ const authConfig = {
       name: "admin",
       oauth: false,
       drivers: ["session"],
-      registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
+      registeration: "by-admin", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "admins", // mainProvider: contain all users types
       role: {
         name: "admin",

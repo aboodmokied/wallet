@@ -51,17 +51,21 @@
         </div>
       </form>
       <hr>
-      <div class="social-auth-links text-center mt-2 mb-3">
-          <a href="/auth/google/login/<%= locals.currentGuard %>" class="btn btn-block btn-danger">
-            <i class="fa-brands fa-google"></i> Login using Gmail
-          </a>
-      </div>
+      <% if(locals.guardObj.oauth){ %>
+          <div class="social-auth-links text-center mt-2 mb-3">
+              <a href="/auth/google/login/<%= locals.currentGuard %>" class="btn btn-block btn-danger">
+                <i class="fa-brands fa-google"></i> Login using Gmail
+              </a>
+          </div>
+        <% } %>
       <p class="my-1">
         <a href="/auth/password-reset/<%= locals.currentGuard %>/request" style="text-decoration: none;">I forgot my password</a>
       </p>
-      <p class="my-1">
-        <a href="/auth/register/<%= locals.currentGuard %>" style="text-decoration: none;">Create new account</a>
-      </p>
+      <% if(locals.guardObj.registeration=='global'){ %>
+        <p class="my-1">
+          <a href="/auth/register/<%= locals.currentGuard %>" style="text-decoration: none;">Create new account</a>
+        </p>
+      <% } %>
     </div>
     <!-- /.login-card-body -->
   </div>

@@ -27,7 +27,7 @@ webRoutes.get('/',isAuthenticated,async(req,res,next)=>{
 })
 
 // login
-webRoutes.get(pagesConfig.authentication.login.route,isGuest,validateRequest('login-page'),authController.getLogin);
+webRoutes.get('/auth/login/:guard',isGuest,validateRequest('login-page'),authController.getLogin);
 webRoutes.get('/auth/quick-login',isGuest,authController.getQuickLogin);
 webRoutes.post('/auth/login',isGuest,validateRequest('login'),authController.postLogin);
 
@@ -36,7 +36,7 @@ webRoutes.get('/auth/google/:process/:guard',isGuest,validateRequest('oauth-requ
 webRoutes.get('/api/auth/google/callback',oAuthController.googleAuthResponse);
 
 // register
-webRoutes.get(pagesConfig.authentication.register.route,isGuest,validateRequest('register-page'),authController.getRegister);
+webRoutes.get('/auth/register/:guard',isGuest,validateRequest('register-page'),authController.getRegister);
 webRoutes.post('/auth/register',isGuest,validateRequest('register'),authController.postRegister);
 
 // admin register

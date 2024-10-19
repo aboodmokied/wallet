@@ -10,7 +10,6 @@ const verifyEmailToken = require("../services/mail/middlewares/verifyEmailToken"
 const verifyPassResetToken = require("../services/password-reset/middlewares/verifyPassResetToken");
 const isVerified = require("../middlewares/isVerified");
 const QueryFeatures = require("../util/QueryFeatures");
-const Student = require("../models/User");
 
 apiRoutes.post("/login", validateRequest("api-login"), authController.login);
 apiRoutes.post(
@@ -70,6 +69,6 @@ apiRoutes.get(
 apiRoutes.post('/transfer',verifyToken,transactionController.transfer);
 apiRoutes.post('/payment',verifyToken,transactionController.payment);
 apiRoutes.post('/charging',verifyToken,transactionController.charging);
-
 apiRoutes.post('/verify-transaction',verifyToken,transactionController.verifyTransaction);
+
 module.exports = apiRoutes;

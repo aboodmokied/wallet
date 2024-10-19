@@ -45,7 +45,7 @@ const errorLogger = winston.createLogger({
       }),
     ),
     transports: [
-      new winston.transports.Console(),
+      // new winston.transports.Console(),
       new winston.transports.File({ filename: path.join(errorLogDir, 'error.log') })
     ]
   });
