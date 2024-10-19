@@ -58,7 +58,8 @@ exports.logout=(req,res,next)=>{
 exports.getRegister=(req,res,next)=>{
     // Before: guard and user data validation required.
     const {guard}=req.params;
-    const guards=Object.keys(authConfig.guards).filter(guard=>authConfig.guards[guard].registeration=='global')
+    const guards=Object.keys(authConfig.guards).filter(guard=>authConfig.guards[guard].registeration=='global' && authConfig.guards[guard].drivers.includes('session'))
+    console.log({guards})
     req.session.pagePath=req.path;
     res.render(pagesConfig.authentication.register.page,{
         pageTitle:`${guard[0].toUpperCase()}${guard.slice(1)} Register`,

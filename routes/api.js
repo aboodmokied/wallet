@@ -12,10 +12,10 @@ const isVerified = require("../middlewares/isVerified");
 const QueryFeatures = require("../util/QueryFeatures");
 const Student = require("../models/User");
 
-apiRoutes.post("/login", validateRequest("login"), authController.login);
+apiRoutes.post("/login", validateRequest("api-login"), authController.login);
 apiRoutes.post(
   "/register",
-  validateRequest("register"),
+  validateRequest("api-register"),
   authController.register
 );
 apiRoutes.get("/logout", verifyToken, authController.logout);

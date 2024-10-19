@@ -69,15 +69,25 @@ exports.validateConfirmPassword=body('confirmPassword').custom((input,{req})=>{
 });
 
 
-exports.validateGuard=(existsIn='body',validateGlobalRegistration=false)=>{
+exports.validateGuard=(existsIn='body',validateGlobalRegistration=false,validateSessionLogin=false,validateTokenLogin=false)=>{
     const holder=require('express-validator')[existsIn];
     return holder('guard').notEmpty().withMessage('Guard Required').custom((input)=>{
+        let isValid=true;
         if(input in authConfig.guards){
-            if(!validateGlobalRegistration){
-                return true;
-            }
+            // if(!validateGlobalRegistration){
+            //     return true;
+            // }
             const guardObj=authConfig.guards[input];
-            if(guardObj.registeration=='global'){
+            if(validateGlobalRegistration){
+                isValid=guardObj.registeration=='global';
+            }
+            if(validateSessionLogin && isValid){
+                isValid=guardObj.drivers.includes('session');
+            }
+            if(validateTokenLogin && isValid){
+                isValid=guardObj.drivers.includes('token');
+            }
+            if(isValid){
                 return true;
             }
         }

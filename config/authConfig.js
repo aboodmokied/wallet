@@ -1,6 +1,6 @@
 const authConfig = {
   defaults: {
-    defaultGuard: "user",
+    defaultGuard: "admin",
   },
   commonRole: {
     // role shared between all users
@@ -12,7 +12,7 @@ const authConfig = {
       name: "admin",
       oauth: false,
       drivers: ["session"],
-      registeration: "by-admin", // (that means any user can create a student account) or admin: (only admin can create new accounts)
+      registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "admins", // mainProvider: contain all users types
       role: {
         name: "admin",
@@ -21,7 +21,7 @@ const authConfig = {
     user: {
       name: "user",
       oauth: true,
-      drivers: ["token","session"],
+      drivers: ["token"],
       registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "users", // mainProvider: contain all users types
       role: {
@@ -32,7 +32,7 @@ const authConfig = {
       name: "chargingPoint",
       oauth: false,
       drivers: ["token"],
-      registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
+      registeration: "by-admin", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "chargingPoints", // mainProvider: contain all users types
       role: {
         name: "charging-point",
@@ -66,7 +66,6 @@ const authConfig = {
       driver: "Sequelize",
       model: require("../models/Company"),
     },
-
   },
 };
 

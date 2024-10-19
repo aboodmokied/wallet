@@ -2,16 +2,21 @@ const { validateEmail, validateEmailExistence, validateName, validateGuard, vali
 
 
 exports.loginPageValidation=[
-    validateGuard('param')
+    validateGuard('param',false,true)
 ]
 exports.loginValidation=[
     validateEmail,
-    validateGuard('body'),
+    validateGuard('body',false,true),
+    validateLoginPassword
+]
+exports.apiLoginValidation=[
+    validateEmail,
+    validateGuard('body',false,false,true),
     validateLoginPassword
 ]
 
 exports.registerPageValidation=[
-    validateGuard('param',true)
+    validateGuard('param',true,true)
 ]
 
 exports.registerValidation=[
@@ -19,6 +24,14 @@ exports.registerValidation=[
     validateEmailExistence,
     validateName,
     validateGuard('body'),
+    validateRegisterPassword,
+    validateConfirmPassword
+]
+exports.apiRegisterValidation=[
+    validateEmail,
+    validateEmailExistence,
+    validateName,
+    validateGuard('body',true,false,true),
     validateRegisterPassword,
     validateConfirmPassword
 ]
