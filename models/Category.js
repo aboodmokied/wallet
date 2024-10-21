@@ -6,7 +6,7 @@ const Category=Application.connection.define('category',{
         type:DataTypes.STRING,
         allowNull:false,
         unique:true
-}
+    } 
 });
 
 module.exports=Category;

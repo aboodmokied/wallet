@@ -22,6 +22,7 @@
  * 
  * 
  * Company
+ *  auth *
  *  -shows company transactions (user-payments)
  * 
  * 

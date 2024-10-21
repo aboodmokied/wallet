@@ -1,4 +1,5 @@
 const Category = require("../../models/Category");
+const Company = require("../../models/Company");
 const tryCatch = require("../../util/tryCatch");
 
 exports.index = tryCatch(async (req, res, next) => {

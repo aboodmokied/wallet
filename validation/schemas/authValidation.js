@@ -16,6 +16,7 @@ const {
   validateOauthProcess,
 } = require("../validations");
 const authConfig = require("../../config/authConfig");
+const Category = require("../../models/Category");
 
 exports.loginPageValidation = [validateGuard("param", false, true)];
 exports.loginValidation = [
@@ -59,6 +60,15 @@ const customUserRegisterationValidations = [
   }),
 ];
 
+const customCompanyRegisterationValidations=[
+  body('category_id').notEmpty().custom(async(category_id)=>{
+    const count=await Category.count({where:{id:category_id}});
+    if(!count){
+      return Promise.reject('Category not found');
+    }
+  })
+];
+
 exports.apiRegisterValidation = [
   validateEmail,
   validateEmailExistence,
@@ -66,7 +76,8 @@ exports.apiRegisterValidation = [
   validateGuard("body", true, false, true),
   validateRegisterPassword,
   validateConfirmPassword,
-  ...customUserRegisterationValidations
+  ...customUserRegisterationValidations,
+  ...customCompanyRegisterationValidations
 ];
 
 exports.requestResetPageValidation = [validateGuard("param")];

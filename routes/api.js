@@ -4,6 +4,7 @@ const apiRoutes = express.Router();
 const authController = require("../controllers/api/authController");
 const transactionController = require("../controllers/api/transactionController");
 const categoryController = require("../controllers/api/categoryController");
+const companyController = require("../controllers/api/companyController");
 const oAuthController = require("../controllers/oAuthController");
 const verifyToken = require("../services/api-authentication/middlewares/verifyToken");
 const validateRequest = require("../validation/middlewares/validateRequest");
@@ -12,6 +13,7 @@ const verifyPassResetToken = require("../services/password-reset/middlewares/ver
 const isVerified = require("../middlewares/isVerified");
 const QueryFeatures = require("../util/QueryFeatures");
 const { body } = require("express-validator");
+const Category = require("../models/Category");
 
 apiRoutes.post("/login", validateRequest("api-login"), authController.login);
 apiRoutes.post(
@@ -29,14 +31,13 @@ apiRoutes.get(
 );
 apiRoutes.get("/auth/google/callback", oAuthController.googleAuthResponse);
 
-apiRoutes.get(
+apiRoutes.post(
   "/test",
-  verifyToken,
-  isVerified,
   tryCatch(async (req, res, next) => {
     // const {data,respronseMetaDate}=await new QueryFeatures(req).findAllWithFeatures(Student);
     // console.log('asdasd',{data,respronseMetaDate})
     // res.send({status:true,result:{data},...respronseMetaDate});
+    await Category.create({name:req.body.name});
     res.status(200).send({ status: true });
   })
 );
@@ -99,5 +100,7 @@ apiRoutes.get('/category/:category_id',categoryController.getCategoryCompanies);
 
 
 
+// company
+apiRoutes.get('/company/:company_id',companyController.show);
 
 module.exports = apiRoutes;
