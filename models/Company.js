@@ -16,6 +16,9 @@ Company.init({
         type:DataTypes.STRING,
         defaultValue:'company'
     },
+    category_id:{
+        type:DataTypes.BIGINT,
+    }
 },{
     sequelize:Application.connection,
     defaultScope:{

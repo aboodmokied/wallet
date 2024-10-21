@@ -9,6 +9,7 @@ const validateRequest = require('../validation/middlewares/validateRequest');
 const authorizePermission = require('../services/authorization/middlewares/authorizePermission');
 
 const RoleController=require('../controllers/web/RoleController');
+const categoryController=require('../controllers/web/categoryController');
 const userController=require('../controllers/web/userController');
 const authorizeSuperAdmin = require('../services/authorization/middlewares/authorizeSuperAdmin');
 const verifyPassResetToken = require('../services/password-reset/middlewares/verifyPassResetToken');
@@ -87,4 +88,9 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     // vrify email
     webRoutes.get('/auth/verify-email/request',isAuthenticated,authController.verifyEmailRequest);
     webRoutes.get('/auth/verify-email/:token',validateRequest('verify-email'),verifyEmailToken,authController.verifyEmail);
+
+    // category
+    webRoutes.get('/category',categoryController.index);
+    webRoutes.get('/category/create',categoryController.create);
+    webRoutes.post('/category',categoryController.store);
 module.exports=webRoutes;

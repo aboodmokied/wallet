@@ -4,7 +4,7 @@
  *      - verification using email message *
  *  -login, logout, password-reset *
  *  -transfer
- *      -enter target_phone, amount, info(optional)
+ *      -enter target_phone, amount, info(optional) *
  *  -payment
  *      -show companies categories
  *      -when user select category, show companies of that category each one has name and photo

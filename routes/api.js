@@ -3,6 +3,7 @@ const tryCatch = require("../util/tryCatch");
 const apiRoutes = express.Router();
 const authController = require("../controllers/api/authController");
 const transactionController = require("../controllers/api/transactionController");
+const categoryController = require("../controllers/api/categoryController");
 const oAuthController = require("../controllers/oAuthController");
 const verifyToken = require("../services/api-authentication/middlewares/verifyToken");
 const validateRequest = require("../validation/middlewares/validateRequest");
@@ -90,5 +91,13 @@ apiRoutes.post(
   verifyToken,
   transactionController.verifyTransaction
 );
+
+
+// category
+apiRoutes.get('/category',categoryController.index);
+apiRoutes.get('/category/:category_id',categoryController.getCategoryCompanies);
+
+
+
 
 module.exports = apiRoutes;
