@@ -10,10 +10,12 @@ const transactionBuilder=new TransactionBuilder();
 exports.transfer=tryCatch(async(req,res,next)=>{
     const opertaion=await transactionBuilder.build(req,'transfer');
     const transaction=await Transaction.findByPk(opertaion.transaction_id);
+    const tragetUser=await transaction.getTargetUser();
     res.status(200).send({status:true,result:{
         message:'Operation Succeed, Verify it.',
         opertaion,
-        transaction
+        transaction,
+        tragetUser
     }});
 });
 

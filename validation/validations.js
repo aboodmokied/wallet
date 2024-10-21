@@ -3,6 +3,7 @@ const authConfig = require("../config/authConfig");
 const Role = require("../models/Role");
 const Permission = require("../models/Permission");
 const { mails } = require("../config/mailConfig");
+const User = require("../models/User");
 
 exports.validateEmail=body('email').normalizeEmail().notEmpty().withMessage('Email Required').isEmail().withMessage('Invalid Email').custom((email)=>{
     const service=email.split('@')[1]?.split('.')[0];
@@ -174,7 +175,7 @@ exports.validateUserExistance=param('id').custom(async(id,{req})=>{
 
 
 exports.targetPhone=body('target_phone').notEmpty().custom(async(target_phone)=>{
-    const count = await User.count({where:{target_phone}});
+    const count = await User.count({where:{phone:target_phone}});
     if(!count){
         return Promise.reject('User not found, no users with this phone');
     }

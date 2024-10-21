@@ -19,7 +19,7 @@ class TransactionBuilder {
     let operation;
     const { id } = req.user;
     const { amount } = req.body;
-    let userWallet=operationType=='charging'?undefined:req.user.getWallet();
+    let userWallet=operationType=='charging'?undefined:await req.user.getWallet();
     let customData;
     if(operationType=='charging'){
       customData = {

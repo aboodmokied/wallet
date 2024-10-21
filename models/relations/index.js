@@ -85,8 +85,8 @@ Transaction.belongsTo(User,{
 })
 
 Transaction.belongsTo(User,{
-  foreignKey: "user_id",
-  as:'targerUser',
+  foreignKey: "target_user_id",
+  as:'targetUser',
   onDelete: "NO ACTION",
 })
 
