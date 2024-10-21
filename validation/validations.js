@@ -69,6 +69,8 @@ exports.validateConfirmPassword=body('confirmPassword').custom((input,{req})=>{
 });
 
 
+
+
 exports.validateGuard=(existsIn='body',validateGlobalRegistration=false,validateSessionLogin=false,validateTokenLogin=false)=>{
     const holder=require('express-validator')[existsIn];
     return holder('guard').notEmpty().withMessage('Guard Required').custom((input)=>{
@@ -168,3 +170,16 @@ exports.validateUserExistance=param('id').custom(async(id,{req})=>{
     }
     throw new Error('Invalid Guard');
 });
+
+
+
+exports.targetPhone=body('target_phone').notEmpty().custom(async(target_phone)=>{
+    const count = await User.count({where:{target_phone}});
+    if(!count){
+        return Promise.reject('User not found, no users with this phone');
+    }
+});
+
+exports.amount=body('amount').notEmpty();
+
+// exports.info=body('info').is

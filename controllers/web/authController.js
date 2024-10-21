@@ -157,6 +157,7 @@ exports.verifyEmail=tryCatch(async(req,res,next)=>{
         // }
     // }
     // throw new BadRequestError('Invalid Token');
+    if(req.isApi)
     req.session.targetUser=req.targetUser;
     res.redirect('/auth/quick-login');
 });

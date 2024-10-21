@@ -53,7 +53,7 @@ exports.postPasswordReset=tryCatch(async(req,res,next)=>{
 // verify email
 exports.verifyEmailRequest=tryCatch(async(req,res,next)=>{
     // const message=await req.user.verifyEmail(process.env.FRONT_HOST);
-    const message=await req.user.verifyEmail('www.my-front.com');
+    const message=await req.user.verifyEmail({isApi:true});
     res.send({status:true,result:{
         message
     }})

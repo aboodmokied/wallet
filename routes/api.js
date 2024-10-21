@@ -10,6 +10,7 @@ const verifyEmailToken = require("../services/mail/middlewares/verifyEmailToken"
 const verifyPassResetToken = require("../services/password-reset/middlewares/verifyPassResetToken");
 const isVerified = require("../middlewares/isVerified");
 const QueryFeatures = require("../util/QueryFeatures");
+const { body } = require("express-validator");
 
 apiRoutes.post("/login", validateRequest("api-login"), authController.login);
 apiRoutes.post(
@@ -30,6 +31,7 @@ apiRoutes.get("/auth/google/callback", oAuthController.googleAuthResponse);
 apiRoutes.get(
   "/test",
   verifyToken,
+  isVerified,
   tryCatch(async (req, res, next) => {
     // const {data,respronseMetaDate}=await new QueryFeatures(req).findAllWithFeatures(Student);
     // console.log('asdasd',{data,respronseMetaDate})
@@ -64,11 +66,29 @@ apiRoutes.get(
   authController.verifyEmail
 );
 
-
-
-apiRoutes.post('/transfer',verifyToken,transactionController.transfer);
-apiRoutes.post('/payment',verifyToken,transactionController.payment);
-apiRoutes.post('/charging',verifyToken,transactionController.charging);
-apiRoutes.post('/verify-transaction',verifyToken,transactionController.verifyTransaction);
+apiRoutes.post(
+  "/transfer",
+  validateRequest('transfer'),
+  verifyToken,
+  isVerified,
+  transactionController.transfer
+);
+apiRoutes.post(
+  "/payment",
+  verifyToken,
+  isVerified,
+  transactionController.payment
+);
+apiRoutes.post(
+  "/charging",
+  verifyToken,
+  isVerified,
+  transactionController.charging
+);
+apiRoutes.post(
+  "/verify-transaction",
+  verifyToken,
+  transactionController.verifyTransaction
+);
 
 module.exports = apiRoutes;

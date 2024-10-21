@@ -3,6 +3,7 @@ const ValidationError=require('../../Errors/ErrorTypes/ValidationError');
 const { loginValidation, loginPageValidation, registerPageValidation, registerValidation, requestResetPageValidation, requestResetValidation, resetPageValidation, resetValidation, verifyEmailValidation, oauthRequestValidation, apiLoginValidation, apiRegisterValidation } = require('../schemas/authValidation');
 const { createRoleValidation, assignRolePermissionValidation, revokeRolePermissionValidation, deleteRoleValidation, rolePageValidation } = require('../schemas/authorizationValidation');
 const { usersPageValidation, userPageValidation } = require('../schemas/userValidation');
+const { transferValidation } = require('../schemas/transactionValidations');
 
 // handles validations result
 const checkResult=(req,res,next)=>{
@@ -73,6 +74,9 @@ const validateRequest=(type)=>{
             break;
         case 'revoke-role-permission':
             validations=revokeRolePermissionValidation;
+            break;
+        case 'transfer':
+            validations=transferValidation;
             break;
         default:
           throw Error('type required');

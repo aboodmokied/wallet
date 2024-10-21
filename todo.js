@@ -1,8 +1,8 @@
 /**
  * User (api)
- *  -create account using national_id, email, phone
- *      - verification using email message
- *  -login, logout, password-reset
+ *  -create account using national_id, email, phone *
+ *      - verification using email message *
+ *  -login, logout, password-reset *
  *  -transfer
  *      -enter target_phone, amount, info(optional)
  *  -payment
