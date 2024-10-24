@@ -1,4 +1,4 @@
-const { targetPhone, amount } = require("../validations");
+const { targetPhone, amount, targetCompanyPhone } = require("../validations");
 
 exports.transferValidation=[
     targetPhone,
@@ -6,6 +6,6 @@ exports.transferValidation=[
 ];
 
 exports.paymentValidation=[
-    target_company_phone,
+    targetCompanyPhone,
     amount,
 ];

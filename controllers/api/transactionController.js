@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const transactionConfig = require("../../config/transactionConfig");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const Transaction = require("../../models/Transaction");
@@ -68,4 +69,17 @@ exports.verifyTransaction=tryCatch(async(req,res,next)=>{
     }});
 });
 
+
+
+exports.userTransactions=tryCatch(async(req,res,next)=>{
+    const {user_id}=req.params;
+    const user=await User.findByPk(user_id);
+    const sourceTransactions=await user.getSourceTransactions({where:{verified_at:{[Op.ne]:null}}});
+    const targetTransactions=await user.getTargetTransactions({where:{verified_at:{[Op.ne]:null}}});
+    res.status(200).send({status:true,result:{
+        user,
+        inTransactions:targetTransactions,
+        outTransactions:sourceTransactions,
+    }});
+});
 

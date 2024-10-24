@@ -89,8 +89,8 @@ class TransactionBuilder {
         const targetUserWalletInstance=await targetUserInstance.getWallet();
         customData.old_balance=targetUserWalletInstance.balance;
         customData.current_balance=targetUserWalletInstance.balance + amount;
-        customData.wallet_id=targetUserWalletInstance.id;
-        customData.user_id=targetUserInstance.id;
+        customData.target_wallet_id=targetUserWalletInstance.id;
+        customData.target_user_id=targetUserInstance.id;
         const chargingOperationData = {
           wallet_id: targetUserWalletInstance.id,
           user_id: targetUserInstance.id,
@@ -111,12 +111,14 @@ class TransactionBuilder {
     const OperationModel = transactionConfig.operations[operation_type]?.model;
     const operationInsatance = await OperationModel.findByPk(operation_id);
     const sourceWallet = await transaction.getSourceWallet();
+    const targetWallet = await transaction.getTargetWallet();
+
     // const target=await operationInsatance.getTarget();
     // const targetWallet=await operationInsatance.getTargetWallet();
     switch (operation_type) {
       case "transfer":
         const { target_wallet_id } = operationInsatance;
-        const targetWallet = await Wallet.findByPk(target_wallet_id);
+        // const targetWallet = await Wallet.findByPk(target_wallet_id);
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
         await targetWallet.update({ balance: targetWallet.balance + amount });
         succeed=true;
@@ -155,7 +157,7 @@ class TransactionBuilder {
             charging_id:operationInsatance.id
         });
         await operationInsatance.update({charging_point_transaction_id:chargingPointTransaction.id});
-        await sourceWallet.update({balance:sourceWallet.balance + amount});
+        await targetWallet.update({balance:targetWallet.balance + amount});
         succeed=true;
         break;
         default:

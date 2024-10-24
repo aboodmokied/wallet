@@ -61,7 +61,7 @@ const customUserRegisterationValidations = [
 ];
 
 const customCompanyRegisterationValidations=[
-  body('category_id').notEmpty().custom(async(category_id)=>{
+  body('category_id').if(body("guard").equals("company")).notEmpty().custom(async(category_id)=>{
     const count=await Category.count({where:{id:category_id}});
     if(!count){
       return Promise.reject('Category not found');

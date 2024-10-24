@@ -68,6 +68,8 @@ apiRoutes.get(
   authController.verifyEmail
 );
 
+
+// transfer
 apiRoutes.post(
   "/transfer",
   validateRequest('transfer'),
@@ -75,6 +77,10 @@ apiRoutes.post(
   isVerified,
   transactionController.transfer
 );
+
+// => verified by source user
+
+// payment
 apiRoutes.post(
   "/payment",
   validateRequest('payment'),
@@ -82,12 +88,17 @@ apiRoutes.post(
   isVerified,
   transactionController.payment
 );
+// => verified by source user
+
+// charging
 apiRoutes.post(
   "/charging",
   verifyToken,
   isVerified,
   transactionController.charging
 );
+// => verified by charging point
+
 apiRoutes.post(
   "/verify-transaction",
   verifyToken,
@@ -103,5 +114,12 @@ apiRoutes.get('/category/:category_id',categoryController.getCategoryCompanies);
 
 // company
 apiRoutes.get('/company/:company_id',companyController.show);
+
+
+
+
+
+// user transactions
+apiRoutes.get('/user-transaction/:user_id',transactionController.userTransactions);
 
 module.exports = apiRoutes;
