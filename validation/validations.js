@@ -4,6 +4,7 @@ const Role = require("../models/Role");
 const Permission = require("../models/Permission");
 const { mails } = require("../config/mailConfig");
 const User = require("../models/User");
+const Company = require("../models/Company");
 
 exports.validateEmail=body('email').normalizeEmail().notEmpty().withMessage('Email Required').isEmail().withMessage('Invalid Email').custom((email)=>{
     const service=email.split('@')[1]?.split('.')[0];
@@ -180,6 +181,14 @@ exports.targetPhone=body('target_phone').notEmpty().custom(async(target_phone)=>
         return Promise.reject('User not found, no users with this phone');
     }
 });
+
+
+exports.targetCompanyPhone=body('target_company_phone').notEmpty().custom(async(target_phone)=>{
+    const count = await Company.count({where:{phone:target_phone}});
+    if(!count){
+        return Promise.reject('Company not found, no company with this phone');
+    }
+});;
 
 exports.amount=body('amount').notEmpty();
 

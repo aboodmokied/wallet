@@ -77,6 +77,7 @@ apiRoutes.post(
 );
 apiRoutes.post(
   "/payment",
+  validateRequest('payment'),
   verifyToken,
   isVerified,
   transactionController.payment
