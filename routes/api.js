@@ -118,12 +118,12 @@ apiRoutes.get('/company/:company_id',companyController.show);
 
 
 
+// transaction
+
+apiRoutes.get('/transaction/:transaction_id',transactionController.show);
 
 // user transactions
 apiRoutes.get('/user-transaction/:user_id',transactionController.userTransactions);
 
-// transaction
-
-apiRoutes.get('/transaction/:transaction_id',transactionController.show);
 
 module.exports = apiRoutes;

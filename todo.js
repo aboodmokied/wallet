@@ -5,12 +5,12 @@
  *  -login, logout, password-reset *
  *  -transfer
  *      -enter target_phone, amount, info(optional) *
- *  -payment
+ *  -payment *
  *      -show companies categories
  *      -when user select category, show companies of that category each one has name and photo
  *      -after select company, enter the amount with info about the process
  *      -verify the balance is enough
- *  -transactions
+ *  -transactions 
  *      - payments (target details, amount)
  *      - chargings (source details, amount)
  *  
