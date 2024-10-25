@@ -55,8 +55,8 @@ exports.show=tryCatch(async (req,res,next)=>{
 });
 
 exports.verifyTransaction=tryCatch(async(req,res,next)=>{
-    const {transactionId,verificationCode}=req.body;
-    const transaction=await Transaction.findByPk(transactionId);
+    const {transaction_id,verification_code}=req.body;
+    const transaction=await Transaction.findByPk(transaction_id);
     if(transaction.verified_at){
         throw new BadRequestError('Transaction Already verified');
     }
@@ -64,7 +64,7 @@ exports.verifyTransaction=tryCatch(async(req,res,next)=>{
     if(Date.now()>expiresAt){
         throw new BadRequestError('Request Timeout');
     }
-    if(transaction.verification_code!=verificationCode){
+    if(transaction.verification_code!=verification_code){
         throw new BadRequestError('Invalid Verification Code');
     }
     const result=await transaction.update({verified_at:Date.now()});

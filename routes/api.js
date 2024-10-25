@@ -14,6 +14,7 @@ const isVerified = require("../middlewares/isVerified");
 const QueryFeatures = require("../util/QueryFeatures");
 const { body } = require("express-validator");
 const Category = require("../models/Category");
+const userCanVerifyTransaction = require("../middlewares/userCanVerifyTransaction");
 
 apiRoutes.post("/login", validateRequest("api-login"), authController.login);
 apiRoutes.post(
@@ -102,6 +103,7 @@ apiRoutes.post(
 apiRoutes.post(
   "/verify-transaction",
   verifyToken,
+  userCanVerifyTransaction,
   transactionController.verifyTransaction
 );
 
