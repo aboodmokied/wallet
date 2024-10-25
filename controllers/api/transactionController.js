@@ -42,6 +42,18 @@ exports.charging=tryCatch(async(req,res,next)=>{
 });
 
 
+exports.show=tryCatch(async (req,res,next)=>{
+    const {transaction_id}=req.params;
+    const transaction=await Transaction.findByPk(transaction_id);
+    const {operation_type,operation_id}=transaction;
+    const operationModel=transactionConfig.operations[operation_type]?.model;
+    const opertaionObject=await operationModel.findByPk(operation_id);
+    res.status(200).send({status:true,result:{
+        transaction,
+        operation:opertaionObject
+    }})
+});
+
 exports.verifyTransaction=tryCatch(async(req,res,next)=>{
     const {transactionId,verificationCode}=req.body;
     const transaction=await Transaction.findByPk(transactionId);
