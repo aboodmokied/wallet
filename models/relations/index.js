@@ -314,6 +314,7 @@ Company.afterCreate("Create Company Wallet", async (company) => {
 // Company,CompanyWallet - CompanyTransaction
 Company.hasMany(CompanyTransaction,{
   foreignKey:'company_id',
+  as:'companyTransactions',
   onDelete:'NO ACTION'
 });
 

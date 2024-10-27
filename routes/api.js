@@ -119,13 +119,23 @@ apiRoutes.get('/company/:company_id',companyController.show);
 
 
 
-
+// => role: systemOwner
 // transaction
 
 apiRoutes.get('/transaction/:transaction_id',transactionController.show);
 
 // user transactions
 apiRoutes.get('/user-transaction/:user_id',transactionController.userTransactions);
+
+// company transactions
+apiRoutes.get('/company-transaction/:company_id',transactionController.companyTransactions);
+apiRoutes.get('/company-transaction/:transaction_id',transactionController.showCompanyTransaction);
+
+
+// loggedin user transactions
+apiRoutes.get('/current-user-transaction',verifyToken,transactionController.currentUserTransactions);
+apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,transactionController.showCurrentUserTransaction);
+
 
 
 module.exports = apiRoutes;

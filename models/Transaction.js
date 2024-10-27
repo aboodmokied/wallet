@@ -52,6 +52,13 @@ const Transaction=Application.connection.define('transation',{
     // }
 })
 
+Transaction.prototype.getOperation=async function() {
+    const transactionConfig=require('../config/transactionConfig');
+    const operationModel=transactionConfig.operations[this.operation_type]?.model;
+    const operation=await operationModel.findByPk(this.operation_id);
+    return operation; 
+};
+
 module.exports=Transaction;
 
 

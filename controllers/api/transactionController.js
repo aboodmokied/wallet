@@ -5,6 +5,11 @@ const Transaction = require("../../models/Transaction");
 const User = require("../../models/User");
 const TransactionBuilder = require("../../services/transaction/TransactionBuilder");
 const tryCatch = require("../../util/tryCatch");
+const Company = require("../../models/Company");
+const CompanyTransaction = require("../../models/CompanyTransaction");
+const Payment = require("../../models/Payment");
+const ChargingPointTransaction = require("../../models/ChargingPointTransaction");
+const AuthorizationError = require("../../Errors/ErrorTypes/AuthorizationError");
 
 const transactionBuilder=new TransactionBuilder();
 
@@ -45,12 +50,13 @@ exports.charging=tryCatch(async(req,res,next)=>{
 exports.show=tryCatch(async (req,res,next)=>{
     const {transaction_id}=req.params;
     const transaction=await Transaction.findByPk(transaction_id);
-    const {operation_type,operation_id}=transaction;
-    const operationModel=transactionConfig.operations[operation_type]?.model;
-    const opertaionObject=await operationModel.findByPk(operation_id);
+    const operation=await transaction.getOperation();
+    // const {operation_type,operation_id}=transaction;
+    // const operationModel=transactionConfig.operations[operation_type]?.model;
+    // const opertaionObject=await operationModel.findByPk(operation_id);
     res.status(200).send({status:true,result:{
         transaction,
-        operation:opertaionObject
+        operation
     }})
 });
 
@@ -90,8 +96,75 @@ exports.userTransactions=tryCatch(async(req,res,next)=>{
     const targetTransactions=await user.getTargetTransactions({where:{verified_at:{[Op.ne]:null}}});
     res.status(200).send({status:true,result:{
         user,
-        inTransactions:targetTransactions,
-        outTransactions:sourceTransactions,
+        transactions:{
+            inTransactions:targetTransactions,
+            outTransactions:sourceTransactions
+        }
     }});
 });
 
+
+exports.companyTransactions=tryCatch(async(req,res,next)=>{
+    const {company_id}=req.params;
+    const company=await Company.findByPk(company_id);
+    // const companyTransactions=await company.getCompanyTransactions({include:{model:Payment}});
+    const companyTransactions=await company.getCompanyTransactions();
+    res.status(200).send({status:true,result:{
+        company,
+        transactions:companyTransactions
+    }});
+});
+
+exports.showCompanyTransaction=tryCatch(async(req,res,next)=>{
+    const {transaction_id}=req.params;
+    const companyTransaction=await CompanyTransaction.findByPk(transaction_id);
+    const operation=await companyTransaction.getPayment();
+    res.status(200).send({status:true,result:{transaction:companyTransaction,operation}});
+});
+
+
+exports.currentUserTransactions=tryCatch(async(req,res,next)=>{
+    const {guard}=req.user;
+    let transactions={};
+    if(guard=='user'){
+        transactions.outTransactions=await req.user.getSourceTransactions({where:{verified_at:{[Op.ne]:null}}});
+        transactions.inTransactions=await req.user.getTargetTransactions({where:{verified_at:{[Op.ne]:null}}});
+    }else if(guard=='company'){
+        transactions=await CompanyTransaction.findAll({where:{company_id:req.user.id}});
+    }else if(guard=='chargingPoint'){
+        transactions=await ChargingPointTransaction.findAll({where:{charging_point_id:req.user.id}});
+    }else{
+        throw new BadRequestError('This type of users has no transactions');
+    }
+    res.status(200).send({status:true,result:{transactions}})
+});
+
+exports.showCurrentUserTransaction=tryCatch(async(req,res,next)=>{
+    const {guard}=req.user;
+    const {transaction_id}=req.params;
+    let transaction;
+    let operation;
+    let transactionUserId;
+    if(guard=='user'){
+        transaction=await Transaction.findByPk(transaction_id);
+        operation=await transaction.getOperation();
+        transactionUserId=transaction.user_id ?? transaction.target_user_id;
+    }else if(guard=='company'){
+        transaction=await CompanyTransaction.findByPk(transaction_id);
+        operation=await transaction.getPayment();
+        transactionUserId=transaction.company_id;
+    }else if(guard=='chargingPoint'){
+        transaction=await ChargingPointTransaction.findByPk(transaction_id);
+        operation=await transaction.getCharging();
+        transactionUserId=transaction.charging_point_id;
+    }else{
+        throw new BadRequestError('This type of users has no transactions');
+    }
+    if(req.user.id!=transactionUserId){
+        throw new AuthorizationError();
+    }
+    res.status(200).send({status:true,result:{
+       transaction,
+       operation 
+    }})
+});
