@@ -23,10 +23,10 @@
  * 
  * Company
  *  auth *
- *  -shows company transactions (user-payments)
+ *  -shows company transactions (user-payments) *
  * 
  * 
- * ChargingPoint (Dashboard)
+ * ChargingPoint (Dashboard) 
  *  - created by the system owner (name, email, phone)
  *  - charging
  *      -enter target_phone
