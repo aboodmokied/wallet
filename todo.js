@@ -18,8 +18,8 @@
  * 
  * 
  * SystemOwner...
- *  - add categories
- *  - add company
+ *  - add categories *
+ *  - add company 
  *  - add ch-point
  *      - operations on ch-point
  *          - pending, delete, update

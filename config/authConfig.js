@@ -18,6 +18,16 @@ const authConfig = {
         name: "admin",
       },
     },
+    systemOwner: {
+      name: "systemOwner",
+      oauth: false,
+      drivers: ["session"],
+      registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
+      provider: "systemOwners", // mainProvider: contain all users types
+      role: {
+        name: "systemOwner",
+      },
+    },
     user: {
       name: "user",
       oauth: true,
@@ -53,6 +63,10 @@ const authConfig = {
     admins: {
       driver: "Sequelize",
       model: require("../models/Admin"),
+    },
+    systemOwners: {
+      driver: "Sequelize",
+      model: require("../models/SystemOwner"),
     },
     users: {
       driver: "Sequelize",

@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const SystemUser = require("./SystemUser");
 const Application = require("../Application");
+// const Category = require("./Category");
 
 class Company extends SystemUser{
 
@@ -16,9 +17,10 @@ Company.init({
         type:DataTypes.STRING,
         defaultValue:'company'
     },
-    category_id:{
-        type:DataTypes.BIGINT,
-    }
+    // category_id:{
+    //     type:DataTypes.BIGINT,
+    //     references:Category
+    // }
 },{
     sequelize:Application.connection,
     defaultScope:{

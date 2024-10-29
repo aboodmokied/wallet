@@ -3,6 +3,7 @@ const isAuthenticated = require('../services/authentication/middlewares/isAuthen
 const oAuthController=require('../controllers/oAuthController');
 const authController=require('../controllers/web/authController');
 const adminController=require('../controllers/web/adminController');
+const companyController=require('../controllers/web/companyController');
 const pagesConfig = require('../config/pagesConfig');
 const isGuest = require('../services/authentication/middlewares/isGuest');
 const validateRequest = require('../validation/middlewares/validateRequest');
@@ -19,8 +20,8 @@ const verifyEmailToken = require('../services/mail/middlewares/verifyEmailToken'
 const webRoutes=express.Router();
 
 webRoutes.get('/',isAuthenticated,async(req,res,next)=>{
-    const wallets=await req.user.getWallet()
-    console.log({user:req.user,wallets})
+    // const wallets=await req.user.getWallet()
+    // console.log({user:req.user,wallets})
     res.render('auth/message',{
         pageTitle:'Test',
         message:'Suiiii'
@@ -93,4 +94,11 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     webRoutes.get('/category',categoryController.index);
     webRoutes.get('/category/create',categoryController.create);
     webRoutes.post('/category',categoryController.store);
+
+    // company
+    webRoutes.get('/company',companyController.index)
+    webRoutes.get('/company/create',companyController.create)
+    webRoutes.get('/company',companyController.store)
+    webRoutes.get('/company/:company_id',companyController.show)
+
 module.exports=webRoutes;
