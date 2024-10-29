@@ -18,6 +18,17 @@
  * 
  * 
  * SystemOwner...
+ *  - add categories
+ *  - add company
+ *  - add ch-point
+ *      - operations on ch-point
+ *          - pending, delete, update
+ *  - reports:
+ *      - all system transactions on one day with period, e.g:(12pm - 5pm)
+ *      - all charging point transactions on one day with period, e.g:(12pm - 5pm)
+ *      - all company payment transactions on one day with period, e.g:(12pm - 5pm)
+ *      - all user transactions on one day with period, e.g:(12pm - 5pm)
+ *      
  * 
  * 
  * 
@@ -26,13 +37,13 @@
  *  -shows company transactions (user-payments) *
  * 
  * 
- * ChargingPoint (Dashboard) 
+ * ChargingPoint (api) 
  *  - created by the system owner (name, email, phone)
  *  - charging
  *      -enter target_phone
- *          -the system shows user informations (name, national_id, email)
- *          -enter amount
- *          -send verification code for user email
+ *          -the system shows user informations (name, national_id, email) *
+ *          -enter amount *
+ *          -send verification code for user email 
  *          -after charging process send email for inforamtion such amount, employee name, charging-point name
  * 
  * 

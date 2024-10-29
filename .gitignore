@@ -1,7 +1,7 @@
 node_modules/
 .env
 
-todo.js
+./todo.js
 
 # Ignore log files and directories
 logs/

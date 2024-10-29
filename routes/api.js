@@ -3,6 +3,7 @@ const tryCatch = require("../util/tryCatch");
 const apiRoutes = express.Router();
 const authController = require("../controllers/api/authController");
 const transactionController = require("../controllers/api/transactionController");
+const userController = require("../controllers/api/userController");
 const categoryController = require("../controllers/api/categoryController");
 const companyController = require("../controllers/api/companyController");
 const oAuthController = require("../controllers/oAuthController");
@@ -107,6 +108,9 @@ apiRoutes.post(
   transactionController.verifyTransaction
 );
 
+
+// user
+apiRoutes.get('/user/:user_phone',userController.getUserByPhone);
 
 // category
 apiRoutes.get('/category',categoryController.index);
