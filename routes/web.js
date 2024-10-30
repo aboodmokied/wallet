@@ -90,15 +90,22 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     webRoutes.get('/auth/verify-email/request',isAuthenticated,authController.verifyEmailRequest);
     webRoutes.get('/auth/verify-email/:token',validateRequest('verify-email'),verifyEmailToken,authController.verifyEmail);
 
+
+    // (system-owner)
     // category
     webRoutes.get('/category',categoryController.index);
     webRoutes.get('/category/create',categoryController.create);
     webRoutes.post('/category',categoryController.store);
 
-    // company
-    webRoutes.get('/company',companyController.index)
-    webRoutes.get('/company/create',companyController.create)
-    webRoutes.get('/company',companyController.store)
-    webRoutes.get('/company/:company_id',companyController.show)
+
+    // charging point
+    // create
+    webRoutes.get('/charging-point');
+
+    // company 
+    // webRoutes.get('/company',companyController.index)
+    // webRoutes.get('/company/:company_id',companyController.show)
+
+
 
 module.exports=webRoutes;
