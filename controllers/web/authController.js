@@ -2,9 +2,11 @@ const authConfig = require("../../config/authConfig");
 const pagesConfig = require("../../config/pagesConfig");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const NotFoundError = require("../../Errors/ErrorTypes/NotFoundError");
+const CreateByAdminRequest = require("../../models/CreateByAdminRequest");
 const VerifyEmailToken = require("../../models/verifyEmailToken");
 const Authenticate = require("../../services/authentication/Authenticate");
 const PasswordReset = require("../../services/password-reset/PasswordReset");
+const ByAdminRegister = require("../../services/registration/ByAdminRegister");
 const Register = require("../../services/registration/Register");
 const tryCatch = require("../../util/tryCatch");
 
@@ -80,6 +82,46 @@ exports.postRegister=tryCatch(async(req,res,next)=>{
     res.redirect('/auth/quick-login');
 });
 
+
+
+// register by admin
+exports.getRegisterByAdminRequest=tryCatch(async(req,res,next)=>{
+    const {guard}=req.params;
+    res.render('auth/by-admin-request',{
+        pageTitle:`Create ${guard} Request`,
+        guard
+     });
+});
+exports.postRegisterByAdminRequest=tryCatch(async(req,res,next)=>{
+    const byAdmin=new ByAdminRegister();
+    const message=await byAdmin.request(req);
+    res.with('message',message).redirect(`/auth/register-by-admin/request/${req.body.guard}`);
+});
+
+exports.getRegisterByAdminCreate=tryCatch(async(req,res,next)=>{
+    const {email}=req.query;
+    const {token}=req.params;
+    const createByAdminRequest=await CreateByAdminRequest.findOne({where:{token,revoked:false}});
+    if(!createByAdminRequest){
+        throw new BadRequestError('Invalid request or the process was revoked by the system.');
+    }
+    if(email!==createByAdminRequest.email){
+        throw new BadRequestError('Invalid Email');
+    };
+    const {guard}=createByAdminRequest;
+    res.render('auth/by-admin-create',{
+        pageTitle:`Create ${guard} Account`,
+        token,
+        email,
+        guard
+    })
+});
+exports.postRegisterByAdminCreate=tryCatch(async(req,res,next)=>{
+    const byAdmin=new ByAdminRegister();
+    const newUser=await byAdmin.create(req);
+    req.session.targetUser=newUser;
+    res.redirect('/auth/quick-login');
+});
 
 
 // password reset

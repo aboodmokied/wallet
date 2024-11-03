@@ -16,6 +16,10 @@ const authorizeSuperAdmin = require('../services/authorization/middlewares/autho
 const verifyPassResetToken = require('../services/password-reset/middlewares/verifyPassResetToken');
 const isVerified = require('../middlewares/isVerified');
 const verifyEmailToken = require('../services/mail/middlewares/verifyEmailToken');
+const Admin = require('../models/Admin');
+const AuthorizationError = require('../Errors/ErrorTypes/AuthorizationError');
+const tryCatch = require('../util/tryCatch');
+const BadRequestError = require('../Errors/ErrorTypes/BadRequestError');
 
 const webRoutes=express.Router();
 
@@ -41,7 +45,31 @@ webRoutes.get('/api/auth/google/callback',oAuthController.googleAuthResponse);
 webRoutes.get('/auth/register/:guard',isGuest,validateRequest('register-page'),authController.getRegister);
 webRoutes.post('/auth/register',isGuest,validateRequest('register'),authController.postRegister);
 
+// by admin register
+
+const conditionalMiddleware=async(req,res,next)=>{
+    let guard;
+    if(req.method=='GET'){
+        guard=req.params.guard;
+    }else{
+        guard=req.body.guard;
+    }
+    if(guard=='admin'){
+        return await authorizeSuperAdmin(req,res,next);
+    }else if(guard=='chargingPoint'){
+        return await authorizePermission('can-create-charging-point')(req,res,next);
+    }else{
+        throw BadRequestError('Process not allowed');
+    }
+};
+
+webRoutes.get('/auth/register-by-admin/request/:guard',isAuthenticated,authorizePermission('can-create-charging-point'),authController.getRegisterByAdminRequest);
+webRoutes.post('/auth/register-by-admin/request',isAuthenticated,conditionalMiddleware,authController.postRegisterByAdminRequest);
+webRoutes.get('/auth/register-by-admin/:token',isGuest,authController.getRegisterByAdminCreate);
+webRoutes.post('/auth/register-by-admin',isGuest,authController.postRegisterByAdminCreate);
+
 // admin register
+// /auth/register-by-admin/${hashedToken}?email=${email}
 webRoutes.get('/auth/create-admin/request',authorizeSuperAdmin,adminController.createRequest);
 webRoutes.post('/auth/create-admin/request',isAuthenticated,authorizeSuperAdmin,adminController.storeRequest);
 webRoutes.get('/auth/create-admin/:token',isGuest,adminController.create);
@@ -50,10 +78,9 @@ webRoutes.post('/auth/create-admin',isGuest,adminController.store);
 // logout
 webRoutes.get('/auth/logout',isAuthenticated,authController.logout);
 
-webRoutes.get('/authTest',isAuthenticated,authorizePermission('testPermission1'),(req,res,next)=>{
+webRoutes.get('/authTest',authorizePermission('can-create-charging-point'),(req,res,next)=>{
     res.send({
-        session:req.session,
-        user:req.user
+        status:true
     })
 })
 

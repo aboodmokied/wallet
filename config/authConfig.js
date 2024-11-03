@@ -31,7 +31,7 @@ const authConfig = {
     user: {
       name: "user",
       oauth: true,
-      drivers: ["token"],
+      drivers: ["token","session"],
       registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "users", // mainProvider: contain all users types
       role: {
@@ -41,8 +41,8 @@ const authConfig = {
     chargingPoint: {
       name: "chargingPoint",
       oauth: false,
-      drivers: ["token"],
-      registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
+      drivers: ["session"],
+      registeration: "by-admin", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "chargingPoints", // mainProvider: contain all users types
       role: {
         name: "charging-point",

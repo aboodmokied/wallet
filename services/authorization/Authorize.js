@@ -219,6 +219,7 @@ class Authorize{
             return permissions;
         } 
         model.prototype.hasPermissionViaRoles=async function(permission){ // ***
+            console.log({model:model,guard:this.guard})
             const permissionInstance=await Permission.findOne({
                 where:{[Op.or]:[{name:permission},{id:permission}]},
                 include:{
@@ -228,6 +229,7 @@ class Authorize{
                     include:{model:model,through:UserHasRole,where:{id:this.id,guard:this.guard},required:true}
                     }
             })
+            console.log({permissionInstance,roles:permissionInstance.roles,role:permissionInstance.roles[0]});
             return permissionInstance?true:false;
         } 
     }

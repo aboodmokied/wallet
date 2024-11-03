@@ -119,8 +119,12 @@ class Application {
   #applyAuthorization() {
     const Authorize = require("./services/authorization/Authorize");
     const SystemUser = require("./models/SystemUser");
+    const User = require("./models/User");
+    const Company = require("./models/Company");
     const authorize = new Authorize();
     authorize.applyAuthorization(SystemUser);
+    authorize.applyAuthorization(User);
+    authorize.applyAuthorization(Company);
   }
   #defineMailing() {
     const Mail = require("./services/mail/Mail");
