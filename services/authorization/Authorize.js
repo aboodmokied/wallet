@@ -53,17 +53,39 @@ class Authorize{
         })
     }
     applyAuthorization(model){
-        model.belongsToMany(Role,{
-            through:UserHasRole,
-            foreignKey:'userId',
-            otherKey:'roleId'
-        })
+
+        // model.belongsToMany(Role,{
+        //     through:UserHasRole,
+        //     foreignKey:'userId',
+        //     sourceKey:'id',
+        //     otherKey:'roleId'
+        // })
         
-        Role.belongsToMany(model,{
-            through:UserHasRole,
-            foreignKey:'roleId',
-            otherKey:'userId'
-        })
+        // model.belongsToMany(Role,{
+        //     through:UserHasRole,
+        //     foreignKey:'guard',
+        //     sourceKey:'guard',
+        //     otherKey:'roleId'
+        // })
+
+        // Role.belongsToMany(model,{
+        //     through:UserHasRole,
+        //     foreignKey:'roleId',
+        //     otherKey:'userId'
+        // })
+        // Role.belongsToMany(model,{
+        //     through:UserHasRole,
+        //     foreignKey:'roleId',
+        //     otherKey:'guard'
+        // })
+
+        
+        
+        // Role.belongsToMany(model,{
+        //     through:UserHasRole,
+        //     foreignKey:'roleId',
+        //     otherKey:'userId'
+        // })
 
         this.#permissionAggregationFunctions(model);
         this.#roleAggregationFunctions(model);
@@ -72,9 +94,10 @@ class Authorize{
     #roleAggregationFunctions(model){
         // Before: validate role existence
         // Class Level
-            model.hasRole=async function(userId){
-                const user=await model.findByPk(userId);
+            model.hasRole=async function(role,userId){
+                const user=await this.findByPk(userId);
                 const count=await Role.count({
+                    where:{[Op.or]:[{name:role},{id:role}]},
                     include:{model:UserHasRole,where:{userId,guard:user.guard},required:true}
                 })
                 return count?true:false;
@@ -83,7 +106,7 @@ class Authorize{
             model.assignRole=async function(role,userId){
                 const roleInstance=await Role.findOne({where:{[Op.or]:[{name:role},{id:role}]}});
                 if(roleInstance.isMain)throw new BadRequestError('Main Roles is not assignable')
-                const user=await model.findByPk(userId);
+                const user=await this.findByPk(userId);
                 const count=await UserHasRole.count({where:{userId,guard:user.guard,roleId:roleInstance.id}});
                 if(count){
                     throw new Error(`${role.name} already assigned to this user`)
@@ -98,20 +121,19 @@ class Authorize{
                 // if(count){
                 //     throw new Error(`${role.name} already assigned to this user`)
                 // }
-                const user=await model.findByPk(userId);
+                const user=await this.findByPk(userId);
                 const result=await UserHasRole.destroy({where:{userId,guard:user.guard,roleId:roleInstance.id}});    
                 return result;
             }
-            model.getRoles=async function(role,userId){
-                const user=await model.findByPk(userId);
+            model.getRoles=async function(userId){  
+                const user=await this.findByPk(userId);
                 const roles=await Role.findAll({
-                    where:{[Op.or]:[{name:role},{id:role}]},
                     include:{model:UserHasRole,where:{userId,guard:user.guard},required:true}
                 })
                 return roles;
             }
             model.getAvaliableRoles=async function(userId){
-                const user=await model.findByPk(userId);
+                const user=await this.findByPk(userId);
                 const roles=await Role.findAll({
                     where:{
                         id:{[Op.notIn]:Application.connection.literal(`(SELECT roleId FROM user_has_roles WHERE userId=${userId} AND guard='${user.guard}')`)},
@@ -125,7 +147,7 @@ class Authorize{
         // Instance Level
             model.prototype.hasRole=async function(role){
                 const count=await Role.count({
-                    where:{name:role},
+                    where:{[Op.or]:[{name:role},{id:role}]},
                     include:{model:UserHasRole,where:{userId:this.id,guard:this.guard},required:true}
                 })
                 return count?true:false;
@@ -178,58 +200,68 @@ class Authorize{
             // }
             // const permissions=new Set(userPermissions);
             // // return permissions;
-            const user=await model.findByPk(userId);
+            const user=await this.findByPk(userId);
             const permissions=await Permission.findAll({
                 include:{
                     model:Role,
                     through:RoleHasPermission,
                     required:true,
-                    include:{model:model,through:UserHasRole,where:{id:userId,guard:user.guard},required:true}
+                    include:{model:UserHasRole,where:{userId:user.id,guard:user.guard},required:true}
                     }
                 
             })
             return permissions;
         } 
         model.hasPermissionViaRoles=async function(userId,permission){ // ***
-            const user=await model.findByPk(userId);
+            const user=await this.findByPk(userId);
             const permissionInstance=await Permission.findOne({
                 where:{[Op.or]:[{name:permission},{id:permission}]},
                 include:{
                     model:Role,
                     through:RoleHasPermission,
                     required:true,
-                    include:{model:model,through:UserHasRole,where:{id:userId,guard:user.guard},required:true}
+                    include:{model:UserHasRole,where:{userId:user.id,guard:user.guard},required:true}
                     }
-                
             })
             return permissionInstance?true:false;
         } 
 
         // Instance Level 
         model.prototype.getPermissionsViaRoles=async function(){ // ***
+            
             const permissions=await Permission.findAll({
                 include:{
                     model:Role,
                     through:RoleHasPermission,
                     required:true,
-                    include:{model:model,through:UserHasRole,where:{id:this.id,guard:this.guard},required:true}
+                    include:{model:UserHasRole,where:{userId:this.id,guard:this.guard},required:true}
                     }
                 
             })
             return permissions;
         } 
         model.prototype.hasPermissionViaRoles=async function(permission){ // ***
-            console.log({model:model,guard:this.guard})
+            // const permissionInstance=await Permission.findAll({
+            //     where:{[Op.or]:[{name:permission},{id:permission}]},
+            //     include:{
+            //         model:Role,
+            //         through:RoleHasPermission,
+            //         required:true,
+            //         include:{model,through:{model:UserHasRole,where:{guard:this.guard}},required:true}
+            //         }
+            // })
+            // console.log({p:permissionInstance[0].roles[0]});
+            // console.log({p:permissionInstance[0].roles[0].Users});
+            // return permissionInstance?true:false;
             const permissionInstance=await Permission.findOne({
                 where:{[Op.or]:[{name:permission},{id:permission}]},
                 include:{
                     model:Role,
                     through:RoleHasPermission,
                     required:true,
-                    include:{model:model,through:UserHasRole,where:{id:this.id,guard:this.guard},required:true}
+                    include:{model:UserHasRole,where:{userId:this.id,guard:this.guard},required:true}
                     }
             })
-            console.log({permissionInstance,roles:permissionInstance.roles,role:permissionInstance.roles[0]});
             return permissionInstance?true:false;
         } 
     }

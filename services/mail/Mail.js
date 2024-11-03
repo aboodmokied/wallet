@@ -98,7 +98,7 @@ class Mail{
         };
         // class level
         model.sendEmail=async function(email,{subject,html}){
-            const user=await model.findOne({where:{email}});
+            const user=await this.findOne({where:{email}});
             if(!user){
                 throw new NotFoundError(`user with id {${email}} not found`);
             }

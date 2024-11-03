@@ -119,12 +119,12 @@ class Application {
   #applyAuthorization() {
     const Authorize = require("./services/authorization/Authorize");
     const SystemUser = require("./models/SystemUser");
-    const User = require("./models/User");
-    const Company = require("./models/Company");
+    // const User = require("./models/User");
+    // const Company = require("./models/Company");
     const authorize = new Authorize();
     authorize.applyAuthorization(SystemUser);
-    authorize.applyAuthorization(User);
-    authorize.applyAuthorization(Company);
+    // authorize.applyAuthorization(User);
+    // authorize.applyAuthorization(Company);
   }
   #defineMailing() {
     const Mail = require("./services/mail/Mail");
@@ -142,7 +142,16 @@ class Application {
     const googleOauth=new GoogleAuth();
     googleOauth.setup();
   }
-  
+
+  // #inheretAssociations(){
+  //   const authConfig=require('./config/authConfig');
+  //   const SystemUser = require("./models/SystemUser");
+  //   for(let providerName in authConfig.providers){
+  //     const model=authConfig.providers[providerName]?.model;
+  //     console.log({assoc:SystemUser.associate});
+  //     model.associate=SystemUser.associate;
+  //   }
+  // }
 }
 
 module.exports = Application;

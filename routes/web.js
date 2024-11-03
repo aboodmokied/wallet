@@ -20,6 +20,7 @@ const Admin = require('../models/Admin');
 const AuthorizationError = require('../Errors/ErrorTypes/AuthorizationError');
 const tryCatch = require('../util/tryCatch');
 const BadRequestError = require('../Errors/ErrorTypes/BadRequestError');
+const User = require('../models/User');
 
 const webRoutes=express.Router();
 
@@ -78,7 +79,8 @@ webRoutes.post('/auth/create-admin',isGuest,adminController.store);
 // logout
 webRoutes.get('/auth/logout',isAuthenticated,authController.logout);
 
-webRoutes.get('/authTest',authorizePermission('can-create-charging-point'),(req,res,next)=>{
+webRoutes.get('/authTest',async(req,res,next)=>{
+    await User.getRoles(1);
     res.send({
         status:true
     })
