@@ -55,6 +55,7 @@ const conditionalMiddleware=async(req,res,next)=>{
     }else{
         guard=req.body.guard;
     }
+    console.log({guard})
     if(guard=='admin'){
         return await authorizeSuperAdmin(req,res,next);
     }else if(guard=='chargingPoint'){
@@ -64,17 +65,17 @@ const conditionalMiddleware=async(req,res,next)=>{
     }
 };
 
-webRoutes.get('/auth/register-by-admin/request/:guard',isAuthenticated,authorizePermission('can-create-charging-point'),authController.getRegisterByAdminRequest);
+webRoutes.get('/auth/register-by-admin/request/:guard',isAuthenticated,conditionalMiddleware,authController.getRegisterByAdminRequest);
 webRoutes.post('/auth/register-by-admin/request',isAuthenticated,conditionalMiddleware,authController.postRegisterByAdminRequest);
 webRoutes.get('/auth/register-by-admin/:token',isGuest,authController.getRegisterByAdminCreate);
 webRoutes.post('/auth/register-by-admin',isGuest,authController.postRegisterByAdminCreate);
 
 // admin register
 // /auth/register-by-admin/${hashedToken}?email=${email}
-webRoutes.get('/auth/create-admin/request',authorizeSuperAdmin,adminController.createRequest);
-webRoutes.post('/auth/create-admin/request',isAuthenticated,authorizeSuperAdmin,adminController.storeRequest);
-webRoutes.get('/auth/create-admin/:token',isGuest,adminController.create);
-webRoutes.post('/auth/create-admin',isGuest,adminController.store);
+// webRoutes.get('/auth/create-admin/request',authorizeSuperAdmin,adminController.createRequest);
+// webRoutes.post('/auth/create-admin/request',isAuthenticated,authorizeSuperAdmin,adminController.storeRequest);
+// webRoutes.get('/auth/create-admin/:token',isGuest,adminController.create);
+// webRoutes.post('/auth/create-admin',isGuest,adminController.store);
 
 // logout
 webRoutes.get('/auth/logout',isAuthenticated,authController.logout);

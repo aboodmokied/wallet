@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const Application = require("../Application");
 
-const CreateByAdminRequest=Application.connection.define('create_admin_request',{
+const CreateByAdminRequest=Application.connection.define('create_by_admin_request',{
     token:{
         type:DataTypes.STRING,
         allowNull:false,

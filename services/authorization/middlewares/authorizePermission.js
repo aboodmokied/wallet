@@ -9,11 +9,12 @@ const authorizePermission=(permission)=>{
     return tryCatch(async(req,res,next)=>{
         console.log(3)
         const allowed=await req.user.hasPermissionViaRoles(permission);
-        console.log(4)
+        console.log(4) 
         if(allowed){
             console.log(5)
             return next();
         }
+        console.log(6)
         throw new AuthorizationError();
     })
 };  

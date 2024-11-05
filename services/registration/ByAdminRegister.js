@@ -1,6 +1,8 @@
 const authConfig = require("../../config/authConfig");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const CreateByAdminRequest = require("../../models/CreateByAdminRequest");
+const crypto=require('crypto');
+const bcrypt=require('bcryptjs');
 
 class ByAdminRegister{
     constructor(){
@@ -9,6 +11,7 @@ class ByAdminRegister{
 
     async request(req){
         const {email,guard}=req.body;
+        console.log({myGuardRequest:guard});
         const count=await CreateByAdminRequest.count({where:{email,guard,revoked:false}});
         if(count){
             // throw new BadRequestError('Create Admin Request already created for this email, the user should check his mailbox');
@@ -20,7 +23,7 @@ class ByAdminRegister{
         }
         const token=crypto.randomBytes(32).toString('hex');
         const hashedToken=crypto.createHash('sha256').update(token).digest('hex');
-        await CreateByAdminRequest.create({email,gaurd,token:hashedToken});
+        await CreateByAdminRequest.create({email,guard,token:hashedToken});
         const url=`${process.env.APP_URL}:${process.env.PORT||3000}/auth/register-by-admin/${hashedToken}?email=${email}`;
         // const mail=new Mail();
         // await mail.sendEmail(email,{
@@ -35,8 +38,10 @@ class ByAdminRegister{
 
     async create(req){
         const {token,password,guard}=req.body;
+        console.log({myGuardCreate:guard});
         await CreateByAdminRequest.update({revoked:true},{where:{token,guard}});
-        const userModel=authConfig.guards[guard]?.model;
+        const guardObj=authConfig.guards[guard];
+        const userModel=authConfig.providers[guardObj.provider]?.model;
         const newUser=await userModel.create({
             ...req.body,
             password:bcrypt.hashSync(password,12),
