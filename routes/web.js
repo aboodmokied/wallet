@@ -2,8 +2,10 @@ const express=require('express');
 const isAuthenticated = require('../services/authentication/middlewares/isAuthenticated');
 const oAuthController=require('../controllers/oAuthController');
 const authController=require('../controllers/web/authController');
+const reportController=require('../controllers/web/reportController');
 const adminController=require('../controllers/web/adminController');
 const companyController=require('../controllers/web/companyController');
+const chPointController=require('../controllers/web/chPointController');
 const pagesConfig = require('../config/pagesConfig');
 const isGuest = require('../services/authentication/middlewares/isGuest');
 const validateRequest = require('../validation/middlewares/validateRequest');
@@ -80,12 +82,7 @@ webRoutes.post('/auth/register-by-admin',isGuest,authController.postRegisterByAd
 // logout
 webRoutes.get('/auth/logout',isAuthenticated,authController.logout);
 
-webRoutes.get('/authTest',async(req,res,next)=>{
-    await User.getRoles(1);
-    res.send({
-        status:true
-    })
-})
+webRoutes.get('/authTest',reportController.dailySystemTransactions);
 
 webRoutes.get('/authTest2',isAuthenticated,authorizePermission('testPermission2'),async(req,res,next)=>{
     const roles=await req.user.getRoles();
@@ -129,8 +126,13 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
 
 
     // charging point
-    // create
-    webRoutes.get('/charging-point');
+
+    // pending
+    webRoutes.patch('/charging-point/pending',isAuthenticated,chPointController.pending);
+    // delete
+    webRoutes.delete('/charging-point',isAuthenticated,chPointController.destroy);
+    
+    
 
     // company 
     // webRoutes.get('/company',companyController.index)

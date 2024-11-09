@@ -19,12 +19,14 @@
  * 
  * SystemOwner...
  *  - add categories *
- *  - add company 
- *  - add ch-point
+ *  - add company -
+ *  - add ch-point *
  *      - operations on ch-point
- *          - pending, delete, update
+ *          - pending, *
+ *            delete, *
+ *            update 
  *  - reports:
- *      - all system transactions on one day with period, e.g:(12pm - 5pm)
+ *      - all system transactions on one day with period, e.g:(12pm - 5pm)  *
  *      - all charging point transactions on one day with period, e.g:(12pm - 5pm)
  *      - all company payment transactions on one day with period, e.g:(12pm - 5pm)
  *      - all user transactions on one day with period, e.g:(12pm - 5pm)

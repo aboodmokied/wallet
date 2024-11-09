@@ -22,7 +22,7 @@ const authConfig = {
       name: "systemOwner",
       oauth: false,
       drivers: ["session"],
-      registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
+      registeration: "by-system", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "systemOwners", // mainProvider: contain all users types
       role: {
         name: "systemOwner",
@@ -31,7 +31,7 @@ const authConfig = {
     user: {
       name: "user",
       oauth: true,
-      drivers: ["token","session"],
+      drivers: ["token"],
       registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "users", // mainProvider: contain all users types
       role: {

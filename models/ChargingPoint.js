@@ -17,6 +17,10 @@ ChargingPoint.init({
         type:DataTypes.STRING,
         defaultValue:'chargingPoint'
     },
+    wasPending:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false
+    }
 },{
     sequelize:Application.connection,
     tableName:'charging_points',
