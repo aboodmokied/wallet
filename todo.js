@@ -57,4 +57,10 @@
 
 
 
-// Permission => roles => get users that has this role => he will get users ids from user-has-role => get these users from thier model 
+
+// views
+//  => system-owner charging-point
+
+// validations
+
+// wrokflows
