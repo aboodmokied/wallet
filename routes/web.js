@@ -13,6 +13,7 @@ const authorizePermission = require('../services/authorization/middlewares/autho
 
 const RoleController=require('../controllers/web/RoleController');
 const categoryController=require('../controllers/web/categoryController');
+const transactionController=require('../controllers/web/transactionController');
 const userController=require('../controllers/web/userController');
 const authorizeSuperAdmin = require('../services/authorization/middlewares/authorizeSuperAdmin');
 const verifyPassResetToken = require('../services/password-reset/middlewares/verifyPassResetToken');
@@ -137,5 +138,25 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     // reporting
     webRoutes.get('/report/system-transactions',reportController.dailySystemTransactions);
     webRoutes.get('/report/system-user-transactions/:guard/:user_id',reportController.dailySystemUserTransactions);
+
+
+
+    // charging
+    // =>show charging page 
+    webRoutes.get('/charging',isAuthenticated,isVerified,transactionController.getCharging);
+    // get user by user phone
+    webRoutes.get('/confirm',isAuthenticated,isVerified,transactionController.getConfirm);
+    // // post amount with target-phone  
+    webRoutes.post(
+        "/charging",
+        isAuthenticated,
+        isVerified,
+        transactionController.charging
+        );  // redirect to verification page
+    // // verify
+    webRoutes.get('/verify/:transaction_id',isAuthenticated,isVerified,transactionController.getVerify);    
+    webRoutes.post('/verify',isAuthenticated,isVerified,transactionController.verifyTransaction);    
+
+
 
 module.exports=webRoutes;

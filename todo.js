@@ -66,14 +66,20 @@
 // wrokflows
 /**
  * charging
- *  - enter user phone => user instance
- *  - enter  
- * payment
+ *  - show charging page
+ *  - enter target user phone
+ *  - show user details
+ *  - enter amount 
+ *  - show verification page with operation details
+ *  - verify
+ * 
+ * payment *
  *  show categories
  *  select category
  *  show category companies
  *  select company
  *  enter amount
+ *  verify 
  * 
  * 
  * transfer

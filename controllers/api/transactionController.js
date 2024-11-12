@@ -36,15 +36,15 @@ exports.payment=tryCatch(async(req,res,next)=>{
     }});
 });
 
-exports.charging=tryCatch(async(req,res,next)=>{
-    const opertaion=await transactionBuilder.build(req,'charging');
-    const transaction=await Transaction.findByPk(opertaion.transaction_id);
-    res.status(200).send({status:true,result:{
-        message:'Operation Succeed, Verify it.',
-        opertaion,
-        transaction
-    }});
-});
+// exports.charging=tryCatch(async(req,res,next)=>{
+//     const opertaion=await transactionBuilder.build(req,'charging');
+//     const transaction=await Transaction.findByPk(opertaion.transaction_id);
+//     res.status(200).send({status:true,result:{
+//         message:'Operation Succeed, Verify it.',
+//         opertaion,
+//         transaction
+//     }});
+// });
 
 
 exports.show=tryCatch(async (req,res,next)=>{
@@ -61,25 +61,13 @@ exports.show=tryCatch(async (req,res,next)=>{
 });
 
 exports.verifyTransaction=tryCatch(async(req,res,next)=>{
-    const {transaction_id,verification_code}=req.body;
-    const transaction=await Transaction.findByPk(transaction_id);
-    if(transaction.verified_at){
-        throw new BadRequestError('Transaction Already verified');
-    }
-    const expiresAt=transaction.date + (5 * 60 * 1000);
-    if(Date.now()>expiresAt){
-        throw new BadRequestError('Request Timeout');
-    }
-    if(transaction.verification_code!=verification_code){
-        throw new BadRequestError('Invalid Verification Code');
-    }
-    const result=await transaction.update({verified_at:Date.now()});
+    const transaction=await transactionBuilder.verify(req);
     const succeed=await transactionBuilder.perform(transaction);
     if(!succeed){
         throw new Error('Server Error, Something went wrong.');
     }
-    const operationModel=transactionConfig.operations[transaction.operation_type]?.model;
-    const operation=await operationModel.findByPk(transaction.operation_id);
+    // const operationModel=transactionConfig.operations[transaction.operation_type]?.model;
+    const operation=await transaction.getOperation();
     res.status(200).send({status:true,result:{
         message:'Transaction Verified Succefully',
         operation,

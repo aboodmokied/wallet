@@ -99,12 +99,12 @@ apiRoutes.post(
 // => verified by source user
 
 // charging
-apiRoutes.post(
-  "/charging",
-  verifyToken,
-  isVerified,
-  transactionController.charging
-);
+// apiRoutes.post(
+//   "/charging",
+//   verifyToken,
+//   isVerified,
+//   transactionController.charging
+// );
 // => verified by charging point
 
 apiRoutes.post(

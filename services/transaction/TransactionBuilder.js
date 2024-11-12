@@ -6,6 +6,7 @@ const Company = require("../../models/Company");
 const CompanyTransaction = require("../../models/CompanyTransaction");
 const CompanyWallet = require("../../models/CompanyWallet");
 const Payment = require("../../models/Payment");
+const Transaction = require("../../models/Transaction");
 const Transfer = require("../../models/Transfer");
 const User = require("../../models/User");
 const Wallet = require("../../models/Wallet");
@@ -19,9 +20,10 @@ class TransactionBuilder {
     let operation;
     const { id } = req.user;
     const { amount } = req.body;
-    let userWallet=operationType=='charging'?undefined:await req.user.getWallet();
+    let userWallet =
+      operationType == "charging" ? undefined : await req.user.getWallet();
     let customData;
-    if(operationType=='charging'){
+    if (operationType == "charging") {
       customData = {
         amount,
         old_balance: undefined,
@@ -33,7 +35,7 @@ class TransactionBuilder {
         // target_user_id:targetUser.id,
         // target_wallet_id:targetUser.wallet_id,
       };
-    }else{
+    } else {
       customData = {
         amount,
         old_balance: userWallet.balance,
@@ -83,20 +85,24 @@ class TransactionBuilder {
         operation = await Payment.create(paymentOperationData, { customData });
         break;
       case "charging":
-        const { target_phone:target_user_phone } = req.body;
-        const chargingPoint=req.user;
-        const targetUserInstance=await User.findOne({where:{phone:target_user_phone}});
-        const targetUserWalletInstance=await targetUserInstance.getWallet();
-        customData.old_balance=targetUserWalletInstance.balance;
-        customData.current_balance=targetUserWalletInstance.balance + amount;
-        customData.target_wallet_id=targetUserWalletInstance.id;
-        customData.target_user_id=targetUserInstance.id;
+        const { target_phone: target_user_phone } = req.body;
+        const chargingPoint = req.user;
+        const targetUserInstance = await User.findOne({
+          where: { phone: target_user_phone },
+        });
+        const targetUserWalletInstance = await targetUserInstance.getWallet();
+        customData.old_balance = targetUserWalletInstance.balance;
+        customData.current_balance = targetUserWalletInstance.balance + amount;
+        customData.target_wallet_id = targetUserWalletInstance.id;
+        customData.target_user_id = targetUserInstance.id;
         const chargingOperationData = {
           wallet_id: targetUserWalletInstance.id,
           user_id: targetUserInstance.id,
           charging_point_id: chargingPoint.id,
         };
-        operation = await Charging.create(chargingOperationData, { customData });
+        operation = await Charging.create(chargingOperationData, {
+          customData,
+        });
         break;
       default:
         throw new BadRequestError("operation not provided");
@@ -105,8 +111,25 @@ class TransactionBuilder {
     return operation;
   }
 
+  async verify(req) {
+    const { transaction_id, verification_code } = req.body;
+    const transaction = await Transaction.findByPk(transaction_id);
+    if (transaction.verified_at) {
+      throw new BadRequestError("Transaction Already verified");
+    }
+    const expiresAt = transaction.date + 5 * 60 * 1000;
+    if (Date.now() > expiresAt) {
+      throw new BadRequestError("Request Timeout");
+    }
+    if (transaction.verification_code != verification_code) {
+      throw new BadRequestError("Invalid Verification Code");
+    }
+    await transaction.update({ verified_at: Date.now() });
+    return transaction;
+  }
+
   async perform(transaction) {
-    let succeed=false;
+    let succeed = false;
     const { operation_type, operation_id, amount } = transaction;
     const OperationModel = transactionConfig.operations[operation_type]?.model;
     const operationInsatance = await OperationModel.findByPk(operation_id);
@@ -121,46 +144,48 @@ class TransactionBuilder {
         // const targetWallet = await Wallet.findByPk(target_wallet_id);
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
         await targetWallet.update({ balance: targetWallet.balance + amount });
-        succeed=true;
+        succeed = true;
         break;
       case "payment":
-        const { company_wallet_id,company_id } = operationInsatance;
+        const { company_wallet_id, company_id } = operationInsatance;
         // const companyInstance=await Company.findByPk(company_id);
-        console.log({operationInsatance});
+        console.log({ operationInsatance });
         const targetCompanyWallet = await CompanyWallet.findByPk(
           company_wallet_id
         );
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
-        const companyTransaction=await CompanyTransaction.create({ 
-            amount,
-            old_balance:targetCompanyWallet.balance,
-            current_balance:targetCompanyWallet.balance + amount,
-            date:transaction.date,
-            company_id,
-            company_wallet_id,
-            payment_id:operationInsatance.id
-         });
+        const companyTransaction = await CompanyTransaction.create({
+          amount,
+          old_balance: targetCompanyWallet.balance,
+          current_balance: targetCompanyWallet.balance + amount,
+          date: transaction.date,
+          company_id,
+          company_wallet_id,
+          payment_id: operationInsatance.id,
+        });
         // await operationInsatance.update({company_transaction_id:companyTransaction.id});
-        operationInsatance.company_transaction_id=companyTransaction.id;
+        operationInsatance.company_transaction_id = companyTransaction.id;
         await operationInsatance.save();
         await targetCompanyWallet.update({
           balance: targetCompanyWallet.balance + amount,
         });
-        succeed=true;
+        succeed = true;
         break;
       case "charging":
-        const {charging_point_id} = operationInsatance;
-        const chargingPointTransaction=await ChargingPointTransaction.create({
-            amount,
-            date:transaction.date,
-            charging_point_id,
-            charging_id:operationInsatance.id
+        const { charging_point_id } = operationInsatance;
+        const chargingPointTransaction = await ChargingPointTransaction.create({
+          amount,
+          date: transaction.date,
+          charging_point_id,
+          charging_id: operationInsatance.id,
         });
-        await operationInsatance.update({charging_point_transaction_id:chargingPointTransaction.id});
-        await targetWallet.update({balance:targetWallet.balance + amount});
-        succeed=true;
+        await operationInsatance.update({
+          charging_point_transaction_id: chargingPointTransaction.id,
+        });
+        await targetWallet.update({ balance: targetWallet.balance + amount });
+        succeed = true;
         break;
-        default:
+      default:
         throw new BadRequestError("operation not provided");
     }
     return succeed;
@@ -169,7 +194,6 @@ class TransactionBuilder {
 
 module.exports = TransactionBuilder;
 
-
 //Ch transaction => 1731233645000
 //transaction => 1731233645000
-//ch => 
+//ch =>

@@ -1,0 +1,20 @@
+<% if (locals.errors) { %>
+  <div class="mb-3">
+    <div class="card card-danger">
+      <div class="card-header">
+        <h3 class="card-title">Errors</h3>
+
+        <!-- /.card-tools -->
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <% for(let error of locals.errors){ %>
+          <p><%= error.msg %></p>
+        <% } %>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+  </div>
+<% } %>
+
