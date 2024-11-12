@@ -83,6 +83,12 @@ apiRoutes.post(
 // => verified by source user
 
 // payment
+    // category
+apiRoutes.get('/category',categoryController.index);
+apiRoutes.get('/category-companies/:id',categoryController.getCategoryCompanies);
+    // company
+apiRoutes.get('/company/:id',companyController.show);
+    // operation
 apiRoutes.post(
   "/payment",
   validateRequest('payment'),
@@ -112,15 +118,6 @@ apiRoutes.post(
 // user
 apiRoutes.get('/user/:user_phone',userController.getUserByPhone);
 
-// category
-apiRoutes.get('/category',categoryController.index);
-apiRoutes.get('/category/:category_id',categoryController.getCategoryCompanies);
-
-
-
-// company
-apiRoutes.get('/company/:company_id',companyController.show);
-
 
 
 // => role: systemOwner
@@ -139,6 +136,8 @@ apiRoutes.get('/company-transaction/:transaction_id',transactionController.showC
 // loggedin user transactions
 apiRoutes.get('/current-user-transaction',verifyToken,transactionController.currentUserTransactions);
 apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,transactionController.showCurrentUserTransaction);
+
+
 
 
 

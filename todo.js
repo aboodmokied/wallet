@@ -64,3 +64,19 @@
 // validations
 
 // wrokflows
+/**
+ * charging
+ *  - enter user phone => user instance
+ *  - enter  
+ * payment
+ *  show categories
+ *  select category
+ *  show category companies
+ *  select company
+ *  enter amount
+ * 
+ * 
+ * transfer
+ * 
+ * */ 
+
