@@ -1,15 +1,15 @@
 const { Op } = require("sequelize");
 const Transaction = require("../../models/Transaction");
 const tryCatch = require("../../util/tryCatch");
-const { BadRequest } = require("../../config/errorConfig");
 const QueryFeatures = require("../../util/QueryFeatures");
 const CompanyTransaction = require("../../models/CompanyTransaction");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const ChargingPointTransaction = require("../../models/ChargingPointTransaction");
 
 const getDates = (date, from, to) => {
-  if (from > to) {
-    throw new BadRequest("timing is not valid");
+  console.log({from,to})
+  if (Number(from) > Number(to)) {
+    throw new BadRequestError("timing is not valid");
   }
   const targetDate = new Date();
   if (date) {
@@ -42,6 +42,9 @@ const getDates = (date, from, to) => {
     endtDateInLocalTime,
   };
 };
+
+
+// const getDate=(date,)=>{};
 
 exports.dailySystemTransactions = tryCatch(async (req, res, next) => {
   const { date, from = 0, to = 23 } = req.query;

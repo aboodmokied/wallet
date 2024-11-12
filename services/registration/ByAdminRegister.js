@@ -18,7 +18,7 @@ class ByAdminRegister{
             return res.with('errors',[{msg:'Create By Admin Request already created for this email and guard, the user should check his mailbox'}]).redirect(`/auth/register-by-admin/request/${guard}`)
         }
         const guardObj=authConfig.guards[guard];
-        if(guardObj.registeration!=='by-admin'){
+        if(guardObj.registeration!=='by-admin' && guardObj.registeration!=='by-system-owner'){
             throw new BadRequestError('Process not allowed for this guard');
         }
         const token=crypto.randomBytes(32).toString('hex');

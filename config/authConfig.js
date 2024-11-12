@@ -41,7 +41,7 @@ const authConfig = {
     chargingPoint: {
       name: "chargingPoint",
       oauth: false,
-      drivers: ["session"],
+      drivers: ["session","token"],
       registeration: "by-admin", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "chargingPoints", // mainProvider: contain all users types
       role: {

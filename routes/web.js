@@ -134,10 +134,8 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     
     
 
-    // company 
-    // webRoutes.get('/company',companyController.index)
-    // webRoutes.get('/company/:company_id',companyController.show)
-
-
+    // reporting
+    webRoutes.get('/report/system-transactions',reportController.dailySystemTransactions);
+    webRoutes.get('/report/system-user-transactions/:guard/:user_id',reportController.dailySystemUserTransactions);
 
 module.exports=webRoutes;
