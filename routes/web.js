@@ -68,10 +68,10 @@ const conditionalMiddleware=async(req,res,next)=>{
     }
 };
 
-webRoutes.get('/auth/register-by-admin/request/:guard',isAuthenticated,conditionalMiddleware,authController.getRegisterByAdminRequest);
-webRoutes.post('/auth/register-by-admin/request',isAuthenticated,conditionalMiddleware,authController.postRegisterByAdminRequest);
+webRoutes.get('/auth/register-by-admin/request/:guard',isAuthenticated,conditionalMiddleware,validateRequest('register-by-admin-request-page'),authController.getRegisterByAdminRequest);
+webRoutes.post('/auth/register-by-admin/request',isAuthenticated,conditionalMiddleware,validateRequest('register-by-admin-request'),authController.postRegisterByAdminRequest);
 webRoutes.get('/auth/register-by-admin/:token',isGuest,authController.getRegisterByAdminCreate);
-webRoutes.post('/auth/register-by-admin',isGuest,authController.postRegisterByAdminCreate);
+webRoutes.post('/auth/register-by-admin',isGuest,validateRequest('register-by-admin-create'),authController.postRegisterByAdminCreate);
 
 // admin register
 // /auth/register-by-admin/${hashedToken}?email=${email}
@@ -123,21 +123,21 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     // category
     webRoutes.get('/category',categoryController.index);
     webRoutes.get('/category/create',categoryController.create);
-    webRoutes.post('/category',categoryController.store);
+    webRoutes.post('/category',validateRequest('create-category'),categoryController.store);
 
 
     // charging point
 
     // pending
-    webRoutes.patch('/charging-point/pending',isAuthenticated,chPointController.pending);
+    webRoutes.patch('/charging-point/pending',isAuthenticated,validateRequest('ch-point-pending'),chPointController.pending);
     // delete
-    webRoutes.delete('/charging-point',isAuthenticated,chPointController.destroy);
+    webRoutes.delete('/charging-point',isAuthenticated,validateRequest('delete-ch-point'),chPointController.destroy);
     
     
 
     // reporting
-    webRoutes.get('/report/system-transactions',reportController.dailySystemTransactions);
-    webRoutes.get('/report/system-user-transactions/:guard/:user_id',reportController.dailySystemUserTransactions);
+    webRoutes.get('/report/system-transactions',validateRequest('transactions-report'),reportController.dailySystemTransactions);
+    webRoutes.get('/report/system-user-transactions/:guard/:user_id',validateRequest('transactions-report'),reportController.dailySystemUserTransactions);
 
 
 
@@ -145,17 +145,18 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     // =>show charging page 
     webRoutes.get('/charging',isAuthenticated,isVerified,transactionController.getCharging);
     // get user by user phone
-    webRoutes.get('/confirm',isAuthenticated,isVerified,transactionController.getConfirm);
+    webRoutes.get('/confirm',isAuthenticated,isVerified,validateRequest('confirm-charging-page'),transactionController.getConfirm);
     // // post amount with target-phone  
     webRoutes.post(
         "/charging",
         isAuthenticated,
         isVerified,
+        validateRequest('charging'),
         transactionController.charging
         );  // redirect to verification page
     // // verify
-    webRoutes.get('/verify/:transaction_id',isAuthenticated,isVerified,transactionController.getVerify);    
-    webRoutes.post('/verify',isAuthenticated,isVerified,transactionController.verifyTransaction);    
+    webRoutes.get('/verify/:transaction_id',isAuthenticated,isVerified,validateRequest('verify-transaction-page'),transactionController.getVerify);    
+    webRoutes.post('/verify',isAuthenticated,isVerified,validateRequest('verify-transaction'),transactionController.verifyTransaction);    
 
 
 

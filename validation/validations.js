@@ -72,7 +72,17 @@ exports.validateConfirmPassword=body('confirmPassword').custom((input,{req})=>{
 
 
 
-
+exports.validateRegisterByAdminGuard=(existsIn='body',checks)=>{
+    const holder=require('express-validator')[existsIn];
+    return holder('guard').custom((input)=>{
+        const guardObj=authConfig.guards[input];
+        const pass=guardObj.registeration.some(ele=>checks.includes(ele));
+        if(!pass){
+            throw new Error('Process not allowed for this guard')
+        }
+        return true;
+    })
+}
 exports.validateGuard=(existsIn='body',validateGlobalRegistration=false,validateSessionLogin=false,validateTokenLogin=false)=>{
     const holder=require('express-validator')[existsIn];
     return holder('guard').notEmpty().withMessage('Guard Required').custom((input)=>{

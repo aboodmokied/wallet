@@ -97,3 +97,9 @@ exports.resetValidation = [
 exports.verifyEmailValidation = [normalizeEmailInQuery];
 
 exports.oauthRequestValidation = [validateOauthProcess, validateOauthGuard];
+
+
+exports.registerByAdminPage = [validateGuard('param'),validateRegisterByAdminGuard('param',['by-admin','by-system-owner'])];
+exports.registerByAdmin = [validateGuard('body'),validateRegisterByAdminGuard('body',['by-admin','by-system-owner']),validateEmailExistence];
+
+exports.registerByAdminCreate = [validateGuard('body'),validateName,validateEmail,validateRegisterPassword,validateConfirmPassword];

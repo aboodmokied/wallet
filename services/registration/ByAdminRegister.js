@@ -11,7 +11,6 @@ class ByAdminRegister{
 
     async request(req){
         const {email,guard}=req.body;
-        console.log({myGuardRequest:guard});
         const count=await CreateByAdminRequest.count({where:{email,guard,revoked:false}});
         if(count){
             // throw new BadRequestError('Create Admin Request already created for this email, the user should check his mailbox');
@@ -38,7 +37,6 @@ class ByAdminRegister{
 
     async create(req){
         const {token,password,guard}=req.body;
-        console.log({myGuardCreate:guard});
         await CreateByAdminRequest.update({revoked:true},{where:{token,guard}});
         const guardObj=authConfig.guards[guard];
         const userModel=authConfig.providers[guardObj.provider]?.model;

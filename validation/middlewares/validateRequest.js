@@ -1,6 +1,6 @@
 const {validationResult}=require('express-validator');
 const ValidationError=require('../../Errors/ErrorTypes/ValidationError');
-const { loginValidation, loginPageValidation, registerPageValidation, registerValidation, requestResetPageValidation, requestResetValidation, resetPageValidation, resetValidation, verifyEmailValidation, oauthRequestValidation, apiLoginValidation, apiRegisterValidation } = require('../schemas/authValidation');
+const { loginValidation, loginPageValidation, registerPageValidation, registerValidation, requestResetPageValidation, requestResetValidation, resetPageValidation, resetValidation, verifyEmailValidation, oauthRequestValidation, apiLoginValidation, apiRegisterValidation, registerByAdminPage, registerByAdmin, registerByAdminCreate } = require('../schemas/authValidation');
 const { createRoleValidation, assignRolePermissionValidation, revokeRolePermissionValidation, deleteRoleValidation, rolePageValidation } = require('../schemas/authorizationValidation');
 const { usersPageValidation, userPageValidation } = require('../schemas/userValidation');
 const { transferValidation, paymentValidation } = require('../schemas/transactionValidations');
@@ -38,6 +38,15 @@ const validateRequest=(type)=>{
             break;
         case 'oauth-request':
             validations=oauthRequestValidation;
+            break;
+            
+        case 'register-by-admin-request-page':
+            validations=registerByAdminPage;
+            break;
+        case 'register-by-admin-request':
+            validations=registerByAdmin;
+        case 'register-by-admin-create':
+            validations=registerByAdminCreate;
             break;
         case 'request-reset-page':
             validations=requestResetPageValidation;
