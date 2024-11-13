@@ -30,8 +30,8 @@
  *      - all charging point transactions on one day with period, e.g:(12pm - 5pm) *
  *      - all company payment transactions on one day with period, e.g:(12pm - 5pm) *
  *      - all user transactions on one day with period, e.g:(12pm - 5pm) *
- *      
- * 
+ *  - view transaction page    
+ *  - view users
  * 
  * 
  * Company
@@ -65,7 +65,7 @@
 
 // wrokflows
 /**
- * charging
+ * charging *
  *  - show charging page
  *  - enter target user phone
  *  - show user details
@@ -79,10 +79,15 @@
  *  show category companies
  *  select company
  *  enter amount
- *  verify 
+ *  verify -
  * 
  * 
- * transfer
+ * transfer 
+ *  enter user phone => user 
+ *  show user date and enter amount
+ *  transfer => transaction and operation
+ *  show verification page
+ *  verify
  * 
  * */ 
 

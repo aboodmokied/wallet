@@ -70,8 +70,11 @@ apiRoutes.get(
   authController.verifyEmail
 );
 
+// *** transaction operations
 
 // transfer
+  // user
+apiRoutes.get('/user/:user_phone',userController.getUserByPhone);
 apiRoutes.post(
   "/transfer",
   validateRequest('transfer'),
@@ -80,7 +83,6 @@ apiRoutes.post(
   transactionController.transfer
 );
 
-// => verified by source user
 
 // payment
     // category
@@ -96,16 +98,7 @@ apiRoutes.post(
   isVerified,
   transactionController.payment
 );
-// => verified by source user
 
-// charging
-// apiRoutes.post(
-//   "/charging",
-//   verifyToken,
-//   isVerified,
-//   transactionController.charging
-// );
-// => verified by charging point
 
 apiRoutes.post(
   "/verify-transaction",
@@ -115,27 +108,26 @@ apiRoutes.post(
 );
 
 
-// user
-apiRoutes.get('/user/:user_phone',userController.getUserByPhone);
 
+// loggedin user transactions
+apiRoutes.get('/current-user-transaction',verifyToken,transactionController.currentUserTransactions);
+apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,transactionController.showCurrentUserTransaction);
 
 
 // => role: systemOwner
 // transaction
 
-apiRoutes.get('/transaction/:transaction_id',transactionController.show);
+// apiRoutes.get('/transaction/:transaction_id',transactionController.show);
 
-// user transactions
-apiRoutes.get('/user-transaction/:user_id',transactionController.userTransactions);
+// // user transactions
+// apiRoutes.get('/user-transaction/:user_id',transactionController.userTransactions);
 
-// company transactions
-apiRoutes.get('/company-transaction/:company_id',transactionController.companyTransactions);
-apiRoutes.get('/company-transaction/:transaction_id',transactionController.showCompanyTransaction);
+// // company transactions
+// apiRoutes.get('/company-transaction/:company_id',transactionController.companyTransactions);
+// apiRoutes.get('/company-transaction/:transaction_id',transactionController.showCompanyTransaction);
 
 
-// loggedin user transactions
-apiRoutes.get('/current-user-transaction',verifyToken,transactionController.currentUserTransactions);
-apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,transactionController.showCurrentUserTransaction);
+
 
 
 
