@@ -136,8 +136,8 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     
 
     // reporting
-    webRoutes.get('/report/system-transactions',validateRequest('transactions-report'),reportController.dailySystemTransactions);
-    webRoutes.get('/report/system-user-transactions/:guard/:user_id',validateRequest('transactions-report'),reportController.dailySystemUserTransactions);
+    webRoutes.get('/report/system-transactions',validateRequest('system-transactions-report'),reportController.dailySystemTransactions);
+    webRoutes.get('/report/system-user-transactions/:guard/:user_id',validateRequest('user-transactions-report'),reportController.dailySystemUserTransactions);
 
 
 

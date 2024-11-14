@@ -6,6 +6,7 @@ const { usersPageValidation, userPageValidation } = require('../schemas/userVali
 const { transferValidation, paymentValidation } = require('../schemas/transactionValidations');
 const { createCategoryValidation } = require('../schemas/categoryValidations');
 const { chargingPointOperationValidation } = require('../schemas/charingPointValidations');
+const { systemTransactionsReportValidation, userTransactionsReportValidation } = require('../schemas/reportValidations');
 
 // handles validations result
 const checkResult=(req,res,next)=>{
@@ -97,6 +98,12 @@ const validateRequest=(type)=>{
             break;
         case 'ch-point-operation':
             validations=chargingPointOperationValidation;
+            break;
+        case 'system-transactions-report':
+            validations=systemTransactionsReportValidation;
+            break;
+        case 'user-transactions-report':
+            validations=userTransactionsReportValidation;
             break;
         default:
           throw Error('type required');

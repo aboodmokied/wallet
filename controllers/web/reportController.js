@@ -7,7 +7,6 @@ const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const ChargingPointTransaction = require("../../models/ChargingPointTransaction");
 
 const getDates = (date, from, to) => {
-  console.log({from,to})
   if (Number(from) > Number(to)) {
     throw new BadRequestError("timing is not valid");
   }
@@ -90,7 +89,7 @@ exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
     transactionModel = ChargingPointTransaction;
     whereOptions = { charging_point_id: user_id };
   } else {
-    throw new BadRequestError("invalid guard");
+    throw new BadRequestError("this guard not able to create transactions");
   }
   const {
     startDateMillS,
