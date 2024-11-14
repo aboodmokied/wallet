@@ -4,6 +4,7 @@ const { loginValidation, loginPageValidation, registerPageValidation, registerVa
 const { createRoleValidation, assignRolePermissionValidation, revokeRolePermissionValidation, deleteRoleValidation, rolePageValidation } = require('../schemas/authorizationValidation');
 const { usersPageValidation, userPageValidation } = require('../schemas/userValidation');
 const { transferValidation, paymentValidation } = require('../schemas/transactionValidations');
+const { createCategoryValidation } = require('../schemas/categoryValidations');
 
 // handles validations result
 const checkResult=(req,res,next)=>{
@@ -89,6 +90,9 @@ const validateRequest=(type)=>{
             break;
         case 'payment':
             validations=paymentValidation;
+            break;
+        case 'create-category':
+            validations=createCategoryValidation;
             break;
         default:
           throw Error('type required');
