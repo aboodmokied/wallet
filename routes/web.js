@@ -52,25 +52,30 @@ webRoutes.post('/auth/register',isGuest,validateRequest('register'),authControll
 
 // by admin register
 
-const conditionalMiddleware=async(req,res,next)=>{
-    let guard;
-    if(req.method=='GET'){
-        guard=req.params.guard;
-    }else{
-        guard=req.body.guard;
+const conditionalMiddleware=(permission)=>{
+    const Authorize = require("../Authorize");
+    new Authorize().addPermission(permission);
+    return async(req,res,next)=>{
+        let guard;
+        if(req.method=='GET'){
+            guard=req.params.guard;
+        }else{
+            guard=req.body.guard;
+        }
+        console.log({guard})
+        if(guard=='admin'){
+            return await authorizeSuperAdmin(req,res,next);
+        }else if(guard=='chargingPoint'){
+            return await authorizePermission(permission,false)(req,res,next);
+        }else{
+            throw BadRequestError('Process not allowed');
+        }
     }
-    console.log({guard})
-    if(guard=='admin'){
-        return await authorizeSuperAdmin(req,res,next);
-    }else if(guard=='chargingPoint'){
-        return await authorizePermission('can-create-charging-point')(req,res,next);
-    }else{
-        throw BadRequestError('Process not allowed');
-    }
-};
+}
 
-webRoutes.get('/auth/register-by-admin/request/:guard',isAuthenticated,conditionalMiddleware,validateRequest('register-by-admin-request-page'),authController.getRegisterByAdminRequest);
-webRoutes.post('/auth/register-by-admin/request',isAuthenticated,conditionalMiddleware,validateRequest('register-by-admin-request'),authController.postRegisterByAdminRequest);
+
+webRoutes.get('/auth/register-by-admin/request/:guard',isAuthenticated,conditionalMiddleware('can-create-charging-point'),validateRequest('register-by-admin-request-page'),authController.getRegisterByAdminRequest);
+webRoutes.post('/auth/register-by-admin/request',isAuthenticated,conditionalMiddleware('can-create-charging-point'),validateRequest('register-by-admin-request'),authController.postRegisterByAdminRequest);
 webRoutes.get('/auth/register-by-admin/:token',isGuest,authController.getRegisterByAdminCreate);
 webRoutes.post('/auth/register-by-admin',isGuest,validateRequest('register-by-admin-create'),authController.postRegisterByAdminCreate);
 
