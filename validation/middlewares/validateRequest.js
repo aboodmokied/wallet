@@ -5,6 +5,7 @@ const { createRoleValidation, assignRolePermissionValidation, revokeRolePermissi
 const { usersPageValidation, userPageValidation } = require('../schemas/userValidation');
 const { transferValidation, paymentValidation } = require('../schemas/transactionValidations');
 const { createCategoryValidation } = require('../schemas/categoryValidations');
+const { chargingPointOperationValidation } = require('../schemas/charingPointValidations');
 
 // handles validations result
 const checkResult=(req,res,next)=>{
@@ -93,6 +94,9 @@ const validateRequest=(type)=>{
             break;
         case 'create-category':
             validations=createCategoryValidation;
+            break;
+        case 'ch-point-operation':
+            validations=chargingPointOperationValidation;
             break;
         default:
           throw Error('type required');

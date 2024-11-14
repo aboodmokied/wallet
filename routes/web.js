@@ -129,9 +129,9 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     // charging point
 
     // pending
-    webRoutes.patch('/charging-point/pending',isAuthenticated,validateRequest('ch-point-pending'),chPointController.pending);
+    webRoutes.patch('/charging-point/pending',isAuthenticated,validateRequest('ch-point-operation'),chPointController.pending);
     // delete
-    webRoutes.delete('/charging-point',isAuthenticated,validateRequest('delete-ch-point'),chPointController.destroy);
+    webRoutes.delete('/charging-point',isAuthenticated,validateRequest('ch-point-operation'),chPointController.destroy);
     
     
 
