@@ -3,7 +3,7 @@ const ValidationError=require('../../Errors/ErrorTypes/ValidationError');
 const { loginValidation, loginPageValidation, registerPageValidation, registerValidation, requestResetPageValidation, requestResetValidation, resetPageValidation, resetValidation, verifyEmailValidation, oauthRequestValidation, apiLoginValidation, apiRegisterValidation, registerByAdminPage, registerByAdmin, registerByAdminCreate } = require('../schemas/authValidation');
 const { createRoleValidation, assignRolePermissionValidation, revokeRolePermissionValidation, deleteRoleValidation, rolePageValidation } = require('../schemas/authorizationValidation');
 const { usersPageValidation, userPageValidation } = require('../schemas/userValidation');
-const { transferValidation, paymentValidation } = require('../schemas/transactionValidations');
+const { transferValidation, paymentValidation, confirmChargingPageValidation, chargingValidation } = require('../schemas/transactionValidations');
 const { createCategoryValidation } = require('../schemas/categoryValidations');
 const { chargingPointOperationValidation } = require('../schemas/charingPointValidations');
 const { systemTransactionsReportValidation, userTransactionsReportValidation } = require('../schemas/reportValidations');
@@ -104,6 +104,12 @@ const validateRequest=(type)=>{
             break;
         case 'user-transactions-report':
             validations=userTransactionsReportValidation;
+            break;
+        case 'confirm-charging-page':
+            validations=confirmChargingPageValidation;
+            break;
+        case 'charging':
+            validations=chargingValidation;
             break;
         default:
           throw Error('type required');
