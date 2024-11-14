@@ -114,11 +114,11 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     webRoutes.post('/cms/role/revokePermission',isAuthenticated,authorizeSuperAdmin,validateRequest('revoke-role-permission'),RoleController.revokePermission);
     webRoutes.delete('/cms/role/:roleId',isAuthenticated,authorizeSuperAdmin,validateRequest('delete-role'),RoleController.destroy);
     // user
-    webRoutes.get('/cms/user/:guard/all',isAuthenticated,validateRequest('users-page'),userController.index);
-    webRoutes.get('/cms/user/:guard/:id',isAuthenticated,validateRequest('user-page'),userController.show);
-    webRoutes.get('/cms/user-roles/:guard/:id',isAuthenticated,validateRequest('user-page'),userController.getUserRoles);
-    webRoutes.post('/cms/user-roles/assignRole',isAuthenticated,userController.userAssignRole);
-    webRoutes.post('/cms/user-roles/revokeRole',isAuthenticated,userController.userRevokeRole);
+    webRoutes.get('/cms/user/:guard/all',isAuthenticated,authorizePermission('can-show-users'),validateRequest('users-page'),userController.index);
+    webRoutes.get('/cms/user/:guard/:id',isAuthenticated,authorizePermission('can-show-users'),validateRequest('user-page'),userController.show);
+    webRoutes.get('/cms/user-roles/:guard/:id',isAuthenticated,authorizePermission('can-show-user-roles'),validateRequest('user-page'),userController.getUserRoles);
+    webRoutes.post('/cms/user-roles/assignRole',isAuthenticated,authorizeSuperAdmin,userController.userAssignRole);
+    webRoutes.post('/cms/user-roles/revokeRole',isAuthenticated,authorizeSuperAdmin,userController.userRevokeRole);
 
     // vrify email
     webRoutes.get('/auth/verify-email/request',isAuthenticated,authController.verifyEmailRequest);
@@ -127,43 +127,43 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
 
     // (system-owner)
     // category
-    webRoutes.get('/category',categoryController.index);
-    webRoutes.get('/category/create',categoryController.create);
-    webRoutes.post('/category',validateRequest('create-category'),categoryController.store);
+    webRoutes.get('/category',isAuthenticated,authorizePermission('can-show-categories'),categoryController.index);
+    webRoutes.get('/category/create',isAuthenticated,authorizePermission('can-create-category'),categoryController.create);
+    webRoutes.post('/category',isAuthenticated,authorizePermission('can-create-category'),validateRequest('create-category'),categoryController.store);
 
 
     // charging point
 
     // pending
-    webRoutes.patch('/charging-point/pending',isAuthenticated,validateRequest('ch-point-operation'),chPointController.pending);
+    webRoutes.patch('/charging-point/pending',isAuthenticated,authorizePermission('can-pending-charging-point'),validateRequest('ch-point-operation'),chPointController.pending);
     // delete
-    webRoutes.delete('/charging-point',isAuthenticated,validateRequest('ch-point-operation'),chPointController.destroy);
+    webRoutes.delete('/charging-point',isAuthenticated,authorizePermission('can-delete-charging-point'),validateRequest('ch-point-operation'),chPointController.destroy);
     
     
 
     // reporting
-    webRoutes.get('/report/system-transactions',validateRequest('system-transactions-report'),reportController.dailySystemTransactions);
-    webRoutes.get('/report/system-user-transactions/:guard/:user_id',validateRequest('user-transactions-report'),reportController.dailySystemUserTransactions);
+    webRoutes.get('/report/system-transactions',isAuthenticated,authorizePermission('can-show-transactions-reports'),validateRequest('system-transactions-report'),reportController.dailySystemTransactions);
+    webRoutes.get('/report/system-user-transactions/:guard/:user_id',isAuthenticated,authorizePermission('can-show-transactions-reports'),validateRequest('user-transactions-report'),reportController.dailySystemUserTransactions);
 
 
 
     // charging
     // =>show charging page 
-    webRoutes.get('/charging',isAuthenticated,isVerified,transactionController.getCharging);
+    webRoutes.get('/charging',isAuthenticated,isVerified,authorizePermission('can-charge'),transactionController.getCharging);
     // get user by user phone
-    webRoutes.get('/confirm',isAuthenticated,isVerified,validateRequest('confirm-charging-page'),transactionController.getConfirm);
+    webRoutes.get('/confirm',isAuthenticated,isVerified,authorizePermission('can-charge'),validateRequest('confirm-charging-page'),transactionController.getConfirm);
     // // post amount with target-phone  
     webRoutes.post(
         "/charging",
         isAuthenticated,
         isVerified,
-        userCanVerifyTransaction,    
+        authorizePermission('can-charge'),
         validateRequest('charging'),
         transactionController.charging
         );  // redirect to verification page
     // // verify
     webRoutes.get('/verify/:transaction_id',isAuthenticated,isVerified,validateRequest('verify-transaction-page'),transactionController.getVerify);    
-    webRoutes.post('/verify',isAuthenticated,isVerified,validateRequest('verify-transaction'),transactionController.verifyTransaction);    
+    webRoutes.post('/verify',isAuthenticated,isVerified,userCanVerifyTransaction,validateRequest('verify-transaction'),transactionController.verifyTransaction);    
 
 
 
