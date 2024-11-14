@@ -1,6 +1,7 @@
-const { query, body } = require("express-validator");
+const { query, body, param } = require("express-validator");
 const { targetPhone, amount, targetCompanyPhone } = require("../validations");
 const User = require("../../models/User");
+const Transaction = require("../../models/Transaction");
 
 exports.transferValidation=[
     targetPhone,
@@ -39,4 +40,27 @@ exports.chargingValidation=[
             return Promise.reject('No Users with this target_phone found');
         }
     })
+];
+
+
+
+exports.verifyTransactionPageValidation=[
+    param('transaction_id').custom(async(transaction_id)=>{
+        const transactionInstance=await Transaction.findByPk(transaction_id);
+        if(!transactionInstance){
+            return Promise.reject('No Transactions with this transaction_id found');
+        }
+        if(transactionInstance.verified_at){
+            return Promise.reject('This transaction already verified');
+        }
+    })
+];
+exports.verifyTransactionValidation=[
+    body('transaction_id').custom(async(transaction_id)=>{
+        const count=await Transaction.count({where:{id:transaction_id}});
+        if(!count){
+            return Promise.reject('No Transactions with this transaction_id found');
+        }
+    }),
+    body('verification_code').notEmpty().withMessage('verification_code required')
 ];
