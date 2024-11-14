@@ -1,5 +1,6 @@
 const { body } = require("express-validator");
 const Category = require("../../models/Category");
+const { param } = require("../../routes/web");
 
 exports.createCategoryValidation=[
     body('name').notEmpty().withMessage('Category Name Required').custom(async(name)=>{
@@ -10,3 +11,12 @@ exports.createCategoryValidation=[
         
     })
 ]
+
+exports.categoryCompaniesValidation=[
+    param('category_id').custom(async(id)=>{
+        const count=await Category.count({where:{id}});
+        if(!count){
+            return Promise.reject('No Category with this category_id');
+        }
+    })
+];

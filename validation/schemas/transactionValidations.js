@@ -14,6 +14,15 @@ exports.paymentValidation=[
 ];
 
 
+exports.showTransactionValidation=[
+    param('transaction_id').custom(async(id)=>{
+        const count=await Transaction.count({where:{id}});
+        if(!count){
+            return Promise.reject('No Transaction with this transaction_id');
+        }
+    })
+];
+
 exports.confirmChargingPageValidation=[
     query('amount').notEmpty().withMessage('amount Query Param Required').custom(amount=>{
         if(amount<=0){
@@ -64,3 +73,4 @@ exports.verifyTransactionValidation=[
     }),
     body('verification_code').notEmpty().withMessage('verification_code required')
 ];
+

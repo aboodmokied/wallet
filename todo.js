@@ -61,7 +61,9 @@
 // views
 //  => system-owner charging-point
 
-// validations
+// validations *
+    // => web *
+    // => api *
 
 // wrokflows
 /**
@@ -79,10 +81,10 @@
  *  show category companies
  *  select company
  *  enter amount
- *  verify -
+ *  verify 
  * 
  * 
- * transfer 
+ * transfer *
  *  enter user phone => user 
  *  show user date and enter amount
  *  transfer => transaction and operation

@@ -4,9 +4,10 @@ const { loginValidation, loginPageValidation, registerPageValidation, registerVa
 const { createRoleValidation, assignRolePermissionValidation, revokeRolePermissionValidation, deleteRoleValidation, rolePageValidation } = require('../schemas/authorizationValidation');
 const { usersPageValidation, userPageValidation } = require('../schemas/userValidation');
 const { transferValidation, paymentValidation, confirmChargingPageValidation, chargingValidation } = require('../schemas/transactionValidations');
-const { createCategoryValidation } = require('../schemas/categoryValidations');
+const { createCategoryValidation, categoryCompaniesValidation } = require('../schemas/categoryValidations');
 const { chargingPointOperationValidation } = require('../schemas/charingPointValidations');
 const { systemTransactionsReportValidation, userTransactionsReportValidation } = require('../schemas/reportValidations');
+const { showCompanyValidation } = require('../schemas/companyValidations');
 
 // handles validations result
 const checkResult=(req,res,next)=>{
@@ -110,6 +111,15 @@ const validateRequest=(type)=>{
             break;
         case 'charging':
             validations=chargingValidation;
+            break;
+        case 'category-companies':
+        validations=categoryCompaniesValidation;
+            break;
+        case 'get-company':
+        validations=showCompanyValidation;
+            break;
+        case 'show-transaction':
+        validations=showTransactionValidation;
             break;
         default:
           throw Error('type required');

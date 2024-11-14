@@ -77,9 +77,9 @@ apiRoutes.get(
 apiRoutes.get('/user/:user_phone',userController.getUserByPhone);
 apiRoutes.post(
   "/transfer",
-  validateRequest('transfer'),
   verifyToken,
   isVerified,
+  validateRequest('transfer'),
   transactionController.transfer
 );
 
@@ -87,15 +87,15 @@ apiRoutes.post(
 // payment
     // category
 apiRoutes.get('/category',categoryController.index);
-apiRoutes.get('/category-companies/:id',categoryController.getCategoryCompanies);
+apiRoutes.get('/category-companies/:category_id',validateRequest('category-companies'),categoryController.getCategoryCompanies);
     // company
-apiRoutes.get('/company/:id',companyController.show);
+apiRoutes.get('/company/:company_id',validateRequest('get-company'),companyController.show);
     // operation
 apiRoutes.post(
   "/payment",
-  validateRequest('payment'),
   verifyToken,
   isVerified,
+  validateRequest('payment'),
   transactionController.payment
 );
 
@@ -104,6 +104,7 @@ apiRoutes.post(
   "/verify-transaction",
   verifyToken,
   userCanVerifyTransaction,
+  validateRequest('verify-transaction'),
   transactionController.verifyTransaction
 );
 
@@ -111,7 +112,7 @@ apiRoutes.post(
 
 // loggedin user transactions
 apiRoutes.get('/current-user-transaction',verifyToken,transactionController.currentUserTransactions);
-apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,transactionController.showCurrentUserTransaction);
+apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,validateRequest('show-transaction'),transactionController.showCurrentUserTransaction);
 
 
 // => role: systemOwner

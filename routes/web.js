@@ -24,6 +24,7 @@ const AuthorizationError = require('../Errors/ErrorTypes/AuthorizationError');
 const tryCatch = require('../util/tryCatch');
 const BadRequestError = require('../Errors/ErrorTypes/BadRequestError');
 const User = require('../models/User');
+const userCanVerifyTransaction = require('../middlewares/userCanVerifyTransaction');
 
 const webRoutes=express.Router();
 
@@ -151,6 +152,7 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
         "/charging",
         isAuthenticated,
         isVerified,
+        userCanVerifyTransaction,    
         validateRequest('charging'),
         transactionController.charging
         );  // redirect to verification page
