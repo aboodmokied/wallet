@@ -16,6 +16,7 @@ const QueryFeatures = require("../util/QueryFeatures");
 const { body } = require("express-validator");
 const Category = require("../models/Category");
 const userCanVerifyTransaction = require("../middlewares/userCanVerifyTransaction");
+const authorizePermission = require("../services/authorization/middlewares/authorizePermission");
 
 apiRoutes.post("/login", validateRequest("api-login"), authController.login);
 apiRoutes.post(
@@ -74,11 +75,12 @@ apiRoutes.get(
 
 // transfer
   // user
-apiRoutes.get('/user/:user_phone',userController.getUserByPhone);
+apiRoutes.get('/user/:user_phone',verifyToken,isVerified,userController.getUserByPhone);
 apiRoutes.post(
   "/transfer",
   verifyToken,
   isVerified,
+  authorizePermission('can-transfer'),
   validateRequest('transfer'),
   transactionController.transfer
 );
@@ -86,15 +88,16 @@ apiRoutes.post(
 
 // payment
     // category
-apiRoutes.get('/category',categoryController.index);
-apiRoutes.get('/category-companies/:category_id',validateRequest('category-companies'),categoryController.getCategoryCompanies);
+apiRoutes.get('/category',verifyToken,isVerified,categoryController.index);
+apiRoutes.get('/category-companies/:category_id',verifyToken,isVerified,validateRequest('category-companies'),categoryController.getCategoryCompanies);
     // company
-apiRoutes.get('/company/:company_id',validateRequest('get-company'),companyController.show);
+apiRoutes.get('/company/:company_id',verifyToken,isVerified,validateRequest('get-company'),companyController.show);
     // operation
 apiRoutes.post(
   "/payment",
   verifyToken,
   isVerified,
+  authorizePermission('can-payment'),
   validateRequest('payment'),
   transactionController.payment
 );
@@ -111,8 +114,8 @@ apiRoutes.post(
 
 
 // loggedin user transactions
-apiRoutes.get('/current-user-transaction',verifyToken,transactionController.currentUserTransactions);
-apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,validateRequest('show-transaction'),transactionController.showCurrentUserTransaction);
+apiRoutes.get('/current-user-transaction',verifyToken,isVerified,authorizePermission('has-transactions'),transactionController.currentUserTransactions);
+apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,isVerified,authorizePermission('has-transactions'),validateRequest('show-transaction'),transactionController.showCurrentUserTransaction);
 
 
 // => role: systemOwner
