@@ -14,6 +14,7 @@ const {
   normalizeEmailInQuery,
   validateOauthGuard,
   validateOauthProcess,
+  validateRegisterByAdminGuard,
 } = require("../validations");
 const authConfig = require("../../config/authConfig");
 const Category = require("../../models/Category");

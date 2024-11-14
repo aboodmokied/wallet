@@ -1,6 +1,5 @@
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 const Category = require("../../models/Category");
-const { param } = require("../../routes/web");
 
 exports.createCategoryValidation=[
     body('name').notEmpty().withMessage('Category Name Required').custom(async(name)=>{

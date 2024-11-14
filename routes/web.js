@@ -53,7 +53,7 @@ webRoutes.post('/auth/register',isGuest,validateRequest('register'),authControll
 // by admin register
 
 const conditionalMiddleware=(permission)=>{
-    const Authorize = require("../Authorize");
+    const Authorize = require("../services/authorization/Authorize");
     new Authorize().addPermission(permission);
     return async(req,res,next)=>{
         let guard;
