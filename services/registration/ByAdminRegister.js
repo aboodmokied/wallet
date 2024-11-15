@@ -3,6 +3,8 @@ const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const CreateByAdminRequest = require("../../models/CreateByAdminRequest");
 const crypto=require('crypto');
 const bcrypt=require('bcryptjs');
+const ValidationError = require("../../Errors/ErrorTypes/ValidationError");
+
 
 class ByAdminRegister{
     constructor(){
@@ -14,7 +16,8 @@ class ByAdminRegister{
         const count=await CreateByAdminRequest.count({where:{email,guard,revoked:false}});
         if(count){
             // throw new BadRequestError('Create Admin Request already created for this email, the user should check his mailbox');
-            return res.with('errors',[{msg:'Create By Admin Request already created for this email and guard, the user should check his mailbox'}]).redirect(`/auth/register-by-admin/request/${guard}`)
+            // return res.with('errors',[{msg:'Create By Admin Request already created for this email and guard, the user should check his mailbox'}]).redirect(`/auth/register-by-admin/request/${guard}`)
+            throw new ValidationError([{msg:'Create By Admin Request already created for this email and guard, the user should check his mailbox'}])
         }
         const guardObj=authConfig.guards[guard];
         if(guardObj.registeration!=='by-admin' && guardObj.registeration!=='by-system-owner'){
@@ -36,6 +39,7 @@ class ByAdminRegister{
     }
 
     async create(req){
+        const Authorize=require('../authorization/Authorize');
         const {token,password,guard}=req.body;
         await CreateByAdminRequest.update({revoked:true},{where:{token,guard}});
         const guardObj=authConfig.guards[guard];
@@ -46,6 +50,7 @@ class ByAdminRegister{
             verified:true,
             guard
         });
+        await new Authorize().applySystemRoles(newUser);
         return newUser;
     }
 }

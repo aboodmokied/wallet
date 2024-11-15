@@ -25,17 +25,32 @@ const tryCatch = require('../util/tryCatch');
 const BadRequestError = require('../Errors/ErrorTypes/BadRequestError');
 const User = require('../models/User');
 const userCanVerifyTransaction = require('../middlewares/userCanVerifyTransaction');
+const authConfig = require('../config/authConfig');
+const NotFoundError = require('../Errors/ErrorTypes/NotFoundError');
 
 const webRoutes=express.Router();
 
 webRoutes.get('/',isAuthenticated,async(req,res,next)=>{
-    // const wallets=await req.user.getWallet()
-    // console.log({user:req.user,wallets})
-    res.render('auth/message',{
-        pageTitle:'Test',
-        message:'Suiiii'
-    })
+    const {guard}=req.user;
+    if(guard=='admin'){
+       if(req.user.isSuper){
+           return res.redirect('/cms/role');
+    } 
+        return res.redirect(`/cms/user/${authConfig.defaults.defaultGuard}/all`)
+    }else if(guard=='systemOwner'){
+        return res.redirect('/report/system-transactions');
+    }else if(guard=='chargingPoint'){
+        return res.redirect('/charging');
+    }else {
+        throw new NotFoundError('Page Not Found For this guard')
+    }  
 })
+
+// home pages
+// webRoutes.get('/home/admin',)
+// webRoutes.get('/home/systemOwner')
+// webRoutes.get('/home/chargingPoint')
+
 
 // login
 webRoutes.get('/auth/login/:guard',isGuest,validateRequest('login-page'),authController.getLogin);
@@ -155,7 +170,7 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     // // post amount with target-phone  
     webRoutes.post(
         "/charging",
-        isAuthenticated,
+        isAuthenticated,           
         isVerified,
         authorizePermission('can-charge'),
         validateRequest('charging'),

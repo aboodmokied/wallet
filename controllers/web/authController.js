@@ -87,6 +87,7 @@ exports.postRegister=tryCatch(async(req,res,next)=>{
 // register by admin
 exports.getRegisterByAdminRequest=tryCatch(async(req,res,next)=>{
     const {guard}=req.params;
+    req.session.pagePath=req.path;
     res.render('auth/by-admin-request',{
         pageTitle:`Create ${guard} Request`,
         guard
@@ -109,6 +110,7 @@ exports.getRegisterByAdminCreate=tryCatch(async(req,res,next)=>{
         throw new BadRequestError('Invalid Email');
     };
     const {guard}=createByAdminRequest;
+    req.session.pagePath=req.path;
     res.render('auth/by-admin-create',{
         pageTitle:`Create ${guard} Account`,
         token,

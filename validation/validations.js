@@ -90,7 +90,9 @@ exports.validateRegisterByAdminGuard = (existsIn = "body", checks) => {
   const holder = require("express-validator")[existsIn];
   return holder("guard").custom((input) => {
     const guardObj = authConfig.guards[input];
-    const pass = guardObj.registeration.some((ele) => checks.includes(ele));
+    console.log({guardObj});
+    // const pass = guardObj.registeration.some((ele) => checks.includes(ele));
+    const pass = checks.includes(guardObj.registeration);
     if (!pass) {
       throw new Error("Process not allowed for this guard");
     }

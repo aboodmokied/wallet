@@ -49,6 +49,7 @@ const validateRequest=(type)=>{
             break;
         case 'register-by-admin-request':
             validations=registerByAdmin;
+            break;
         case 'register-by-admin-create':
             validations=registerByAdminCreate;
             break;
