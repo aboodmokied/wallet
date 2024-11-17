@@ -7,7 +7,8 @@ const tryCatch = require("../../util/tryCatch");
 const transactionBuilder=new TransactionBuilder();
 
 exports.getCharging=(req,res,next)=>{
-    res.render('transaction/charging/index',{
+    req.session.pagePath=req.path;
+    res.render('transaction/charging/charge',{
         pageTitle:'Charging'
     });
 };
@@ -15,6 +16,7 @@ exports.getCharging=(req,res,next)=>{
 exports.getConfirm=tryCatch(async(req,res,next)=>{
     const {amount,target_phone}=req.query;
     const userInstance=await User.findOne({where:{phone:target_phone}});
+    req.session.pagePath=req.path;
     res.render('transaction/charging/confirm',{
         pageTitle:'Confirm',
         user:userInstance,
@@ -30,6 +32,7 @@ exports.charging=tryCatch(async(req,res,next)=>{
 
 exports.getVerify=tryCatch(async(req,res,next)=>{
     const {transaction_id}=req.params;
+    req.session.pagePath=req.path;
     res.render('transaction/charging/verify',{
         transaction_id
     });
@@ -56,5 +59,19 @@ exports.verifyTransaction=tryCatch(async(req,res,next)=>{
         message:'Transaction Verified Succefully',
         operation,
         transaction
+    }});
+});
+
+
+
+exports.showTransaction=tryCatch(async(req,res,next)=>{
+    const {transaction_id}=req.params;
+    const transaction=await Transaction.findByPk(transaction_id);
+    const operation=await transaction.getOperation();
+    const users=await operation.getUsers();
+    res.status(200).send({status:true,result:{
+        transaction,
+        operation,
+        users
     }});
 });

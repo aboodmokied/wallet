@@ -151,8 +151,10 @@ exports.showCurrentUserTransaction=tryCatch(async(req,res,next)=>{
     if(req.user.id!=transactionUserId){
         throw new AuthorizationError();
     }
+    const users=await operation.getUsers();
     res.status(200).send({status:true,result:{
        transaction,
-       operation 
+       operation,
+       users
     }})
 });

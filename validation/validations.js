@@ -239,7 +239,7 @@ exports.amount = body("amount").notEmpty();
 
 exports.validateTiming = query("from").custom((from, { req }) => {
   if (from && req.query.to) {
-    if (from > to) {
+    if (from > req.query.to) {
       throw new Error("Invalid Timing");
     }
   }

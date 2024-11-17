@@ -12,7 +12,7 @@ const getDates = (date, from, to) => {
   }
   const targetDate = new Date();
   if (date) {
-    const splittedDate = date.split("/");
+    const splittedDate = date.split("-");
     const year = splittedDate[0];
     const month = splittedDate[1];
     const day = splittedDate[2];
@@ -43,7 +43,6 @@ const getDates = (date, from, to) => {
 };
 
 
-// const getDate=(date,)=>{};
 
 exports.dailySystemTransactions = tryCatch(async (req, res, next) => {
   const { date, from = 0, to = 23 } = req.query;
@@ -54,21 +53,31 @@ exports.dailySystemTransactions = tryCatch(async (req, res, next) => {
     endDate,
     startDateInLocalTime,
     endtDateInLocalTime,
-  } = getDates(date, from, to);
+  } = getDates(date?.toString(), from, to);
   const queryFeatures = new QueryFeatures(req);
   const transactions = await queryFeatures.findAllWithFeatures(Transaction, {
     date: { [Op.between]: [startDateMillS, endDateMillS] },
     verified_at: { [Op.ne]: null },
   });
-  return res.send({
-    status: true,
-    result: {
-      transactions,
+  // return res.send({
+  //   status: true,
+  //   result: {
+  //     transactions,
+  //     startDateInLocalTime,
+  //     endtDateInLocalTime,
+  //     startDateInUTC:startDate,
+  //     endtDateInUTC:endDate,
+  //   },
+  // });
+  console.log({date});
+  return res.render('transaction/systemOwner/transactions-report',{
+      pageTitle:'Transactions Report',
+      transactions:transactions.data,
+      responseMetaData:transactions.respronseMetaDate,
       startDateInLocalTime,
       endtDateInLocalTime,
       startDateInUTC:startDate,
       endtDateInUTC:endDate,
-    },
   });
 });
 exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {

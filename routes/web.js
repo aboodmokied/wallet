@@ -160,6 +160,8 @@ webRoutes.post('/auth/password-reset',validateRequest('reset'),verifyPassResetTo
     webRoutes.get('/report/system-transactions',isAuthenticated,authorizePermission('can-show-transactions-reports'),validateRequest('system-transactions-report'),reportController.dailySystemTransactions);
     webRoutes.get('/report/system-user-transactions/:guard/:user_id',isAuthenticated,authorizePermission('can-show-transactions-reports'),validateRequest('user-transactions-report'),reportController.dailySystemUserTransactions);
 
+    // transaction
+    webRoutes.get('/transaction/:transaction_id',transactionController.showTransaction);
 
 
     // charging
