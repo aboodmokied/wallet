@@ -7,7 +7,7 @@
         <!-- Date -->
         <form action="" method="GET">
             <div class="form-group">
-                <label>Date:</label>
+                <label>Date (UTC):</label>
                 <div class="input-group date" id="reservationdate" data-target-input="nearest">
                     <input type="date" name="date" class="form-control datetimepicker-input" data-target="#reservationdate">
                     <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
@@ -16,10 +16,10 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>From:</label>
+                <label>From (UTC):</label>
 
                 <div class="input-group">
-                    <input type="number" name="from" class="form-control float-right" id="reservationtime">
+                    <input type="number" value="0" min="0" max="23" name="from" class="form-control float-right" id="reservationtime">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-clock"></i></span>
                     </div>
@@ -27,10 +27,10 @@
             <!-- /.input group -->
             </div>
             <div class="form-group">
-                <label>To:</label>
+                <label>To (UTC):</label>
 
                 <div class="input-group">
-                    <input type="number" name="to" class="form-control float-right" id="reservationtime">
+                    <input type="number" value="23" min="0" max="23" name="to" class="form-control float-right" id="reservationtime">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-clock"></i></span>
                     </div>

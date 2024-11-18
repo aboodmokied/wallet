@@ -69,7 +69,7 @@ exports.dailySystemTransactions = tryCatch(async (req, res, next) => {
   //     endtDateInUTC:endDate,
   //   },
   // });
-  console.log({date});
+  console.log({md:transactions.respronseMetaDate});
   return res.render('transaction/systemOwner/transactions-report',{
       pageTitle:'Transactions Report',
       transactions:transactions.data,

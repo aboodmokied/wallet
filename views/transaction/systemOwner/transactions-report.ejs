@@ -26,7 +26,11 @@
           </div>
         </div>
         <div class="card-body">
-            <%- include('../components/time-filter.ejs') %>
+            <div class="col-md-12" style="display: flex; gap: 10px;">
+              <%- include('../components/time-filter.ejs') %>
+              <%- include('../components/time-details.ejs') %>
+            </div>
+        
             <%- include('../components/transactions-table.ejs',{
               tableTitle:'System Transactions',
               transactions:locals.transactions
