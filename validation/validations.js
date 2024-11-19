@@ -77,7 +77,7 @@ exports.validateLoginPassword = body("password")
   .notEmpty()
   .withMessage("Password Required");
 
-exports.validateConfirmPassword = body("confirmPassword").custom(
+exports.validateConfirmPassword = body("confirm_password").notEmpty().withMessage('Confirm Password Required').custom(
   (input, { req }) => {
     if (input === req.body.password) {
       return true;

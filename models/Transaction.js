@@ -6,13 +6,21 @@ const Transaction=Application.connection.define('transation',{
         type:DataTypes.DOUBLE,
         allowNull:false
     },
-    old_balance:{
+    source_user_old_balance:{
         type:DataTypes.DOUBLE,
-        allowNull:false
+        allowNull:true
     },
-    current_balance:{
+    target_user_old_balance:{
         type:DataTypes.DOUBLE,
-        allowNull:false
+        allowNull:true
+    },
+    source_user_current_balance:{
+        type:DataTypes.DOUBLE,
+        allowNull:true
+    },
+    target_user_current_balance:{
+        type:DataTypes.DOUBLE,
+        allowNull:true
     },
     verification_code:{
         type:DataTypes.STRING,
@@ -50,6 +58,15 @@ const Transaction=Application.connection.define('transation',{
     //     type:DataTypes.BIGINT,
     //     defaultValue:null
     // }
+},{
+    defaultScope:{
+        attributes:{exclude:['verification_code']}
+    },
+    scopes:{
+        withVerificationCode:{
+            attributes:{}
+        }
+    }
 })
 
 Transaction.prototype.getOperation=async function() {

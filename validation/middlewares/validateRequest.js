@@ -43,7 +43,6 @@ const validateRequest=(type)=>{
         case 'oauth-request':
             validations=oauthRequestValidation;
             break;
-            
         case 'register-by-admin-request-page':
             validations=registerByAdminPage;
             break;

@@ -67,7 +67,15 @@ const customCompanyRegisterationValidations=[
     if(!count){
       return Promise.reject('Category not found');
     }
-  })
+  }),
+  body("phone").if(body("guard").equals("company")).notEmpty().custom(async(phone,{req})=>{
+    const guardObj=authConfig.guards[req.body.guard]
+    const model=authConfig.providers[guardObj.provider]?.model;
+    const count=await model.count({where:{phone}});
+    if(count){
+        return Promise.reject('this phone already used'); 
+    }
+  }),
 ];
 
 exports.apiRegisterValidation = [

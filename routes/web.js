@@ -77,13 +77,13 @@ const conditionalMiddleware=(permission)=>{
         }else{
             guard=req.body.guard;
         }
-        console.log({guard})
-        if(guard=='admin'){
+        const guardObj=authConfig.guards[guard]
+        if(guardObj?.registeration=='by-admin'){
             return await authorizeSuperAdmin(req,res,next);
-        }else if(guard=='chargingPoint'){
+        }else if(guardObj?.registeration=='by-system-owner'){
             return await authorizePermission(permission,false)(req,res,next);
         }else{
-            throw BadRequestError('Process not allowed');
+            throw new BadRequestError('Process not allowed');
         }
     }
 }

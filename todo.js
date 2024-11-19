@@ -30,7 +30,7 @@
  *      - all charging point transactions on one day with period, e.g:(12pm - 5pm) *
  *      - all company payment transactions on one day with period, e.g:(12pm - 5pm) *
  *      - all user transactions on one day with period, e.g:(12pm - 5pm) *
- *  - view transaction page    
+ *  - view transaction page *   
  *  - view users
  * 
  * 
@@ -63,8 +63,10 @@
     // => api *
 
 // views
-//  => system-owner *
-//  charging-point
+//  => system-owner 
+        // => reports * 
+        // => users 
+//  charging-point 
 // superAdmin *
 
 // validations *

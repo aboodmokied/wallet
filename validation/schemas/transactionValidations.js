@@ -28,12 +28,14 @@ exports.confirmChargingPageValidation=[
         if(amount<=0){
             throw new Error('Invalid Amount, should be greater than 0');
         }
+        return true;
     }),
     query('target_phone').notEmpty().withMessage('target_phone Query Param Required').custom(async(target_phone)=>{
         const count=await User.count({where:{phone:target_phone}});
         if(!count){
             return Promise.reject('No Users with this target_phone found');
         }
+        return true;
     })
 ];
 
@@ -42,12 +44,14 @@ exports.chargingValidation=[
         if(amount<=0){
             throw new Error('Invalid Amount, should be greater than 0');
         }
+        return true;
     }),
     body('target_phone').notEmpty().withMessage('target_phone Required').custom(async(target_phone)=>{
         const count=await User.count({where:{phone:target_phone}});
         if(!count){
             return Promise.reject('No Users with this target_phone found');
         }
+        return true;
     })
 ];
 

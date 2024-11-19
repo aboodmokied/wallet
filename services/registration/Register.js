@@ -36,7 +36,8 @@ class Register{
                 })
                 
                 await new Authorize().applySystemRoles(newUser);
-                return newUser;
+                const newUserInstance=model.findByPk(newUser.id);
+                return newUserInstance;
             }else if(driver=='db'){ // use pure mysql 
                 throw Error('this feature not completed');
             }else{
