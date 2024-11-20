@@ -1,0 +1,15 @@
+<%- include('../components/top.ejs',{
+    links:[
+        {
+            title:'Transactions',
+            path:'/charging'
+        },
+        {
+            title:'Charg',
+            path:'/charging'
+        },
+        
+    ]
+}) %>
+    <%- include('../components/usersTable.ejs',{users:locals.users,tableTitle:`${guard}s Table`}) %>
+<%- include('../components/buttom.ejs') %>

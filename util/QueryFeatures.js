@@ -3,7 +3,7 @@ const BadRequestError = require("../Errors/ErrorTypes/BadRequestError");
 
 class QueryFeatures {
   queryOptions = {};
-  respronseMetaDate = {};
+  responseMetaData = {};
   constructor(req) {
     this.queryStr = req.query;
   }
@@ -128,22 +128,22 @@ class QueryFeatures {
   }
   // pagination
 
-  async paginate(model,whereOptions) {
+  async paginate(model, whereOptions) {
     const page = parseInt(this.queryStr.page) || 1;
     const limit = parseInt(this.queryStr.limit) || 10;
     const offset = (page - 1) * limit;
     this.queryOptions.offset = offset;
     this.queryOptions.limit = limit;
-    this.respronseMetaDate.currentPage = page;
+    this.responseMetaData.currentPage = page;
     if (model) {
       const options = {};
       if (this.queryOptions.where) {
         options.where = this.queryOptions.where;
       }
-      options.where={...options.where,...whereOptions};
+      options.where = { ...options.where, ...whereOptions };
       const count = await model.count(options);
-      this.respronseMetaDate.totalItems = count;
-      this.respronseMetaDate.totalPages = Math.ceil(count / limit) || 1;
+      this.responseMetaData.totalItems = count;
+      this.responseMetaData.totalPages = Math.ceil(count / limit) || 1;
     }
     return this;
   }
@@ -175,16 +175,20 @@ class QueryFeatures {
     return this;
   }
 
-  async findAllWithFeatures(
-    model,
-    whereOptions = {}
-  ) {
-    await this.filter(model).search(model).fields().sort().paginate(model,whereOptions);
-    const updatedQueryOptions={...this.queryOptions};
-    updatedQueryOptions.where={...updatedQueryOptions.where,...whereOptions};
+  async findAllWithFeatures(model, whereOptions = {}) {
+    await this.filter(model)
+      .search(model)
+      .fields()
+      .sort()
+      .paginate(model, whereOptions);
+    const updatedQueryOptions = { ...this.queryOptions };
+    updatedQueryOptions.where = {
+      ...updatedQueryOptions.where,
+      ...whereOptions,
+    };
     const data = await model.findAll(updatedQueryOptions);
-    this.respronseMetaDate.length = data.length;
-    const result = { data, respronseMetaDate: this.respronseMetaDate };
+    this.responseMetaData.length = data.length;
+    const result = { data, responseMetaData: this.responseMetaData };
     return result;
   }
 }

@@ -59,21 +59,10 @@ exports.dailySystemTransactions = tryCatch(async (req, res, next) => {
     date: { [Op.between]: [startDateMillS, endDateMillS] },
     verified_at: { [Op.ne]: null },
   });
-  // return res.send({
-  //   status: true,
-  //   result: {
-  //     transactions,
-  //     startDateInLocalTime,
-  //     endtDateInLocalTime,
-  //     startDateInUTC:startDate,
-  //     endtDateInUTC:endDate,
-  //   },
-  // });
-  console.log({md:transactions.respronseMetaDate});
-  return res.render('transaction/systemOwner/transactions-report',{
+  return res.render('wallet/systemOwner/transactions-report',{
       pageTitle:'Transactions Report',
       transactions:transactions.data,
-      responseMetaData:transactions.respronseMetaDate,
+      responseMetaData:transactions.responseMetaData,
       startDateInLocalTime,
       endtDateInLocalTime,
       startDateInUTC:startDate,
@@ -116,14 +105,23 @@ exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
       ...whereOptions,
     }
   );
-  return res.send({
-    status: true,
-    result: {
-      transactions,
-      startDateInLocalTime,
-      endtDateInLocalTime,
-      startDateInUTC:startDate,
-      endtDateInUTC:endDate,
-    },
-  });
+  // return res.send({
+  //   status: true,
+  //   result: {
+  //     transactions,
+  //     startDateInLocalTime,
+  //     endtDateInLocalTime,
+  //     startDateInUTC:startDate,
+  //     endtDateInUTC:endDate,
+  //   },
+  // });
+  return res.render('wallet/systemOwner/transactions-report',{
+    pageTitle:'Transactions Report',
+    transactions:transactions.data,
+    responseMetaData:transactions.responseMetaData,
+    startDateInLocalTime,
+    endtDateInLocalTime,
+    startDateInUTC:startDate,
+    endtDateInUTC:endDate,
+});
 });
