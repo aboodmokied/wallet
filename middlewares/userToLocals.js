@@ -2,6 +2,7 @@ const tryCatch = require("../util/tryCatch");
 
 const userToLocals=tryCatch(async(req,res,next)=>{
     res.locals.user=req.user;
+    res.locals.currentUrl=req.url;
     if(req.user?.guard=='admin'){
         // const superAdmin=await SuperAdmin.findOne();
         if(req.user.isSuper){

@@ -104,7 +104,10 @@ webRoutes.post('/auth/register-by-admin',isGuest,validateRequest('register-by-ad
 // logout
 webRoutes.get('/auth/logout',isAuthenticated,authController.logout);
 
-webRoutes.get('/authTest',reportController.dailySystemTransactions);
+webRoutes.get('/authTest',(req,res,next)=>{
+    console.log(req.url);
+    res.send({status:true});
+});
 
 webRoutes.get('/authTest2',isAuthenticated,authorizePermission('testPermission2'),async(req,res,next)=>{
     const roles=await req.user.getRoles();

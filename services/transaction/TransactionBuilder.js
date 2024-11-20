@@ -18,37 +18,37 @@ class TransactionBuilder {
 
   async build(req, operationType) {
     let operation;
-    const { id } = req.user;
+    // const { id } = req.user;
     // const { amount } = req.body;
-    let userWallet =
-      operationType == "charging" ? undefined : await req.user.getWallet();
+    // let userWallet =
+    //   operationType == "charging" ? undefined : await req.user.getWallet();
     
-    let customData;
-    if (operationType == "charging") {
-      customData = {
-        amount,
-        // old_balance: undefined,
-        // current_balance: undefined,
-        verification_code: "123132",
-        wallet_id: undefined,
-        user_id: undefined,
-        date: Date.now(),
-        // target_user_id:targetUser.id,
-        // target_wallet_id:targetUser.wallet_id,
-      };
-    } else {
-      customData = {
-        amount,
-        // old_balance: userWallet.balance,
-        // current_balance: userWallet.balance - amount,
-        verification_code: "123132",
-        wallet_id: userWallet.id,
-        user_id: id,
-        date: Date.now(),
-        // target_user_id:targetUser.id,
-        // target_wallet_id:targetUser.wallet_id,
-      };
-    }
+    // let customData;
+    // if (operationType == "charging") {
+    //   customData = {
+    //     amount,
+    //     // old_balance: undefined,
+    //     // current_balance: undefined,
+    //     verification_code: "123132",
+    //     wallet_id: undefined,
+    //     user_id: undefined,
+    //     date: Date.now(),
+    //     // target_user_id:targetUser.id,
+    //     // target_wallet_id:targetUser.wallet_id,
+    //   };
+    // } else {
+    //   customData = {
+    //     amount,
+    //     // old_balance: userWallet.balance,
+    //     // current_balance: userWallet.balance - amount,
+    //     verification_code: "123132",
+    //     wallet_id: userWallet.id,
+    //     user_id: id,
+    //     date: Date.now(),
+    //     // target_user_id:targetUser.id,
+    //     // target_wallet_id:targetUser.wallet_id,
+    //   };
+    // }
     if(operationType=='transfer'){
         const { target_phone, info, amount } = req.body;
         const sourceUser=req.user;
@@ -63,7 +63,7 @@ class TransactionBuilder {
         const transactionData = {
           amount,
           verification_code: this.#generateVerificationCode(),
-          wallet_id: userWallet.id,
+          wallet_id: sourceUserWallet.id,
           date: Date.now(),
           user_id: sourceUser.id,
           target_user_id:targetUser.id,
@@ -94,7 +94,7 @@ class TransactionBuilder {
         const transactionData = {
           amount,
           verification_code: this.#generateVerificationCode(),
-          wallet_id: userWallet.id,
+          wallet_id: sourceUserWallet.id,
           date: Date.now(),
           user_id: sourceUser.id,
           source_user_old_balance:sourceUserWallet.balance,
@@ -117,9 +117,9 @@ class TransactionBuilder {
         const transactionData = {
           amount,
           verification_code: this.#generateVerificationCode(),
-          wallet_id: userWallet.id,
           date: Date.now(),
           target_user_id: targetUser.id,
+          target_wallet_id: targetUserWallet.id,
           target_user_old_balance:targetUserWallet.balance,
           target_user_current_balance:targetUserWallet.balance + amount,
         };

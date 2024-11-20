@@ -41,16 +41,7 @@
       </div>
       <!-- /.card-body -->
       <div class="card-footer clearfix">
-        <% if(locals.responseMetaData.totalPages>1){ %>
-            <ul class="pagination pagination-sm m-0 float-right">
-                <li class="page-item"><a class="page-link" href="?page=<%= locals.responseMetaData.currentPage-1 %>">«</a></li>
-                <% for(let i=1; i<=locals.responseMetaData.totalPages; i++){ %>
-                    <li class="page-item <%= i==locals.responseMetaData.currentPage?"active":"" %>"><a class="page-link" href="?page=<%= i %>"><%= i %></a></li>
-                <% } %>  
-                <li class="page-item"><a class="page-link" href="?page=<%= locals.responseMetaData.currentPage+1 %>">»</a></li>
-            </ul>
-          <% } %>
-        
+        <%- include('../components/pagination-line.ejs') %>
       </div>
     </div>
 </div>
