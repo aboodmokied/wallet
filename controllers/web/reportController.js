@@ -5,6 +5,7 @@ const QueryFeatures = require("../../util/QueryFeatures");
 const CompanyTransaction = require("../../models/CompanyTransaction");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const ChargingPointTransaction = require("../../models/ChargingPointTransaction");
+const authConfig = require("../../config/authConfig");
 
 const getDates = (date, from, to) => {
   if (Number(from) > Number(to)) {
@@ -42,8 +43,6 @@ const getDates = (date, from, to) => {
   };
 };
 
-
-
 exports.dailySystemTransactions = tryCatch(async (req, res, next) => {
   const { date, from = 0, to = 23 } = req.query;
   const {
@@ -59,33 +58,38 @@ exports.dailySystemTransactions = tryCatch(async (req, res, next) => {
     date: { [Op.between]: [startDateMillS, endDateMillS] },
     verified_at: { [Op.ne]: null },
   });
-  return res.render('wallet/systemOwner/transactions-report',{
-      pageTitle:'Transactions Report',
-      transactions:transactions.data,
-      responseMetaData:transactions.responseMetaData,
-      startDateInLocalTime,
-      endtDateInLocalTime,
-      startDateInUTC:startDate,
-      endtDateInUTC:endDate,
+  return res.render("wallet/systemOwner/transactions-report", {
+    pageTitle: "Transactions Report",
+    transactions: transactions.data,
+    responseMetaData: transactions.responseMetaData,
+    startDateInLocalTime,
+    endtDateInLocalTime,
+    startDateInUTC: startDate,
+    endtDateInUTC: endDate,
   });
 });
+
+
 exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
   const { date, from = 0, to = 23 } = req.query;
   const { guard, user_id } = req.params;
+  const guardObj = authConfig.guards[guard];
+  const model = authConfig.providers[guardObj.provider]?.model;
+  const user = await model.findByPk(user_id);
   let transactionModel;
   let whereOptions = {};
   if (guard == "user") {
     transactionModel = Transaction;
     whereOptions = {
-      [Op.or]: [{ user_id }, { target_user_id: user_id }],
-      verified_at: { [Op.ne]: null },
+      [Op.or]: [{ user_id: user.id }, { target_user_id: user.id }],
+      // verified_at: { [Op.ne]: null },
     };
   } else if (guard == "company") {
     transactionModel = CompanyTransaction;
-    whereOptions = { company_id: user_id };
+    whereOptions = { company_id: user.id };
   } else if (guard == "chargingPoint") {
     transactionModel = ChargingPointTransaction;
-    whereOptions = { charging_point_id: user_id };
+    whereOptions = { charging_point_id: user.id };
   } else {
     throw new BadRequestError("this guard not able to create transactions");
   }
@@ -96,7 +100,7 @@ exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
     endDate,
     startDateInLocalTime,
     endtDateInLocalTime,
-  } = getDates(date, from, to);
+  } = getDates(date?.toString(), from, to);
   const queryFeatures = new QueryFeatures(req);
   const transactions = await queryFeatures.findAllWithFeatures(
     transactionModel,
@@ -115,13 +119,23 @@ exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
   //     endtDateInUTC:endDate,
   //   },
   // });
-  return res.render('wallet/systemOwner/transactions-report',{
-    pageTitle:'Transactions Report',
-    transactions:transactions.data,
-    responseMetaData:transactions.responseMetaData,
+  //   return res.render('wallet/systemOwner/transactions-report',{
+  //     pageTitle:'User Transactions Report',
+  //     transactions:transactions.data,
+  //     responseMetaData:transactions.responseMetaData,
+  //     startDateInLocalTime,
+  //     endtDateInLocalTime,
+  //     startDateInUTC:startDate,
+  //     endtDateInUTC:endDate,
+  // });
+  return res.render("wallet/systemOwner/user-transactions-report", {
+    pageTitle: "User Transactions Report",
+    user,
+    transactions: transactions.data,
+    responseMetaData: transactions.responseMetaData,
     startDateInLocalTime,
     endtDateInLocalTime,
-    startDateInUTC:startDate,
-    endtDateInUTC:endDate,
-});
+    startDateInUTC: startDate,
+    endtDateInUTC: endDate,
+  });
 });

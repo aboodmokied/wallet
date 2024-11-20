@@ -316,13 +316,13 @@ webRoutes.get(
   validateRequest("users-page"),
   walletUserController.index
 );
-webRoutes.get(
-  "/wallet-user/:guard/:id",
-  isAuthenticated,
-  authorizePermission("can-show-wallet-users"),
-  validateRequest("user-page"),
-  walletUserController.show
-);
+// webRoutes.get(
+//   "/wallet-user/:guard/:id",
+//   isAuthenticated,
+//   authorizePermission("can-show-wallet-users"),
+//   validateRequest("user-page"),
+//   walletUserController.show
+// );
 
 // charging point
 

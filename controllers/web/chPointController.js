@@ -7,14 +7,16 @@ exports.pending=tryCatch(async(req,res,next)=>{
     const chPoint=await ChargingPoint.findByPk(ch_point_id);
     chPoint.wasPending=!chPoint.wasPending;
     await chPoint.save();
-    res.status(true).send({status:true,result:{
-        message:'Operation Succeseed'
-    }})
+    const {url}=req.body;
+    return res.redirect(url);
+    // return res.status(true).send({status:true,result:{
+    //     message:'Operation Succeseed'
+    // }})
 });
 
 exports.destroy=tryCatch(async(req,res,next)=>{
     const {ch_point_id}=req.body;
-    await ChargingPoint.delete({where:{id:ch_point_id}});
+    await ChargingPoint.destroy({where:{id:ch_point_id}});
     res.status(true).send({status:true,result:{
         message:'Operation Succeseed'
     }})

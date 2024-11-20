@@ -29,13 +29,13 @@ const Wallet = require("../Wallet");
 
 // AccessToken - User
 
-User.hasMany(AccessToken,{
-    foreignKey:'userId',
-})
+User.hasMany(AccessToken, {
+  foreignKey: "userId",
+});
 
-AccessToken.belongsTo(User,{
-    foreignKey:'userId',
-})
+AccessToken.belongsTo(User, {
+  foreignKey: "userId",
+});
 
 // AccessToken - AuthClient
 AuthClient.hasMany(AccessToken, {
@@ -59,59 +59,57 @@ Wallet.hasOne(User, {
 
 // create a wallet automatically when new user was registered
 User.afterCreate("Create User Wallet", async (user) => {
-  const wallet=await Wallet.create({ user_id: user.id });
-  await user.update({wallet_id:wallet.id});
+  const wallet = await Wallet.create({ user_id: user.id });
+  await user.update({ wallet_id: wallet.id });
 });
 
 // // User,Wallet - transaction
 
-
 // ** problem: how to set multi foreignKey for the same model
 User.hasMany(Transaction, {
   foreignKey: "user_id",
-  as:'sourceTransactions',
+  as: "sourceTransactions",
   onDelete: "NO ACTION",
 });
 User.hasMany(Transaction, {
   foreignKey: "target_user_id",
-  as:'targetTransactions',
+  as: "targetTransactions",
   onDelete: "NO ACTION",
 });
 
-Transaction.belongsTo(User,{
+Transaction.belongsTo(User, {
   foreignKey: "user_id",
-  as:'sourceUser',
+  as: "sourceUser",
   onDelete: "NO ACTION",
-})
+});
 
-Transaction.belongsTo(User,{
+Transaction.belongsTo(User, {
   foreignKey: "target_user_id",
-  as:'targetUser',
+  as: "targetUser",
   onDelete: "NO ACTION",
-})
-
+});
 
 Wallet.hasMany(Transaction, {
   foreignKey: "wallet_id",
-  as:'sourceTransactions',
+  as: "sourceTransactions",
   onDelete: "NO ACTION",
 });
 
 Wallet.hasMany(Transaction, {
   foreignKey: "target_wallet_id",
-  as:'targetTransactions',
+  as: "targetTransactions",
   onDelete: "NO ACTION",
 });
 
 Transaction.belongsTo(Wallet, {
   foreignKey: "wallet_id",
-  as:'sourceWallet',
+  as: "sourceWallet",
   onDelete: "NO ACTION",
 });
 
 Transaction.belongsTo(Wallet, {
   foreignKey: "target_wallet_id",
-  as:'targetWallet',
+  as: "targetWallet",
   onDelete: "NO ACTION",
 });
 
@@ -225,113 +223,105 @@ Transaction.hasOne(Transfer, {
 Payment.afterCreate(
   "Create transaction record after payment operation",
   async (payment, { customData }) => {
-    const transaction=await Transaction.create({
-      ...customData,     
+    const transaction = await Transaction.create({
+      ...customData,
       operation_type: "payment",
       operation_id: payment.id,
     });
-    await payment.update({transaction_id:transaction.id});
+    await payment.update({ transaction_id: transaction.id });
   }
 );
 
 Transfer.afterCreate(
   "Create transaction record after transfer operation",
   async (transfer, { customData }) => {
-    const transaction=await Transaction.create({
-      ...customData,     
+    const transaction = await Transaction.create({
+      ...customData,
       operation_type: "transfer",
       operation_id: transfer.id,
     });
-    await transfer.update({transaction_id:transaction.id});
+    await transfer.update({ transaction_id: transaction.id });
   }
 );
 
 Charging.afterCreate(
   "Create transaction record after charging operation",
   async (charging, { customData }) => {
-    const transaction=await Transaction.create({
-      ...customData,     
+    const transaction = await Transaction.create({
+      ...customData,
       operation_type: "charging",
       operation_id: charging.id,
     });
-    await charging.update({transaction_id:transaction.id});
+    await charging.update({ transaction_id: transaction.id });
   }
 );
 
-
 // ChargingPoint Charging
-ChargingPoint.hasMany(Charging,{
-  foreignKey:'charging_point_id',
-  onDelete:'NO ACTION'
+ChargingPoint.hasMany(Charging, {
+  foreignKey: "charging_point_id",
+  onDelete: "NO ACTION",
 });
-Charging.belongsTo(ChargingPoint,{
-  foreignKey:'charging_point_id',
-  onDelete:'NO ACTION'
-});
-
-ChargingPoint.hasMany(ChargingPointTransaction,{
-  foreignKey:'charging_point_id',
-  onDelete:'NO ACTION'
-});
-ChargingPointTransaction.belongsTo(ChargingPoint,{
-  foreignKey:'charging_point_id',
-  onDelete:'NO ACTION'
+Charging.belongsTo(ChargingPoint, {
+  foreignKey: "charging_point_id",
+  onDelete: "NO ACTION",
 });
 
+ChargingPoint.hasMany(ChargingPointTransaction, {
+  foreignKey: "charging_point_id",
+  onDelete: "NO ACTION",
+});
+ChargingPointTransaction.belongsTo(ChargingPoint, {
+  foreignKey: "charging_point_id",
+  onDelete: "NO ACTION",
+});
 
-Charging.hasOne(ChargingPointTransaction,{
-  foreignKey:'charging_id',
-})
+Charging.hasOne(ChargingPointTransaction, {
+  foreignKey: "charging_id",
+});
 
-ChargingPointTransaction.hasOne(Charging,{
-  foreignKey:'charging_point_transaction_id',
-})
-
-
-
-
+ChargingPointTransaction.hasOne(Charging, {
+  foreignKey: "charging_point_transaction_id",
+});
 
 // Charging - user
 
+// Company - CompanyWallet
 
-// Company - CompanyWallet 
-
-Company.hasOne(CompanyWallet,{
-  foreignKey:'company_id',
-  onDelete:'CASCADE',
+Company.hasOne(CompanyWallet, {
+  foreignKey: "company_id",
+  onDelete: "CASCADE",
 });
 
-CompanyWallet.hasOne(Company,{
-  foreignKey:'company_wallet_id',
-  onDelete:'CASCADE',
+CompanyWallet.hasOne(Company, {
+  foreignKey: "company_wallet_id",
+  onDelete: "CASCADE",
 });
 
 Company.afterCreate("Create Company Wallet", async (company) => {
-  const companyWallet=await CompanyWallet.create({ company_id: company.id });
-  await company.update({company_wallet_id:companyWallet.id});
+  const companyWallet = await CompanyWallet.create({ company_id: company.id });
+  await company.update({ company_wallet_id: companyWallet.id });
 });
 
 // Company,CompanyWallet - CompanyTransaction
-Company.hasMany(CompanyTransaction,{
-  foreignKey:'company_id',
-  as:'companyTransactions',
-  onDelete:'NO ACTION'
+Company.hasMany(CompanyTransaction, {
+  foreignKey: "company_id",
+  as: "companyTransactions",
+  onDelete: "NO ACTION",
 });
 
-CompanyTransaction.belongsTo(Company,{
-  foreignKey:'company_id',
-  onDelete:'NO ACTION'
+CompanyTransaction.belongsTo(Company, {
+  foreignKey: "company_id",
+  onDelete: "NO ACTION",
 });
 
-
-CompanyWallet.hasMany(CompanyTransaction,{
-  foreignKey:'company_wallet_id',
-  onDelete:'NO ACTION'
+CompanyWallet.hasMany(CompanyTransaction, {
+  foreignKey: "company_wallet_id",
+  onDelete: "NO ACTION",
 });
 
-CompanyTransaction.belongsTo(CompanyWallet,{
-  foreignKey:'company_wallet_id',
-  onDelete:'NO ACTION'
+CompanyTransaction.belongsTo(CompanyWallet, {
+  foreignKey: "company_wallet_id",
+  onDelete: "NO ACTION",
 });
 
 // Company,CompanyWallet, - payment
@@ -345,7 +335,6 @@ CompanyTransaction.belongsTo(CompanyWallet,{
 //   onDelete:'NO ACTION'
 // });
 
-
 // CompanyWallet.hasMany(Payment,{
 //   foreignKey:'company_wallet_id',
 //   onDelete:'NO ACTION'
@@ -357,23 +346,22 @@ CompanyTransaction.belongsTo(CompanyWallet,{
 // });
 
 // Company - Category
-Category.hasMany(Company,{
-  foreignKey:'category_id'
+Category.hasMany(Company, {
+  foreignKey: "category_id",
 });
 
-Company.belongsTo(Category,{
-  foreignKey:'category_id'
+Company.belongsTo(Category, {
+  foreignKey: "category_id",
 });
-
 
 // Payment - CompanyTransactions,Company,CompanyWallet
 
-CompanyTransaction.hasOne(Payment,{
-  foreignKey:'company_transaction_id'
+CompanyTransaction.hasOne(Payment, {
+  foreignKey: "company_transaction_id",
 });
 
-Payment.hasOne(CompanyTransaction,{
-  foreignKey:'payment_id'
+Payment.hasOne(CompanyTransaction, {
+  foreignKey: "payment_id",
 });
 
 // Company.hasOne(Payment,{
@@ -392,7 +380,7 @@ Payment.hasOne(CompanyTransaction,{
 //   foreignKey:'payment_id'
 // });
 
-// create CompanyTransaction after veirfy the payment transaction 
+// create CompanyTransaction after veirfy the payment transaction
 // Transaction.afterUpdate(
 //   "create CompanyTransaction after veirfy the payment transaction",
 //   async (transaction) => {
