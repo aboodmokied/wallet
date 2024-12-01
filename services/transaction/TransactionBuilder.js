@@ -18,37 +18,6 @@ class TransactionBuilder {
 
   async build(req, operationType) {
     let operation;
-    // const { id } = req.user;
-    // const { amount } = req.body;
-    // let userWallet =
-    //   operationType == "charging" ? undefined : await req.user.getWallet();
-    
-    // let customData;
-    // if (operationType == "charging") {
-    //   customData = {
-    //     amount,
-    //     // old_balance: undefined,
-    //     // current_balance: undefined,
-    //     verification_code: "123132",
-    //     wallet_id: undefined,
-    //     user_id: undefined,
-    //     date: Date.now(),
-    //     // target_user_id:targetUser.id,
-    //     // target_wallet_id:targetUser.wallet_id,
-    //   };
-    // } else {
-    //   customData = {
-    //     amount,
-    //     // old_balance: userWallet.balance,
-    //     // current_balance: userWallet.balance - amount,
-    //     verification_code: "123132",
-    //     wallet_id: userWallet.id,
-    //     user_id: id,
-    //     date: Date.now(),
-    //     // target_user_id:targetUser.id,
-    //     // target_wallet_id:targetUser.wallet_id,
-    //   };
-    // }
     if(operationType=='transfer'){
         const { target_phone, info, amount } = req.body;
         const sourceUser=req.user;
@@ -110,6 +79,9 @@ class TransactionBuilder {
       }else if(operationType=='charging'){
         const { target_phone, amount } = req.body;
         const chargingPoint=req.user;
+        if(chargingPoint.wasPending){
+          throw BadRequestError("This ChargingPoint Was Pending By System Owner, so you can't be able to perform charging operations");
+        }
         const targetUser = await User.findOne({
           where: { phone: target_phone },
         });
@@ -134,73 +106,6 @@ class TransactionBuilder {
     }else{
       throw new BadRequestError("operation not provided");
     }
-
-    // switch (operationType) {
-    //   case "transfer":
-    //     const { target_phone, info } = req.body;
-    //     if (userWallet.balance < amount) {
-    //       throw new BadRequestError("Your Balance Not Enough");
-    //     }
-    //     const targetUser = await User.findOne({
-    //       where: { phone: target_phone },
-    //     });
-    //     const targetUserWallet = await targetUser.getWallet();
-    //     const operationData = {
-    //       wallet_id: userWallet.id,
-    //       user_id: id,
-    //       target_id: targetUser.id,
-    //       target_wallet_id: targetUser.wallet_id,
-    //       info,
-    //     };
-    //     customData.target_user_id = targetUser.id;
-    //     customData.target_wallet_id = targetUser.wallet_id;
-    //     customData.source_user_old_balance = userWallet.balance;
-    //     customData.target_user_old_balance = targetUserWallet.balance;
-    //     customData.source_user_current_balance = userWallet.balance - amount;
-    //     customData.target_user_current_balance = targetUserWallet.balance + amount;
-    //     operation = await Transfer.create(operationData, { customData });
-    //     break;
-    //   case "payment":
-    //     const { target_company_phone } = req.body;
-    //     if (userWallet.balance < amount) {
-    //       throw new BadRequestError("Your Balance Not Enough");
-    //     }
-    //     const targetCompany = await Company.findOne({
-    //       where: { phone: target_company_phone },
-    //     });
-    //     const paymentOperationData = {
-    //       wallet_id: userWallet.id,
-    //       user_id: id,
-    //       company_id: targetCompany.id,
-    //       company_wallet_id: targetCompany.company_wallet_id,
-    //     };
-    //     customData.source_user_old_balance = userWallet.balance;
-    //     customData.source_user_current_balance = userWallet.balance - amount;
-    //     operation = await Payment.create(paymentOperationData, { customData });
-    //     break;
-    //   case "charging":
-    //     const { target_phone: target_user_phone } = req.body;
-    //     const chargingPoint = req.user;
-    //     const targetUserInstance = await User.findOne({
-    //       where: { phone: target_user_phone },
-    //     });
-    //     const targetUserWalletInstance = await targetUserInstance.getWallet();
-    //     customData.target_user_old_balance = targetUserWalletInstance.balance;
-    //     customData.target_user_current_balance = targetUserWalletInstance.balance + amount;
-    //     customData.target_wallet_id = targetUserWalletInstance.id;
-    //     customData.target_user_id = targetUserInstance.id;
-    //     const chargingOperationData = {
-    //       wallet_id: targetUserWalletInstance.id,
-    //       user_id: targetUserInstance.id,
-    //       charging_point_id: chargingPoint.id,
-    //     };
-    //     operation = await Charging.create(chargingOperationData, {
-    //       customData,
-    //     });
-    //     break;
-    //   default:
-    //     throw new BadRequestError("operation not provided");
-    // }
 
     return operation;
   }
@@ -286,7 +191,8 @@ class TransactionBuilder {
   }
 
   #generateVerificationCode(){
-    return "123123"
+    const code=Math.floor(100000 + Math.random() * 900000);
+    return code.toString();
   }
 }
 

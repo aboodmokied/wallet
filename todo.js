@@ -17,7 +17,7 @@
  * 
  * 
  * 
- * SystemOwner...
+ * SystemOwner *
  *  - add categories *
  *  - add company -
  *  - add ch-point *
@@ -31,7 +31,7 @@
  *      - all company payment transactions on one day with period, e.g:(12pm - 5pm) *
  *      - all user transactions on one day with period, e.g:(12pm - 5pm) *
  *  - view transaction page *   
- *  - view users
+ *  - view users *
  * 
  * 
  * Company
@@ -65,8 +65,16 @@
 // views
 //  => system-owner 
         // => reports * 
-        // => users 
+        // => users *
 //  charging-point 
+    // my transactions *
+    // transactions page
+
+
+// generate verification code for transaction *
+
+
+
 // superAdmin *
 
 // validations *

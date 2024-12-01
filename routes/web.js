@@ -154,15 +154,6 @@ webRoutes.get("/authTest", (req, res, next) => {
   res.send({ status: true });
 });
 
-webRoutes.get(
-  "/authTest2",
-  isAuthenticated,
-  authorizePermission("testPermission2"),
-  async (req, res, next) => {
-    const roles = await req.user.getRoles();
-    res.send({ status: true, user: req.user, roles });
-  }
-);
 
 // pass reset
 webRoutes.get(
@@ -307,6 +298,13 @@ webRoutes.post(
   validateRequest("create-category"),
   categoryController.store
 );
+webRoutes.get(
+  "/category-companies/:category_id",
+  isAuthenticated,
+  authorizePermission("can-show-wallet-users"),
+  validateRequest("category-companies"),
+  categoryController.categoryCompanies
+);
 
 // wallet users
 webRoutes.get(
@@ -408,5 +406,8 @@ webRoutes.post(
   validateRequest("verify-transaction"),
   transactionController.verifyTransaction
 );
+
+// my-charging-point transactions
+webRoutes.get('/my-charging-point-transactions',isAuthenticated,reportController.dailyMyChPointTransactions);
 
 module.exports = webRoutes;

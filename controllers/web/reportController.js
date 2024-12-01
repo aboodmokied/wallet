@@ -6,6 +6,7 @@ const CompanyTransaction = require("../../models/CompanyTransaction");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const ChargingPointTransaction = require("../../models/ChargingPointTransaction");
 const authConfig = require("../../config/authConfig");
+const AuthorizationError = require("../../Errors/ErrorTypes/AuthorizationError");
 
 const getDates = (date, from, to) => {
   if (Number(from) > Number(to)) {
@@ -17,25 +18,26 @@ const getDates = (date, from, to) => {
     const year = splittedDate[0];
     const month = splittedDate[1];
     const day = splittedDate[2];
-    targetDate.setFullYear(year, month - 1, day);
+    console.log({date});
+    targetDate.setUTCFullYear(year, month - 1, Number(day));
   }
   targetDate.setUTCHours(0, 0, 0, 0);
 
-  const startDate = new Date(targetDate);
-  startDate.setUTCHours(Number(from), 0, 0, 0);
+  const startDateInUTC = new Date(targetDate);
+  startDateInUTC.setUTCHours(Number(from), 0, 0, 0);
 
-  const endDate = new Date(targetDate);
-  endDate.setUTCHours(Number(to), 59, 59, 999);
+  const endtDateInUTC = new Date(targetDate);
+  endtDateInUTC.setUTCHours(Number(to), 59, 59, 999);
 
-  const startDateMillS = startDate.getTime();
-  const endDateMillS = endDate.getTime();
+  const startDateMillS = startDateInUTC.getTime();
+  const endDateMillS = endtDateInUTC.getTime();
 
-  const startDateInLocalTime = startDate.toLocaleString();
-  const endtDateInLocalTime = endDate.toLocaleString();
+  const startDateInLocalTime = startDateInUTC.toLocaleString();
+  const endtDateInLocalTime = endtDateInUTC.toLocaleString();
 
   return {
-    startDate,
-    endDate,
+    startDateInUTC,
+    endtDateInUTC,
     startDateMillS,
     endDateMillS,
     startDateInLocalTime,
@@ -44,34 +46,45 @@ const getDates = (date, from, to) => {
 };
 
 exports.dailySystemTransactions = tryCatch(async (req, res, next) => {
-  const { date, from = 0, to = 23 } = req.query;
-  const {
-    startDateMillS,
-    endDateMillS,
-    startDate,
-    endDate,
-    startDateInLocalTime,
-    endtDateInLocalTime,
-  } = getDates(date?.toString(), from, to);
+  const { date, from = 0, to = 23, dateFiltering } = req.query;
+  let timingData={};
+  const whereOptions={};
+  if(dateFiltering){
+    const {
+      startDateMillS,
+      endDateMillS,
+      startDateInUTC,
+      endtDateInUTC,
+      startDateInLocalTime,
+      endtDateInLocalTime,
+    } = getDates(date?.toString(), from, to);
+    whereOptions.date={ [Op.between]: [startDateMillS, endDateMillS] }
+    timingData={
+      startDateInUTC,
+      endtDateInUTC,
+      startDateMillS,
+      endDateMillS,
+      startDateInLocalTime,
+      endtDateInLocalTime
+    };
+  }
+  
   const queryFeatures = new QueryFeatures(req);
   const transactions = await queryFeatures.findAllWithFeatures(Transaction, {
-    date: { [Op.between]: [startDateMillS, endDateMillS] },
     verified_at: { [Op.ne]: null },
+    ...whereOptions
   });
   return res.render("wallet/systemOwner/transactions-report", {
     pageTitle: "Transactions Report",
     transactions: transactions.data,
     responseMetaData: transactions.responseMetaData,
-    startDateInLocalTime,
-    endtDateInLocalTime,
-    startDateInUTC: startDate,
-    endtDateInUTC: endDate,
+    ...timingData,
   });
 });
 
 
 exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
-  const { date, from = 0, to = 23 } = req.query;
+  const { date, from = 0, to = 23, dateFiltering } = req.query;
   const { guard, user_id } = req.params;
   const guardObj = authConfig.guards[guard];
   const model = authConfig.providers[guardObj.provider]?.model;
@@ -82,7 +95,7 @@ exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
     transactionModel = Transaction;
     whereOptions = {
       [Op.or]: [{ user_id: user.id }, { target_user_id: user.id }],
-      // verified_at: { [Op.ne]: null },
+      verified_at: { [Op.ne]: null },
     };
   } else if (guard == "company") {
     transactionModel = CompanyTransaction;
@@ -93,49 +106,86 @@ exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
   } else {
     throw new BadRequestError("this guard not able to create transactions");
   }
-  const {
-    startDateMillS,
-    endDateMillS,
-    startDate,
-    endDate,
-    startDateInLocalTime,
-    endtDateInLocalTime,
-  } = getDates(date?.toString(), from, to);
+  let timingData={};
+  const dateWhereOptions={};
+  if(dateFiltering){
+    const {
+      startDateMillS,
+      endDateMillS,
+      startDateInUTC,
+      endtDateInUTC,
+      startDateInLocalTime,
+      endtDateInLocalTime,
+    } = getDates(date?.toString(), from, to);
+    dateWhereOptions.date={ [Op.between]: [startDateMillS, endDateMillS] }
+    timingData={
+      startDateInUTC,
+      endtDateInUTC,
+      startDateMillS,
+      endDateMillS,
+      startDateInLocalTime,
+      endtDateInLocalTime
+    };
+  }
   const queryFeatures = new QueryFeatures(req);
   const transactions = await queryFeatures.findAllWithFeatures(
     transactionModel,
     {
-      date: { [Op.between]: [startDateMillS, endDateMillS] },
       ...whereOptions,
+      ...dateWhereOptions
     }
   );
-  // return res.send({
-  //   status: true,
-  //   result: {
-  //     transactions,
-  //     startDateInLocalTime,
-  //     endtDateInLocalTime,
-  //     startDateInUTC:startDate,
-  //     endtDateInUTC:endDate,
-  //   },
-  // });
-  //   return res.render('wallet/systemOwner/transactions-report',{
-  //     pageTitle:'User Transactions Report',
-  //     transactions:transactions.data,
-  //     responseMetaData:transactions.responseMetaData,
-  //     startDateInLocalTime,
-  //     endtDateInLocalTime,
-  //     startDateInUTC:startDate,
-  //     endtDateInUTC:endDate,
-  // });
   return res.render("wallet/systemOwner/user-transactions-report", {
     pageTitle: "User Transactions Report",
     user,
     transactions: transactions.data,
     responseMetaData: transactions.responseMetaData,
-    startDateInLocalTime,
-    endtDateInLocalTime,
-    startDateInUTC: startDate,
-    endtDateInUTC: endDate,
+    ...timingData
+  });
+});
+
+
+exports.dailyMyChPointTransactions = tryCatch(async (req, res, next) => {
+  const { date, from = 0, to = 23, dateFiltering } = req.query;
+  const { guard } = req.user;
+  if(guard!=='chargingPoint'){
+    throw AuthorizationError('Forbidden, this proccess allowed only for charging points');
+  }
+  const user = req.user;
+  let timingData={};
+  const dateWhereOptions={};
+  if(dateFiltering){
+    const {
+      startDateMillS,
+      endDateMillS,
+      startDateInUTC,
+      endtDateInUTC,
+      startDateInLocalTime,
+      endtDateInLocalTime,
+    } = getDates(date?.toString(), from, to);
+    dateWhereOptions.date={ [Op.between]: [startDateMillS, endDateMillS] }
+    timingData={
+      startDateInUTC,
+      endtDateInUTC,
+      startDateMillS,
+      endDateMillS,
+      startDateInLocalTime,
+      endtDateInLocalTime
+    };
+  }
+  const queryFeatures = new QueryFeatures(req);
+  const transactions = await queryFeatures.findAllWithFeatures(
+    ChargingPointTransaction,
+    {
+      charging_point_id: user.id,
+      ...dateWhereOptions
+    }
+  );
+  return res.render("wallet/systemOwner/user-transactions-report", {
+    pageTitle: "Charging Point Transactions Report",
+    user,
+    transactions: transactions.data,
+    responseMetaData: transactions.responseMetaData,
+    ...timingData
   });
 });

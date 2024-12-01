@@ -1,7 +1,14 @@
 <div class="col-md-12">
     <div class="card">
       <div class="card-header">
+        <div style="display: flex; justify-content: space-between; align-items: center ;">
           <h3 class="card-title"><%= tableTitle ?? "Users" %></h3>
+          <% if(locals.guard=='chargingPoint'){ %>
+            <div>
+                <a href="/auth/register-by-admin/request/chargingPoint">Create new Charging Point</a>
+            </div>
+          <% } %>
+      </div>
       </div>
       <!-- /.card-header -->
       <div class="card-body">
@@ -23,7 +30,7 @@
                 <td><%= user.email %></td>
                 <td><%= user.phone %></td>
                 <td>
-                    <button type="button" class="btn btn-block btn-primary m-0"><a href="/report/system-user-transactions/<%= user.guard %>/<%= user.id %>" style="text-decoration: none; color: white;">Show Transactions Report</a></button>
+                    <button type="button" class="btn btn-block btn-primary m-0"><a href="/report/system-user-transactions/<%= user.guard %>/<%= user.id %>" style="text-decoration: none; color: white;">Show Report</a></button>
                 </td>
               </tr>
               <% } %> 

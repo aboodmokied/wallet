@@ -1,0 +1,46 @@
+<%- include('../components/top.ejs') %>
+<div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <div style="display: flex; justify-content: space-between; align-items: center ;">
+            <h3 class="card-title">Categories</h3>
+            <div>
+                <a href="/category/create">Create new Category</a>
+            </div>
+        </div>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th style="width: 10px">#</th>
+              <th>Name</th>
+              <th style="width: 40px">Operations</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <% for(let category of locals.categories){ %>
+              <tr>
+                <td><%= category.id %></td>
+                <td><%= category.name %></td>
+                <td>
+                  <a href="/category-companies/<%= category.id %>">
+                      <button type="button" class="btn btn-block btn-primary">View Companies</button>
+                  </a>
+              </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+        <%- include('../components/pagination-line.ejs') %>
+      </div>
+    </div>
+</div>
+
+
+<%- include('../components/buttom.ejs') %>
