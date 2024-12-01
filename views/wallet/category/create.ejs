@@ -1,0 +1,39 @@
+
+<%- include('../components/top.ejs') %>
+
+<div class="row">
+    
+    <div class="col-md-12">
+      <div class="card card-secondary">
+        <div class="card-header">
+          <h3 class="card-title">Create Category</h3>
+
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+            <form action="/category" method="POST">
+                <%- include('../components/errors.ejs') %>
+                <div class="form-group">
+                    
+                    <label for="inputEstimatedBudget">Category Name</label>
+                    <input type="text" name="name" value="<%= locals.old?.name ?? "" %>" id="inputEstimatedBudget" class="form-control">
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                      <!-- <a href="#" class="btn btn-secondary">Cancel</a> -->
+                      <input type="submit" value="Create" class="btn btn-success  float-right">
+                    </div>
+                  </div>
+            </form>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+  </div>
+
+<%- include('../components/buttom.ejs') %>

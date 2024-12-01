@@ -2,9 +2,11 @@ const authConfig = require("../../config/authConfig");
 const pagesConfig = require("../../config/pagesConfig");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const NotFoundError = require("../../Errors/ErrorTypes/NotFoundError");
+const CreateByAdminRequest = require("../../models/CreateByAdminRequest");
 const VerifyEmailToken = require("../../models/verifyEmailToken");
 const Authenticate = require("../../services/authentication/Authenticate");
 const PasswordReset = require("../../services/password-reset/PasswordReset");
+const ByAdminRegister = require("../../services/registration/ByAdminRegister");
 const Register = require("../../services/registration/Register");
 const tryCatch = require("../../util/tryCatch");
 
@@ -14,10 +16,12 @@ exports.getLogin=(req,res,next)=>{
     const guards=Object.keys(authConfig.guards).filter(guard=>authConfig.guards[guard].drivers.includes('session'));
     const {guard}=req.params;
     req.session.pagePath=req.path;
+    const guardObj=authConfig.guards[guard];
     res.render(pagesConfig.authentication.login.page,{
         pageTitle:`${guard[0].toUpperCase()}${guard.slice(1)} Login`,
         guards,
-        currentGuard:guard
+        currentGuard:guard,
+        guardObj
     })
 }
 
@@ -58,12 +62,14 @@ exports.logout=(req,res,next)=>{
 exports.getRegister=(req,res,next)=>{
     // Before: guard and user data validation required.
     const {guard}=req.params;
-    const guards=Object.keys(authConfig.guards).filter(guard=>authConfig.guards[guard].registeration=='global')
+    const guards=Object.keys(authConfig.guards).filter(guard=>authConfig.guards[guard].registeration=='global' && authConfig.guards[guard].drivers.includes('session'))
+    const guardObj=authConfig.guards[guard];
     req.session.pagePath=req.path;
-    res.render(pagesConfig.authentication.register.page,{
+    res.render('auth/register',{
         pageTitle:`${guard[0].toUpperCase()}${guard.slice(1)} Register`,
         currentGuard:guard,
-        guards
+        guards,
+        guardObj
     })
 }
 
@@ -76,6 +82,48 @@ exports.postRegister=tryCatch(async(req,res,next)=>{
     res.redirect('/auth/quick-login');
 });
 
+
+
+// register by admin
+exports.getRegisterByAdminRequest=tryCatch(async(req,res,next)=>{
+    const {guard}=req.params;
+    req.session.pagePath=req.path;
+    res.render('auth/by-admin-request',{
+        pageTitle:`Create ${guard} Request`,
+        guard
+     });
+});
+exports.postRegisterByAdminRequest=tryCatch(async(req,res,next)=>{
+    const byAdmin=new ByAdminRegister();
+    const message=await byAdmin.request(req);
+    res.with('message',message).redirect(`/auth/register-by-admin/request/${req.body.guard}`);
+});
+
+exports.getRegisterByAdminCreate=tryCatch(async(req,res,next)=>{
+    const {email}=req.query;
+    const {token}=req.params;
+    const createByAdminRequest=await CreateByAdminRequest.findOne({where:{token,revoked:false}});
+    if(!createByAdminRequest){
+        throw new BadRequestError('Invalid request or the process was revoked by the system.');
+    }
+    if(email!==createByAdminRequest.email){
+        throw new BadRequestError('Invalid Email');
+    };
+    const {guard}=createByAdminRequest;
+    req.session.pagePath=req.path;
+    res.render('auth/by-admin-create',{
+        pageTitle:`Create ${guard} Account`,
+        token,
+        email,
+        guard
+    })
+});
+exports.postRegisterByAdminCreate=tryCatch(async(req,res,next)=>{
+    const byAdmin=new ByAdminRegister();
+    const newUser=await byAdmin.create(req);
+    req.session.targetUser=newUser;
+    res.redirect('/auth/quick-login');
+});
 
 
 // password reset
@@ -153,6 +201,7 @@ exports.verifyEmail=tryCatch(async(req,res,next)=>{
         // }
     // }
     // throw new BadRequestError('Invalid Token');
+    if(req.isApi)
     req.session.targetUser=req.targetUser;
     res.redirect('/auth/quick-login');
 });

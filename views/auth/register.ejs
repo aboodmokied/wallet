@@ -75,11 +75,13 @@
         </div>
       </form>
       <hr>
-      <div class="social-auth-links text-center mt-2 mb-3">
-          <a href="/auth/google/register/<%= locals.currentGuard %>" class="btn btn-block btn-danger">
-            <i class="fa-brands fa-google"></i> Register using Gmail
-          </a>
-      </div>
+      <% if(locals.guardObj.oauth){ %>
+        <div class="social-auth-links text-center mt-2 mb-3">
+            <a href="/auth/google/register/<%= locals.currentGuard %>" class="btn btn-block btn-danger">
+              <i class="fa-brands fa-google"></i> Register using Gmail
+            </a>
+        </div>
+      <% } %>
    
 
       <a href="/auth/login/<%= locals.currentGuard %>" class="text-center">I already have a membership</a>

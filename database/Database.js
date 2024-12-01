@@ -42,9 +42,9 @@ class Database{
 
     async migrate(){
         try {
-            await this.#connection.sync({force:true});
+            // await this.#connection.sync({force:false});
         } catch (error) {
-            if(error.original.errno==1049){ // database not found
+            if(error.original?.errno==1049){ // database not found
                 await this.#createDB();
             }else{
                 throw error;

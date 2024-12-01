@@ -1,0 +1,47 @@
+<div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><%= tableTitle %></h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th style="width: 10px">#</th>
+              <th>Type</th>
+              <th>Source User</th>
+              <th>Target User</th>
+              <th>Amount</th>
+              <th>Date (UTC)</th>
+              <th>Date (Local)</th>
+              <th style="width: 40px">Operations</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <% for(let transaction of transactions){ %>
+              <tr>
+                <td><%= transaction.id %></td>
+                <td><%= transaction.operation_type %></td>
+                <td><%= transaction.user_id  || "-" %></td>
+                <td><%= transaction.target_user_id || "-" %></td>
+                <td><%= transaction.amount %></td>
+                <td><%= new Date(transaction.date).toUTCString() %></td>
+                <td><%= new Date(transaction.date).toLocaleString() %></td>
+                <td>
+                  <a href="/transaction/<%= transaction.id %>">
+                      <button type="button" class="btn btn-block btn-primary">View</button>
+                  </a>
+              </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+        <%- include('../components/pagination-line.ejs') %>
+      </div>
+    </div>
+</div>

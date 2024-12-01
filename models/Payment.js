@@ -1,5 +1,7 @@
 const { DataTypes, Op } = require("sequelize");
 const Application = require("../Application");
+const Company = require("./Company");
+const User = require("./User");
 
 const Payment=Application.connection.define('payment',{
     wallet_id:{
@@ -10,15 +12,7 @@ const Payment=Application.connection.define('payment',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    transaction_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false
-    },
     company_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false
-    },
-    branch_id:{
         type:DataTypes.BIGINT,
         allowNull:false
     },
@@ -26,19 +20,17 @@ const Payment=Application.connection.define('payment',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    company_old_balance:{
-        type:DataTypes.DOUBLE,
-        allowNull:false
-    },
-    company_current_balance:{
-        type:DataTypes.DOUBLE,
-        allowNull:false
-    },
-    amount:{
-        type:DataTypes.DOUBLE,
-        allowNull:false
-    },
 })
+
+Payment.prototype.getUsers=async function(){
+    const company=await Company.findByPk(this.company_id);
+    const sourceUser=await User.findByPk(this.user_id);
+    return {
+        company,
+        sourceUser
+    }
+}
+
 
 module.exports=Payment;
 

@@ -1,0 +1,54 @@
+<%- include('../components/top.ejs',{
+    links:[
+        {
+            title:'Transactions',
+            path:'/charging'
+        },
+        {
+            title:'Charg',
+            path:'/charging'
+        },
+        
+    ]
+}) %>
+
+<div class="row">
+    
+    <div class="col-md-12">
+      <div class="card card-secondary">
+        <div class="card-header">
+          <h3 class="card-title">Verify Operation</h3>
+
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+            <form action="/verify" method="POST">
+              <div class="callout callout-info">
+                <h5>Verification Code Was Sent to user email</h5>
+                <p>Enter the code to perform this operation</p>
+              </div>
+              <%- include('../components/errors.ejs') %>
+                <div class="form-group">
+                    <label for="inputEstimatedBudget">Verification Code</label>
+                    <input type="text" name="verification_code" id="inputEstimatedBudget" class="form-control">
+                </div>
+                <input type="hidden" name="transaction_id" value="<%= locals.transaction_id %>">
+                <div class="row">
+                    <div class="col-12">
+                      <!-- <a href="#" class="btn btn-secondary">Cancel</a> -->
+                      <input type="submit" value="Verify" class="btn btn-success float-right">
+                    </div>
+                  </div>
+            </form>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+  </div>
+
+<%- include('../components/buttom.ejs') %>  

@@ -1,0 +1,45 @@
+<%- include('../components/top.ejs',{
+    links:[
+        {
+            title:'Transactions',
+            path:'/charging'
+        },
+        {
+            title:'Charg',
+            path:'/charging'
+        },
+        
+    ]
+}) %>
+
+<div class="row">
+    
+    <div class="col-md-12">
+      <div class="card card-secondary">
+        <div class="card-header">
+          <h3 class="card-title">Transactions Report</h3>
+
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+            <div class="col-md-12" style="display: flex; gap: 10px;">
+              <%- include('../components/time-filter.ejs') %>
+              <%- include('../components/time-details.ejs') %>
+            </div>
+        
+            <%- include('../components/transactions-table.ejs',{
+              tableTitle:'System Transactions',
+              transactions:locals.transactions
+            }) %>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+  </div>
+
+<%- include('../components/buttom.ejs') %>

@@ -9,6 +9,7 @@ exports.register=tryCatch(async(req,res,next)=>{
     // Before: guard and user data validation required, check if user exist.
     const {guard}=req.body;
     const user=await new Register().withGuard(guard).create(req);
+    console.log({user});
     res.status(201).send({status:true,result:{user}});
 });
 
@@ -53,7 +54,7 @@ exports.postPasswordReset=tryCatch(async(req,res,next)=>{
 // verify email
 exports.verifyEmailRequest=tryCatch(async(req,res,next)=>{
     // const message=await req.user.verifyEmail(process.env.FRONT_HOST);
-    const message=await req.user.verifyEmail('www.my-front.com');
+    const message=await req.user.verifyEmail({isApi:true});
     res.send({status:true,result:{
         message
     }})

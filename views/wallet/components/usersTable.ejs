@@ -1,0 +1,46 @@
+<div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <div style="display: flex; justify-content: space-between; align-items: center ;">
+          <h3 class="card-title"><%= tableTitle ?? "Users" %></h3>
+          <% if(locals.guard=='chargingPoint'){ %>
+            <div>
+                <a href="/auth/register-by-admin/request/chargingPoint">Create new Charging Point</a>
+            </div>
+          <% } %>
+      </div>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th style="width: 70px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(let user of users){ %>
+              <tr>
+                <td><%= user.id %></td>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td><%= user.phone %></td>
+                <td>
+                    <button type="button" class="btn btn-block btn-primary m-0"><a href="/report/system-user-transactions/<%= user.guard %>/<%= user.id %>" style="text-decoration: none; color: white;">Show Report</a></button>
+                </td>
+              </tr>
+              <% } %> 
+            
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+            <%- include('../components/pagination-line.ejs') %>
+      </div>
+    </div>
+  </div>

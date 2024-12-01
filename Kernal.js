@@ -16,6 +16,7 @@ const methodOverride=require('./middlewares/methodOverride');
 const userToLocals = require('./middlewares/userToLocals');
 const notFoundHandler = require('./middlewares/notFoundHandler');
 const hpp = require('hpp');
+const appendGuardsToLocals = require('./middlewares/appendGuardsToLocals');
 const Kernal={
     global:[
         requestLogger,
@@ -39,7 +40,7 @@ const Kernal={
         hpp()
     ],
     api:[limiter('api')],
-    web:[limiter('web'),verifyUser,addWith,appendLocals,methodOverride,userToLocals],
+    web:[limiter('web'),verifyUser,addWith,appendLocals,methodOverride,userToLocals,appendGuardsToLocals],
     error:[notFoundHandler,errorHandler]
 }
 

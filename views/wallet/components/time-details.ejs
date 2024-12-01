@@ -1,0 +1,14 @@
+<div>
+    <% if(locals.startDateInUTC){ %>
+          <h6>Start Date (UTC): <%= new Date(locals.startDateInUTC).toUTCString() %></h6>
+      <% } %>
+    <% if(locals.endtDateInUTC){ %>
+          <h6>End Date (UTC): <%= new Date(locals.endtDateInUTC).toUTCString() %></h6>
+      <% } %>
+    <% if(locals.startDateInLocalTime){ %>
+          <h6>Start Date (Local): <%= new Date(locals.startDateInLocalTime).toLocaleString() %></h6>
+      <% } %>
+    <% if(locals.endtDateInLocalTime){ %>
+          <h6>End Date (Local): <%= new Date(locals.endtDateInLocalTime).toLocaleString() %></h6>
+      <% } %>
+</div>

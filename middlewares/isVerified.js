@@ -5,7 +5,6 @@ const isVerified=(req,res,next)=>{
     if(!req.user){
         throw new AuthenticationError();
     }
-    console.log(req.user);
     if(req.user.verified){
         return next();
     }

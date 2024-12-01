@@ -1,8 +1,13 @@
 const {validationResult}=require('express-validator');
 const ValidationError=require('../../Errors/ErrorTypes/ValidationError');
-const { loginValidation, loginPageValidation, registerPageValidation, registerValidation, requestResetPageValidation, requestResetValidation, resetPageValidation, resetValidation, verifyEmailValidation, oauthRequestValidation } = require('../schemas/authValidation');
+const { loginValidation, loginPageValidation, registerPageValidation, registerValidation, requestResetPageValidation, requestResetValidation, resetPageValidation, resetValidation, verifyEmailValidation, oauthRequestValidation, apiLoginValidation, apiRegisterValidation, registerByAdminPage, registerByAdmin, registerByAdminCreate } = require('../schemas/authValidation');
 const { createRoleValidation, assignRolePermissionValidation, revokeRolePermissionValidation, deleteRoleValidation, rolePageValidation } = require('../schemas/authorizationValidation');
 const { usersPageValidation, userPageValidation } = require('../schemas/userValidation');
+const { transferValidation, paymentValidation, confirmChargingPageValidation, chargingValidation, verifyTransactionPageValidation, verifyTransactionValidation, showTransactionValidation } = require('../schemas/transactionValidations');
+const { createCategoryValidation, categoryCompaniesValidation } = require('../schemas/categoryValidations');
+const { chargingPointOperationValidation } = require('../schemas/charingPointValidations');
+const { systemTransactionsReportValidation, userTransactionsReportValidation } = require('../schemas/reportValidations');
+const { showCompanyValidation } = require('../schemas/companyValidations');
 
 // handles validations result
 const checkResult=(req,res,next)=>{
@@ -23,14 +28,29 @@ const validateRequest=(type)=>{
         case 'login':
             validations=loginValidation;
             break;
+        case 'api-login':
+            validations=apiLoginValidation;
+            break;
         case 'register-page':
             validations=registerPageValidation;
             break;
         case 'register':
             validations=registerValidation;
             break;
+        case 'api-register':
+            validations=apiRegisterValidation;
+            break;
         case 'oauth-request':
             validations=oauthRequestValidation;
+            break;
+        case 'register-by-admin-request-page':
+            validations=registerByAdminPage;
+            break;
+        case 'register-by-admin-request':
+            validations=registerByAdmin;
+            break;
+        case 'register-by-admin-create':
+            validations=registerByAdminCreate;
             break;
         case 'request-reset-page':
             validations=requestResetPageValidation;
@@ -67,6 +87,45 @@ const validateRequest=(type)=>{
             break;
         case 'revoke-role-permission':
             validations=revokeRolePermissionValidation;
+            break;
+        case 'transfer':
+            validations=transferValidation;
+            break;
+        case 'payment':
+            validations=paymentValidation;
+            break;
+        case 'create-category':
+            validations=createCategoryValidation;
+            break;
+        case 'ch-point-operation':
+            validations=chargingPointOperationValidation;
+            break;
+        case 'system-transactions-report':
+            validations=systemTransactionsReportValidation;
+            break;
+        case 'user-transactions-report':
+            validations=userTransactionsReportValidation;
+            break;
+        case 'confirm-charging-page':
+            validations=confirmChargingPageValidation;
+            break;
+        case 'charging':
+            validations=chargingValidation;
+            break;
+        case 'category-companies':
+        validations=categoryCompaniesValidation;
+            break;
+        case 'get-company':
+        validations=showCompanyValidation;
+            break;
+        case 'show-transaction':
+        validations=showTransactionValidation;
+            break;
+        case 'verify-transaction-page':
+        validations=verifyTransactionPageValidation;
+            break;
+        case 'verify-transaction':
+        validations=verifyTransactionValidation;
             break;
         default:
           throw Error('type required');

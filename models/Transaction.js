@@ -6,13 +6,21 @@ const Transaction=Application.connection.define('transation',{
         type:DataTypes.DOUBLE,
         allowNull:false
     },
-    old_balance:{
+    source_user_old_balance:{
         type:DataTypes.DOUBLE,
-        allowNull:false
+        allowNull:true
     },
-    current_balance:{
+    target_user_old_balance:{
         type:DataTypes.DOUBLE,
-        allowNull:false
+        allowNull:true
+    },
+    source_user_current_balance:{
+        type:DataTypes.DOUBLE,
+        allowNull:true
+    },
+    target_user_current_balance:{
+        type:DataTypes.DOUBLE,
+        allowNull:true
     },
     verification_code:{
         type:DataTypes.STRING,
@@ -21,7 +29,7 @@ const Transaction=Application.connection.define('transation',{
     verified_at:{
         type:DataTypes.BIGINT,
         defaultValue:null
-    },
+    }, 
     operation_type:{
         type:DataTypes.STRING,
         allowNull:false
@@ -34,15 +42,39 @@ const Transaction=Application.connection.define('transation',{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    wallet_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false
+    // wallet_id:{
+    //     type:DataTypes.BIGINT,
+    //     allowNull:false
+    // },
+    // user_id:{
+    //     type:DataTypes.BIGINT,
+    //     allowNull:false
+    // },
+    // target_user_id:{
+    //     type:DataTypes.BIGINT,
+    //     defaultValue:null
+    // },
+    // target_wallet_id:{
+    //     type:DataTypes.BIGINT,
+    //     defaultValue:null
+    // }
+},{
+    defaultScope:{
+        attributes:{exclude:['verification_code']}
     },
-    user_id:{
-        type:DataTypes.BIGINT,
-        allowNull:false
+    scopes:{
+        withVerificationCode:{
+            attributes:{}
+        }
     }
 })
+
+Transaction.prototype.getOperation=async function() {
+    const transactionConfig=require('../config/transactionConfig');
+    const operationModel=transactionConfig.operations[this.operation_type]?.model;
+    const operation=await operationModel.findByPk(this.operation_id);
+    return operation; 
+};
 
 module.exports=Transaction;
 
