@@ -112,19 +112,49 @@ exports.showCompanyTransaction=tryCatch(async(req,res,next)=>{
 
 
 exports.currentUserTransactions=tryCatch(async(req,res,next)=>{
-    const {guard}=req.user;
-    let transactions={};
-    if(guard=='user'){
-        transactions.outTransactions=await req.user.getSourceTransactions({where:{verified_at:{[Op.ne]:null}}});
-        transactions.inTransactions=await req.user.getTargetTransactions({where:{verified_at:{[Op.ne]:null}}});
-    }else if(guard=='company'){
-        transactions=await CompanyTransaction.findAll({where:{company_id:req.user.id}});
-    }else if(guard=='chargingPoint'){
-        transactions=await ChargingPointTransaction.findAll({where:{charging_point_id:req.user.id}});
-    }else{
-        throw new BadRequestError('This type of users has no transactions');
+    // const {guard}=req.user;
+    // let transactions={};
+    // if(guard=='user'){
+    //     transactions.outTransactions=await req.user.getSourceTransactions({where:{verified_at:{[Op.ne]:null}}});
+    //     transactions.inTransactions=await req.user.getTargetTransactions({where:{verified_at:{[Op.ne]:null}}});
+    // }else if(guard=='company'){
+    //     transactions=await CompanyTransaction.findAll({where:{company_id:req.user.id}});
+    // }else if(guard=='chargingPoint'){
+    //     transactions=await ChargingPointTransaction.findAll({where:{charging_point_id:req.user.id}});
+    // }else{
+    //     throw new BadRequestError('This type of users has no transactions');
+    // }
+    const user=req.user  
+    const { guard } = user;
+    let transactionModel;
+    let whereOptions = {};
+    if (guard == "user") {
+        transactionModel = Transaction;
+        whereOptions = {
+            [Op.or]: [{ user_id: user.id }, { target_user_id: user.id }],
+            verified_at: { [Op.ne]: null },
+        };
+    } else if (guard == "company") {
+        transactionModel = CompanyTransaction;
+        whereOptions = { company_id: user.id };
+    } else if (guard == "chargingPoint") {
+        transactionModel = ChargingPointTransaction;
+        whereOptions = { charging_point_id: user.id };
+    } else {
+        throw new BadRequestError("this guard not able to create transactions");
     }
-    res.status(200).send({status:true,result:{transactions}})
+    
+    const queryFeatures = new QueryFeatures(req);
+    const transactions = await queryFeatures.findAllWithFeatures(
+        transactionModel,
+        {
+            ...whereOptions,
+        }
+    );
+    res.status(200).send({status:true,result:{
+        transactions,
+        responseMetaData: transactions.responseMetaData
+    }})
 });
 
 exports.showCurrentUserTransaction=tryCatch(async(req,res,next)=>{
