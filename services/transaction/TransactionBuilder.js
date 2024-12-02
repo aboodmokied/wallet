@@ -148,10 +148,10 @@ class TransactionBuilder {
       case "payment":
         const { company_wallet_id, company_id } = operationInsatance;
         // const companyInstance=await Company.findByPk(company_id);
-        console.log({ operationInsatance });
         const targetCompanyWallet = await CompanyWallet.findByPk(
           company_wallet_id
         );
+        
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
         const companyTransaction = await CompanyTransaction.create({
           amount,

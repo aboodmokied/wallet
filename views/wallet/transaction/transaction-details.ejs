@@ -1,0 +1,195 @@
+<%- include('../components/top.ejs') %>
+<div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-text-width"></i>
+          <%= locals.guard?.toUpperCase() %> TRANSACTION
+        </h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <dl class="row">
+        <% if(locals.guard=='company'){ %>
+          <dt class="col-sm-8">Amount</dt>
+          <dd class="col-sm-4"><%= locals.transaction.amount %></dd>
+          <dt class="col-sm-8">Old Balance</dt>
+          <dd class="col-sm-4"><%= locals.transaction.old_balance %></dd>
+          <dt class="col-sm-8">Current Balance</dt>
+          <dd class="col-sm-4"><%= locals.transaction.current_balance %></dd>
+          <dt class="col-sm-8">Date (UTC)</dt>
+          <dd class="col-sm-4"><%= new Date(locals.transaction.date).toUTCString() %></dd>
+          <dt class="col-sm-8">Date (LOCALE)</dt>
+          <dd class="col-sm-4"><%= new Date(locals.transaction.date).toLocaleString() %></dd>
+        <% }else if(locals.guard=='chargingPoint'){ %>
+            <dt class="col-sm-8">Amount</dt>
+            <dd class="col-sm-4"><%= locals.transaction.amount %></dd>
+            <dt class="col-sm-8">Date (UTC)</dt>
+            <dd class="col-sm-4"><%= new Date(locals.transaction.date).toUTCString() %></dd>
+            <dt class="col-sm-8">Date (LOCALE)</dt>
+            <dd class="col-sm-4"><%= new Date(locals.transaction.date).toLocaleString() %></dd>
+        <% }else{ %>
+            <dt class="col-sm-8">Operation Type</dt>
+            <dd class="col-sm-4"><%= locals.transaction.operation_type %></dd>
+            <dt class="col-sm-8">Amount</dt>
+            <dd class="col-sm-4"><%= locals.transaction.amount %></dd>
+            <% if(locals.transaction.operation_type=='transfer'){ %>
+                <dt class="col-sm-8">Source User Old Balance</dt>
+                <dd class="col-sm-4"><%= locals.transaction.source_user_old_balance %></dd>
+                <dt class="col-sm-8">Source User Current Balance</dt>
+                <dd class="col-sm-4"><%= locals.transaction.source_user_current_balance %></dd>
+                <dt class="col-sm-8">Target User Old Balance</dt>
+                <dd class="col-sm-4"><%= locals.transaction.target_user_old_balance %></dd>
+                <dt class="col-sm-8">Target User Current Balance</dt>
+                <dd class="col-sm-4"><%= locals.transaction.target_user_current_balance %></dd>
+            <% }else{ %>
+                <dt class="col-sm-8">Target User Old Balance</dt>
+                <dd class="col-sm-4"><%= locals.transaction.target_user_old_balance %></dd>
+                <dt class="col-sm-8">Target User Current Balance</dt>
+                <dd class="col-sm-4"><%= locals.transaction.target_user_current_balance %></dd>
+                <% } %>
+            <dt class="col-sm-8">Date (UTC)</dt>
+            <dd class="col-sm-4"><%= new Date(locals.transaction.date).toUTCString() %></dd>
+            <dt class="col-sm-8">Date (LOCALE)</dt>
+            <dd class="col-sm-4"><%= new Date(locals.transaction.date).toLocaleString() %></dd>
+            <% } %>
+        </dl>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+  </div>
+    <% if((locals.guard=='company')||(locals.guard=='user'&&(locals.transaction.operation_type=='transfer'||locals.transaction.operation_type=='payment'))){ %>
+      <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-text-width"></i>
+                Source User
+              </h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <dl class="row">
+                <dt class="col-sm-8">Name</dt>
+                <dd class="col-sm-4"><%= locals.users?.sourceUser.name %></dd>
+                <dt class="col-sm-8">Wallet ID</dt>
+                <dd class="col-sm-4"><%= locals.users?.sourceUser.wallet_id %></dd>
+                <dt class="col-sm-8">Phone</dt>
+                <dd class="col-sm-4"><%= locals.users?.sourceUser.phone %></dd>
+                <dt class="col-sm-8">Email</dt>
+                <dd class="col-sm-4"><%= locals.users?.sourceUser.email %></dd>
+                <dt class="col-sm-8">National ID</dt>
+                <dd class="col-sm-4"><%= locals.users?.sourceUser.national_id %></dd>
+              </dl>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <a href="/report/system-user-transactions/<%= locals.users?.sourceUser.guard %>/<%= locals.users?.sourceUser.id %>">
+                View User
+              </a>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+      <% } %>
+    <% if((locals.guard=='chargingPoint')||(locals.guard=='user'&&locals.transaction.operation_type=='charging')){ %>
+      <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-text-width"></i>
+                Charging Point
+              </h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <dl class="row">
+                <dt class="col-sm-8">Name</dt>
+                <dd class="col-sm-4"><%= locals.users?.chargingPoint.name %></dd>
+                <dt class="col-sm-8">Phone</dt>
+                <dd class="col-sm-4"><%= locals.users?.chargingPoint.phone %></dd>
+                <dt class="col-sm-8">Email</dt>
+                <dd class="col-sm-4"><%= locals.users?.chargingPoint.email %></dd>
+                <dt class="col-sm-8">Was Pending</dt>
+                <dd class="col-sm-4"><%= locals.users?.chargingPoint.wasPending %></dd>
+              </dl>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <a href="/report/system-user-transactions/<%= locals.users?.chargingPoint.guard %>/<%= locals.users?.chargingPoint.id %>">
+                View User
+              </a>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+      <% } %>
+      <% if((locals.guard=='company'||locals.guard=='chargingPoint')||(locals.guard=='user'&&(locals.transaction.operation_type=='transfer'||locals.transaction.operation_type=='charging'))){ %>
+        <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-text-width"></i>
+                  Target User
+                </h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <dl class="row">
+                  <dt class="col-sm-8">Name</dt>
+                  <dd class="col-sm-4"><%= locals.users?.targetUser.name %></dd>
+                  <dt class="col-sm-8">Wallet ID</dt>
+                  <dd class="col-sm-4"><%= locals.users?.targetUser.wallet_id %></dd>
+                  <dt class="col-sm-8">Phone</dt>
+                  <dd class="col-sm-4"><%= locals.users?.targetUser.phone %></dd>
+                  <dt class="col-sm-8">Email</dt>
+                  <dd class="col-sm-4"><%= locals.users?.targetUser.email %></dd>
+                  <dt class="col-sm-8">National ID</dt>
+                  <dd class="col-sm-4"><%= locals.users?.targetUser.national_id %></dd>
+                </dl>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <a href="/report/system-user-transactions/<%= locals.users?.targetUser.guard %>/<%= locals.users?.targetUser.id %>">
+                  View User
+                </a>
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>
+        <% } %>
+    <% if((locals.guard=='company')||(locals.guard=='user'&&locals.transaction.operation_type=='payment')){ %>
+      <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-text-width"></i>
+                Company
+              </h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <dl class="row">
+                <dt class="col-sm-8">Name</dt>
+                <dd class="col-sm-4"><%= locals.users?.company.name %></dd>
+                <dt class="col-sm-8">Company Wallet ID</dt>
+                <dd class="col-sm-4"><%= locals.users?.company.company_wallet_id %></dd>
+                <dt class="col-sm-8">Phone</dt>
+                <dd class="col-sm-4"><%= locals.users?.company.phone %></dd>
+                <dt class="col-sm-8">Email</dt>
+                <dd class="col-sm-4"><%= locals.users?.company.email %></dd>
+              </dl>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <a href="/report/system-user-transactions/<%= locals.users?.company.guard %>/<%= locals.users?.company.id %>">
+                View User 
+              </a>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+      <% } %>
+
+<%- include('../components/buttom.ejs') %>
