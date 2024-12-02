@@ -24,16 +24,16 @@ class ApiAuth{
         }
         return this;
     }
-    #defineRelations(model){
-        model.hasMany(AccessToken,{
-            foreignKey:'userId',
-        })
-        AccessToken.belongsTo(model,{
-            foreignKey:'userId',
-        })
-    }
+    // #defineRelations(model){
+    //     model.hasMany(AccessToken,{
+    //         foreignKey:'userId',
+    //     })
+    //     AccessToken.belongsTo(model,{
+//         foreignKey:'userId',
+    //     })
+    // }
     applyApiAuth(model){
-        this.#defineRelations(model);
+        // this.#defineRelations(model);
         // model.prototype.generateToken=async function(revokePrev=false){
         //     const guardObj=authConfig.guards[this.guard];
         //     if(!guardObj.drivers.includes('token')){

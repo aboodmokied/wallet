@@ -14,6 +14,10 @@ const AccessToken=Application.connection.define('access_token',{
      expiresAt:{
       type:DataTypes.BIGINT(),
       allowNull:false
+     },
+     userId:{
+      type:DataTypes.BIGINT,
+      allowNull:false
      }
 })
 

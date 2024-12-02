@@ -1,16 +1,4 @@
-<%- include('../components/top.ejs',{
-    links:[
-        {
-            title:'Transactions',
-            path:'/charging'
-        },
-        {
-            title:'Charg',
-            path:'/charging'
-        },
-        
-    ]
-}) %>
+<%- include('../components/top.ejs') %>
 
 <div class="row">
     
@@ -33,7 +21,7 @@
         
             <%- include('../components/transactions-table.ejs',{
               tableTitle:'System Transactions',
-              transactions:locals.transactions
+              transactions:locals.transactions,
             }) %>
         </div>
         <!-- /.card-body -->

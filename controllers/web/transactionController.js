@@ -1,4 +1,6 @@
 const AppError = require("../../Errors/AppError");
+const ChargingPointTransaction = require("../../models/ChargingPointTransaction");
+const CompanyTransaction = require("../../models/CompanyTransaction");
 const Transaction = require("../../models/Transaction");
 const User = require("../../models/User");
 const TransactionBuilder = require("../../services/transaction/TransactionBuilder");
@@ -65,14 +67,34 @@ exports.verifyTransaction=tryCatch(async(req,res,next)=>{
 
 
 exports.showTransaction=tryCatch(async(req,res,next)=>{
-    const {transaction_id}=req.params;
-    const transaction=await Transaction.findByPk(transaction_id);
-    const operation=await transaction.getOperation();
+    const {transaction_id,guard}=req.params;
+    let transaction;
+    let operation;
+    if(guard=='user'){
+        transaction=await Transaction.findByPk(transaction_id);
+        operation=await transaction.getOperation();
+    }else if(guard=='company'){
+        transaction=await CompanyTransaction.findByPk(transaction_id);
+        operation=await transaction.getPayment();
+    }else if(guard=='chargingPoint'){
+        transaction=await ChargingPointTransaction.findByPk(transaction_id);
+        operation=await transaction.getCharging();
+    }else{
+        throw new BadRequestError('This type of users has no transactions');
+    }
     const users=await operation.getUsers();
-    res.status(200).send({status:true,result:{
+    return res.render('wallet/transaction/transaction-details',{
+        pageTitle:'Transaction Details',
+        guard,
         transaction,
         operation,
         users
-    }});
+    })
+    // res.status(200).send({status:true,result:{
+    //     guard,
+    //     transaction,
+    //     operation,
+    //     users
+    // }});
 });
 

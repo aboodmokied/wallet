@@ -12,6 +12,7 @@ SystemOwner.init({
     },
 },{
     sequelize:Application.connection,
+    tableName:'system_owners',
     defaultScope:{
         attributes:{exclude:['password']}
     },

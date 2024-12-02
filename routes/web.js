@@ -359,9 +359,10 @@ webRoutes.get(
 
 // transaction
 webRoutes.get(
-  "/transaction/:transaction_id",
+  "/transaction/:guard/:transaction_id",
   transactionController.showTransaction
 );
+
 
 // charging
 // =>show charging page

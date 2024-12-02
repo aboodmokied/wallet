@@ -29,13 +29,6 @@ const Wallet = require("../Wallet");
 
 // AccessToken - User
 
-User.hasMany(AccessToken, {
-  foreignKey: "userId",
-});
-
-AccessToken.belongsTo(User, {
-  foreignKey: "userId",
-});
 
 // AccessToken - AuthClient
 AuthClient.hasMany(AccessToken, {

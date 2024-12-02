@@ -137,7 +137,7 @@ exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
   );
   return res.render("wallet/systemOwner/user-transactions-report", {
     pageTitle: "User Transactions Report",
-    user,
+    transactionUser:user,
     transactions: transactions.data,
     responseMetaData: transactions.responseMetaData,
     ...timingData
@@ -183,7 +183,7 @@ exports.dailyMyChPointTransactions = tryCatch(async (req, res, next) => {
   );
   return res.render("wallet/systemOwner/user-transactions-report", {
     pageTitle: "Charging Point Transactions Report",
-    user,
+    transactionUser:user,
     transactions: transactions.data,
     responseMetaData: transactions.responseMetaData,
     ...timingData
