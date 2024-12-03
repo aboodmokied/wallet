@@ -64,8 +64,9 @@ apiRoutes.get(
   verifyToken,
   authController.verifyEmailRequest
 );
-apiRoutes.get(
-  "/auth/verify-email/:token",
+apiRoutes.post(
+  "/auth/verify-email",
+  verifyToken,
   validateRequest("verify-email"),
   verifyEmailToken,
   authController.verifyEmail

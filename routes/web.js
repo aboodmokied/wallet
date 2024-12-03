@@ -265,13 +265,15 @@ webRoutes.post(
 );
 
 // vrify email
+
+// need to modify
 webRoutes.get(
   "/auth/verify-email/request",
   isAuthenticated,
   authController.verifyEmailRequest
 );
-webRoutes.get(
-  "/auth/verify-email/:token",
+webRoutes.post(
+  "/auth/verify-email",
   validateRequest("verify-email"),
   verifyEmailToken,
   authController.verifyEmail

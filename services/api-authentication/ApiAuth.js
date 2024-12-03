@@ -95,7 +95,8 @@ class ApiAuth{
             signature,
             expiresAt
         });
-        return token;
+        const userInstance=await model.findOne({where:{...req.body}})
+        return {token,user};
     };
     async generateTokenWithOauth(userData,revokePrev=false){
         const guardObj=authConfig.guards[this.#guard];

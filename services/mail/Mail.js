@@ -53,19 +53,19 @@ class Mail{
             })
             return true;
         };
-        model.prototype.verifyEmail=async function({hostUrl=null,isApi=false}){
+        model.prototype.verifyEmail=async function(){
             const {email,guard}=this;
             const count=await VerifyEmailToken.count({where:{email,guard,revoked:false}});
             if(count){
                 return 'Verification message already sent, check your email.'
             }
             const service=email.split('@')[1]?.split('.')[0];
-            
-            const token=crypto.randomBytes(32).toString('hex');
-            const hashedToken=crypto.createHash('sha256').update(token).digest('hex');
-            const url=isApi
-            ?`${process.env.APP_Url}:${process.env.PORT||3000}/api/auth/verify-email/${hashedToken}?email=${email}`
-            :`${process.env.APP_Url}:${process.env.PORT||3000}/auth/verify-email/${hashedToken}?email=${email}`
+            const code=Math.floor(100000 + Math.random() * 900000).toString();
+            // const token=crypto.randomBytes(32).toString('hex');
+            // const hashedToken=crypto.createHash('sha256').update(token).digest('hex');
+            // const url=isApi
+            // ?`${process.env.APP_Url}:${process.env.PORT||3000}/api/auth/verify-email/${hashedToken}?email=${email}`
+            // :`${process.env.APP_Url}:${process.env.PORT||3000}/auth/verify-email/${hashedToken}?email=${email}`
             // const url=hostUrl
             // ?`${hostUrl}/verify-email/${hashedToken}?email=${email}`
             // :`${process.env.APP_Url}:${process.env.PORT||3000}/auth/verify-email/${hashedToken}?email=${email}`;
@@ -73,9 +73,9 @@ class Mail{
             const verifyEmailToken=await VerifyEmailToken.create({
                 email,
                 guard,
-                token:hashedToken,
+                code,
             });
-            console.log(url)
+            console.log({code})
             // const transporter=new Mail().getTransporter(service);
             // if(!transporter){
             //     throw new Error(`Transporter Not Found for this service: ${service}`)
