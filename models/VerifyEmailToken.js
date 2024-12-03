@@ -10,7 +10,7 @@ const VerifyEmailToken=Application.connection.define('verify_email_token',{
         type:DataTypes.STRING,
         allowNull:false
     },
-    token:{
+    code:{
         type:DataTypes.STRING,
         allowNull:false,
         unique:true

@@ -172,6 +172,7 @@ exports.postPasswordReset=tryCatch(async(req,res,next)=>{
 
 exports.verifyEmailRequest=tryCatch(async(req,res,next)=>{
     const message=await req.user.verifyEmail();
+    // send a page with form to submit the code
     res.render('auth/message',{
         pageTitle:'Message',
         message
@@ -201,9 +202,10 @@ exports.verifyEmail=tryCatch(async(req,res,next)=>{
         // }
     // }
     // throw new BadRequestError('Invalid Token');
-    if(req.isApi)
-    req.session.targetUser=req.targetUser;
-    res.redirect('/auth/quick-login');
+    // if(req.isApi)
+    // req.session.targetUser=req.targetUser;
+    // res.redirect('/auth/quick-login');
+    res.status(200).send({status:true,result:{message:'Email Verified'}})
 });
 
 

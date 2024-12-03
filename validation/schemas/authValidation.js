@@ -103,7 +103,7 @@ exports.resetValidation = [
   validateConfirmPassword,
 ];
 
-exports.verifyEmailValidation = [normalizeEmailInQuery];
+exports.verifyEmailValidation = [body('code').notEmpty().withMessage('Verification Code Required')];
 
 exports.oauthRequestValidation = [validateOauthProcess, validateOauthGuard];
 
