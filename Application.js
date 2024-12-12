@@ -102,15 +102,20 @@ class Application {
   #applyApiAuth() {
     const ApiAuth = require("./services/api-authentication/ApiAuth");
     const apiAuth = new ApiAuth();
-    const authConfig = require("./config/authConfig");
-    const guards=authConfig.guards;
-    for(let guard in guards){
-      const guardObj=guards[guard];
-      if(guardObj.drivers.includes['token']){
-        const model=authConfig.providers[guardObj.provider]?.model;
-        apiAuth.applyApiAuth(model);
-      }
-    }
+    // const authConfig = require("./config/authConfig");
+    // const guards=authConfig.guards;
+    // for(let guard in guards){
+    //   const guardObj=guards[guard];
+    //   if(guardObj.drivers.includes('token')){
+    //     const model=authConfig.providers[guardObj.provider]?.model;
+    //     apiAuth.applyApiAuth(model);
+    //   }
+    // }
+    const SystemUser = require("./models/SystemUser");
+    // const User = require("./models/User");
+    // const Company = require("./models/Company");
+    
+    apiAuth.applyApiAuth(SystemUser);
   }
   async #defineAuthorization() {
     const Authorize = require("./services/authorization/Authorize");

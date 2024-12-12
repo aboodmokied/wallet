@@ -7,10 +7,10 @@ const authConfig = require("../../../config/authConfig");
 
 const verifyToken=tryCatch(async(req,res,next)=>{
     const requestToken=req.headers.authorization;
-    console.log(requestToken);
-    if(requestToken?.startsWith('Bearer')){
+    if(requestToken?.startsWith('Bearer')&&requestToken?.split(' ')[1]){
         const token=requestToken.split(' ')[1];
         const signature=token.split('.')[2];
+        if(token&&signature){
         const accessToken=await AccessToken.findOne({where:{signature,revoked:false}});
         if(accessToken){
             if(accessToken.expiresAt>=Date.now()){
@@ -43,6 +43,8 @@ const verifyToken=tryCatch(async(req,res,next)=>{
             }
             
         }
+        }
+        
     }
     throw new AuthenticationError();
 });
