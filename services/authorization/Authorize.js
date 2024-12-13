@@ -32,25 +32,25 @@ class Authorize{
     }
     #defineRelations(){
         // role - permission
-        Role.belongsToMany(Permission,{
-            through:RoleHasPermission,
-            foreignKey:'roleId',
-            otherKey:'permissionId'
-        })
+        // Role.belongsToMany(Permission,{
+        //     through:RoleHasPermission,
+        //     foreignKey:'roleId',
+        //     otherKey:'permissionId'
+        // })
 
-        Permission.belongsToMany(Role,{
-            through:RoleHasPermission,
-            foreignKey:'permissionId',
-            otherKey:'roleId'
-        })
+        // Permission.belongsToMany(Role,{
+        //     through:RoleHasPermission,
+        //     foreignKey:'permissionId',
+        //     otherKey:'roleId'
+        // })
 
-        Role.hasMany(UserHasRole,{
-            foreignKey:'roleId',
-            // onDelete:'SET-NULL'
-        });
-        UserHasRole.belongsTo(Role,{
-            foreignKey:'roleId'
-        })
+        // Role.hasMany(UserHasRole,{
+        //     foreignKey:'roleId',
+        //     // onDelete:'SET-NULL'
+        // });
+        // UserHasRole.belongsTo(Role,{
+        //     foreignKey:'roleId'
+        // })
     }
     applyAuthorization(model){
 

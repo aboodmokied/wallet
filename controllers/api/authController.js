@@ -9,14 +9,24 @@ exports.register=tryCatch(async(req,res,next)=>{
     // Before: guard and user data validation required, check if user exist.
     const {guard}=req.body;
     const user=await new Register().withGuard(guard).create(req);
-    console.log({user});
     res.status(201).send({status:true,result:{user}});
 });
 
+
 exports.login=tryCatch(async(req,res,next)=>{
     const {guard}=req.body;
-    const {token,user}=await new ApiAuth().withGuard(guard).generateToken(req);
-    res.send({status:true,result:{token,user}})
+    const {accessToken,user}=await new ApiAuth().withGuard(guard).jwtLogin(req,res);
+    res.send({status:true,result:{accessToken,user}});
+})
+
+exports.logout=tryCatch(async(req,res,next)=>{
+    await new ApiAuth().logout(req,res);
+    res.send({status:true});
+});
+
+exports.refresh=tryCatch(async(req,res,next)=>{
+    const {accessToken,user}=await new ApiAuth().refresh(req);
+    res.send({status:true,result:{accessToken,user}});
 })
 
 exports.getCurrentUser=(req,res,next)=>{
@@ -25,11 +35,13 @@ exports.getCurrentUser=(req,res,next)=>{
     }});   
 };
 
-exports.logout=tryCatch(async(req,res,next)=>{
-    const {user,userSignature}=req;
-    await user.apiLogoutCurrentSession(userSignature);
-    res.status(200).send({status:true});
-})
+// exports.logout=tryCatch(async(req,res,next)=>{
+//     // const {user,userSignature}=req;
+//     // await user.apiLogoutCurrentSession(userSignature);
+//     // res.status(200).send({status:true});
+    
+// })
+
 // exports.logoutAll=tryCatch(async(req,res,next)=>{
 //     const {user}=req;
 //     await user.apiLogout();

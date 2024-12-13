@@ -50,10 +50,10 @@ class Application {
     this.#applyApiAuth();
     this.#defineGoogleOauth();
     await this.#database.migrate(); // sync database
-    await this.#defineApiAuth();
-    await this.#defineAuthorization();
+    await this.#syncApiAuth();
+    await this.#syncAuthorization();
     this.#applyAuthorization();
-    this.#defineMailing();
+    this.#syncMailing();
     this.#applyMailing();
   }
 
@@ -95,7 +95,7 @@ class Application {
     this.#app.use(Kernal.error);
   }
 
-  async #defineApiAuth() {
+  async #syncApiAuth() {
     const ApiAuth = require("./services/api-authentication/ApiAuth");
     await new ApiAuth().setup();
   }
@@ -117,7 +117,7 @@ class Application {
     
     apiAuth.applyApiAuth(SystemUser);
   }
-  async #defineAuthorization() {
+  async #syncAuthorization() {
     const Authorize = require("./services/authorization/Authorize");
     await new Authorize().setup();
   }
@@ -131,7 +131,7 @@ class Application {
     // authorize.applyAuthorization(User);
     // authorize.applyAuthorization(Company);
   }
-  #defineMailing() {
+  #syncMailing() {
     const Mail = require("./services/mail/Mail");
     new Mail().setup();
   }

@@ -5,12 +5,15 @@ const AuthClient=Application.connection.define('auth_client',{
     guard:{
         type:DataTypes.STRING,
         allowNull:false,
-        unique:true
     },
     secret:{
         type:DataTypes.STRING,
         allowNull:false,
         unique:true
+    },
+    type:{
+        type:DataTypes.ENUM(["refresh","access"]),
+        allowNull:false
     },
     revoked:{
         type:DataTypes.BOOLEAN,

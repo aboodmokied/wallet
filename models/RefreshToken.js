@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const Application = require("../Application");
 
-const AccessToken=Application.connection.define('access_token',{
+const RefreshToken=Application.connection.define('refresh_token',{
      signature:{
         type:DataTypes.STRING,
         allowNull:false,
@@ -22,4 +22,4 @@ const AccessToken=Application.connection.define('access_token',{
 })
 
 
-module.exports=AccessToken;
+module.exports=RefreshToken;

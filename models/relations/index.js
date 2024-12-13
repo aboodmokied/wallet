@@ -9,35 +9,63 @@ const Company = require("../Company");
 const CompanyTransaction = require("../CompanyTransaction");
 const CompanyWallet = require("../CompanyWallet");
 const Payment = require("../Payment");
+const Permission = require("../Permission");
+const RefreshToken = require("../RefreshToken");
+const Role = require("../Role");
+const RoleHasPermission = require("../RoleHasPermission");
 const Transaction = require("../Transaction");
 const Transfer = require("../Transfer");
 const User = require("../User");
+const UserHasRole = require("../UserHasRole");
 const Wallet = require("../Wallet");
 
-// user - role
-// User.belongsToMany(Role,{
-//     through:UserHasRole,
-//     foreignKey:'userId',
-//     otherKey:'roleId'
-// })
 
-// Role.belongsToMany(User,{
-//     through:UserHasRole,
-//     foreignKey:'roleId',
-//     otherKey:'userId'
-// })
-
-// AccessToken - User
-
-
-// AccessToken - AuthClient
 AuthClient.hasMany(AccessToken, {
-  foreignKey: "clientId",
+  foreignKey: "client_id",
 });
 
 AccessToken.belongsTo(AuthClient, {
-  foreignKey: "clientId",
+  foreignKey: "client_id",
 });
+
+AuthClient.hasMany(RefreshToken, {
+  foreignKey: "client_id",
+});
+
+RefreshToken.belongsTo(AuthClient, {
+  foreignKey: "client_id",
+});
+
+RefreshToken.hasMany(AccessToken,{
+  foreignKey: "refresh_id",
+})
+
+AccessToken.belongsTo(RefreshToken,{
+  foreignKey: "refresh_id",
+});
+
+
+
+Role.belongsToMany(Permission,{
+  through:RoleHasPermission,
+  foreignKey:'roleId',
+  otherKey:'permissionId'
+})
+
+Permission.belongsToMany(Role,{
+  through:RoleHasPermission,
+  foreignKey:'permissionId',
+  otherKey:'roleId'
+})
+
+Role.hasMany(UserHasRole,{
+  foreignKey:'roleId',
+  // onDelete:'SET-NULL'
+});
+UserHasRole.belongsTo(Role,{
+  foreignKey:'roleId'
+})
+
 
 // // user - wallet
 User.hasOne(Wallet, {
