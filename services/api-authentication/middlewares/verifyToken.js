@@ -14,25 +14,20 @@ const verifyToken=tryCatch(async(req,res,next)=>{
         const accessToken=await AccessToken.findOne({where:{signature,revoked:false}});
         if(accessToken){
             if(accessToken.expiresAt>=Date.now()){
-                console.log('1');
-                const authClient=await AuthClient.findOne({where:{id:accessToken.clientId,revoked:false}});
+                const authClient=await AuthClient.findOne({where:{id:accessToken.client_id,revoked:false}});
                 if(authClient){
-                    console.log('2');
                     let payload=null;
                     try {
                         payload=jwt.verify(token,authClient.secret); // throws an error
                     } catch (error) {
                         throw new AuthenticationError('Unathorized, Invalid Token');
                     }
-                    console.log({payload,accessToken});
-                    if(payload?.id==accessToken.userId){
-                        console.log('3');
+                    if(payload?.id==accessToken.user_id){
                         const {guard}=authClient;
                         const guardObj=authConfig.guards[guard];
                         const model=authConfig.providers[guardObj.provider].model;
-                        const user=await model.findByPk(accessToken.userId);
+                        const user=await model.findByPk(accessToken.user_id);
                         if(user){
-                            console.log('4');
                             req.user=user;
                             req.userSignature=signature;
                             return next();

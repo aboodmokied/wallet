@@ -9,6 +9,7 @@ const {payloadConfig} = require('./config/securityConfig');
 const corsMiddleware = require('./middlewares/corsMiddleware');
 const verifyUser = require('./services/authentication/middlewares/verifyUser');
 const session=require('express-session');
+const cookieParser=require('cookie-parser');
 const differentiateRequests = require('./middlewares/differentiateRequests');
 const addWith = require('./middlewares/addWith');
 const appendLocals = require('./middlewares/appendLocals');
@@ -17,6 +18,7 @@ const userToLocals = require('./middlewares/userToLocals');
 const notFoundHandler = require('./middlewares/notFoundHandler');
 const hpp = require('hpp');
 const appendGuardsToLocals = require('./middlewares/appendGuardsToLocals');
+const credentialsHeaders = require('./middlewares/credintialsHeaders');
 const Kernal={
     global:[
         requestLogger,
@@ -32,10 +34,12 @@ const Kernal={
               httpOnly: true // Ensures the cookie is not accessible via JavaScript
             }
           }),
+        cookieParser(secret='test'),
         differentiateRequests  
     ],
     security:[
         helmet(), // adds many security headers
+        credentialsHeaders,
         corsMiddleware(),
         hpp()
     ],

@@ -19,12 +19,13 @@ const userCanVerifyTransaction = require("../middlewares/userCanVerifyTransactio
 const authorizePermission = require("../services/authorization/middlewares/authorizePermission");
 
 apiRoutes.post("/login", validateRequest("api-login"), authController.login);
+apiRoutes.get("/refresh", authController.refresh);
 apiRoutes.post(
   "/register",
   validateRequest("api-register"),
   authController.register
 );
-apiRoutes.get("/logout", verifyToken, authController.logout);
+apiRoutes.get("/logout",verifyToken,authController.logout);
 // apiRoutes.get('/logout/all',verifyToken,authController.logout);
 // Oauth
 apiRoutes.get(
@@ -36,11 +37,12 @@ apiRoutes.get("/auth/google/callback", oAuthController.googleAuthResponse);
 
 apiRoutes.post(
   "/test",
+  verifyToken,
   tryCatch(async (req, res, next) => {
     // const {data,respronseMetaDate}=await new QueryFeatures(req).findAllWithFeatures(Student);
     // console.log('asdasd',{data,respronseMetaDate})
     // res.send({status:true,result:{data},...respronseMetaDate});
-    await Category.create({name:req.body.name});
+    // await Category.create({ name: req.body.name });
     res.status(200).send({ status: true });
   })
 );
@@ -75,49 +77,74 @@ apiRoutes.post(
 // *** transaction operations
 
 // transfer
-  // user
-apiRoutes.get('/user/:user_phone',verifyToken,isVerified,userController.getUserByPhone);
+// user
+apiRoutes.get(
+  "/user/:user_phone",
+  verifyToken,
+  isVerified,
+  userController.getUserByPhone
+);
 apiRoutes.post(
   "/transfer",
   verifyToken,
   isVerified,
-  authorizePermission('can-transfer'),
-  validateRequest('transfer'),
+  authorizePermission("can-transfer"),
+  validateRequest("transfer"),
   transactionController.transfer
 );
 
-
 // payment
-    // category
-apiRoutes.get('/category',verifyToken,isVerified,categoryController.index);
-apiRoutes.get('/category-companies/:category_id',verifyToken,isVerified,validateRequest('category-companies'),categoryController.getCategoryCompanies);
-    // company
-apiRoutes.get('/company/:company_id',verifyToken,isVerified,validateRequest('get-company'),companyController.show);
-    // operation
+// category
+apiRoutes.get("/category", verifyToken, isVerified, categoryController.index);
+apiRoutes.get(
+  "/category-companies/:category_id",
+  verifyToken,
+  isVerified,
+  validateRequest("category-companies"),
+  categoryController.getCategoryCompanies
+);
+// company
+apiRoutes.get(
+  "/company/:company_id",
+  verifyToken,
+  isVerified,
+  validateRequest("get-company"),
+  companyController.show
+);
+// operation
 apiRoutes.post(
   "/payment",
   verifyToken,
   isVerified,
-  authorizePermission('can-payment'),
-  validateRequest('payment'),
+  authorizePermission("can-payment"),
+  validateRequest("payment"),
   transactionController.payment
 );
-
 
 apiRoutes.post(
   "/verify-transaction",
   verifyToken,
   userCanVerifyTransaction,
-  validateRequest('verify-transaction'),
+  validateRequest("verify-transaction"),
   transactionController.verifyTransaction
 );
 
-
-
 // loggedin user transactions
-apiRoutes.get('/current-user-transaction',verifyToken,isVerified,authorizePermission('has-transactions'),transactionController.currentUserTransactions);
-apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,isVerified,authorizePermission('has-transactions'),validateRequest('show-transaction'),transactionController.showCurrentUserTransaction);
-
+apiRoutes.get(
+  "/current-user-transaction",
+  verifyToken,
+  isVerified,
+  authorizePermission("has-transactions"),
+  transactionController.currentUserTransactions
+);
+apiRoutes.get(
+  "/current-user-transaction/:transaction_id",
+  verifyToken,
+  isVerified,
+  authorizePermission("has-transactions"),
+  validateRequest("show-transaction"),
+  transactionController.showCurrentUserTransaction
+);
 
 // => role: systemOwner
 // transaction
@@ -130,12 +157,5 @@ apiRoutes.get('/current-user-transaction/:transaction_id',verifyToken,isVerified
 // // company transactions
 // apiRoutes.get('/company-transaction/:company_id',transactionController.companyTransactions);
 // apiRoutes.get('/company-transaction/:transaction_id',transactionController.showCompanyTransaction);
-
-
-
-
-
-
-
 
 module.exports = apiRoutes;
