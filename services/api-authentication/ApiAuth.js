@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const authConfig = require("../../config/authConfig");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const AuthClient = require("../../models/AuthClient");
@@ -83,9 +83,13 @@ class ApiAuth {
     const authClient = await AuthClient.findOne({
       where: { guard: user.guard, type: "access", revoked: false },
     });
-    const accessToken = jwt.sign({ id: user.id }, authClient.secret);
+    const payload = {
+      id: user.id,
+      uniqueId: `${Date.now()}-${Math.random()}`, // High-precision timestamp with randomness
+    };
+    const accessToken = jwt.sign(payload, authClient.secret);
     const signature = accessToken.split(".")[2];
-    const expiresAt = Date.now() + 1 * 60 * 1000; // 15 min
+    const expiresAt = Date.now() + 0.25 * 60 * 1000; // 15 min
 
     if (revokeAllPrev) {
       await AccessToken.update(
@@ -113,12 +117,16 @@ class ApiAuth {
     });
     return { accessInstance, accessToken };
   }
-  
+
   async #generateRefresh(user, revokePrev = false) {
     const authClient = await AuthClient.findOne({
       where: { guard: user.guard, type: "refresh", revoked: false },
     });
-    const refreshToken = jwt.sign({ id: user.id }, authClient.secret);
+    const payload = {
+      id: user.id,
+      uniqueId: `${Date.now()}-${Math.random()}`, // High-precision timestamp with randomness
+    };
+    const refreshToken = jwt.sign(payload, authClient.secret);
     const signature = refreshToken.split(".")[2];
     const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 day
 
@@ -137,7 +145,7 @@ class ApiAuth {
     return { refreshInstance, refreshToken };
   }
 
-  async jwtLogin(req,res,revokePrev = false) {
+  async jwtLogin(req, res, revokePrev = false) {
     const password = req.body.password;
     delete req.body.password;
     const guardObj = authConfig.guards[this.#guard];
@@ -155,14 +163,19 @@ class ApiAuth {
       user,
       revokePrev
     );
-    
+
     const { accessToken } = await this.#generateAccess(
       user,
       refreshInstance,
       revokePrev
     );
     // add refresh token for cookie
-    res.cookie('refresh',refreshToken,{httpOnly:true,sameSite:'None',secure:false,maxAge:30 * 24 * 60 * 60 * 1000})
+    res.cookie("refresh", refreshToken, {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
     const userInstance = await model.findOne({ where: { ...req.body } });
     return { accessToken, refreshToken, user: userInstance };
   }
@@ -196,6 +209,17 @@ class ApiAuth {
                 const model = authConfig.providers[guardObj.provider].model;
                 const user = await model.findByPk(refreshToken.user_id);
                 if (user) {
+                  // get a vaild exist access token
+                  const validExistAccessToken = await AccessToken.findOne({
+                    where: {
+                      refresh_id: refreshToken.id,
+                      revoked: false,
+                      expiresAt: { [Op.gt]: Date.now() },
+                    },
+                  });
+                  if (validExistAccessToken) {
+                    return { accessToken: validExistAccessToken, user };
+                  }
                   // generate new Access token
                   const { accessToken } = await this.#generateAccess(
                     user,
@@ -231,7 +255,11 @@ class ApiAuth {
           );
         }
       }
-      res.clearCookie('refresh',{httpOnly:true,sameSite:'None',secure:false});
+      res.clearCookie("refresh", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+      });
     } else if (req.user && req.signature) {
       // there is access token without refresh token
       const { signature } = req;

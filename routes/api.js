@@ -25,7 +25,7 @@ apiRoutes.post(
   validateRequest("api-register"),
   authController.register
 );
-apiRoutes.get("/logout", authController.logout);
+apiRoutes.get("/logout",verifyToken,authController.logout);
 // apiRoutes.get('/logout/all',verifyToken,authController.logout);
 // Oauth
 apiRoutes.get(

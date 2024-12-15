@@ -18,6 +18,7 @@ const userToLocals = require('./middlewares/userToLocals');
 const notFoundHandler = require('./middlewares/notFoundHandler');
 const hpp = require('hpp');
 const appendGuardsToLocals = require('./middlewares/appendGuardsToLocals');
+const credentialsHeaders = require('./middlewares/credintialsHeaders');
 const Kernal={
     global:[
         requestLogger,
@@ -38,6 +39,7 @@ const Kernal={
     ],
     security:[
         helmet(), // adds many security headers
+        credentialsHeaders,
         corsMiddleware(),
         hpp()
     ],
