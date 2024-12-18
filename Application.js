@@ -55,6 +55,7 @@ class Application {
     this.#applyAuthorization();
     this.#syncMailing();
     this.#applyMailing();
+    this.#runSeeders();
   }
 
 
@@ -148,15 +149,16 @@ class Application {
     googleOauth.setup();
   }
 
-  // #inheretAssociations(){
-  //   const authConfig=require('./config/authConfig');
-  //   const SystemUser = require("./models/SystemUser");
-  //   for(let providerName in authConfig.providers){
-  //     const model=authConfig.providers[providerName]?.model;
-  //     console.log({assoc:SystemUser.associate});
-  //     model.associate=SystemUser.associate;
-  //   }
-  // }
+  async #runSeeders(){
+    const Category = require("./models/Category");
+    const categories=['University','School','Other'];
+    for(let category of categories){
+      const count = await Category.count({where:{name:category}});
+      if(!count){
+        await Category.create({name:category});
+      }
+    }
+  }
 }
 
 module.exports = Application;

@@ -95,7 +95,7 @@ apiRoutes.post(
 
 // payment
 // category
-apiRoutes.get("/category", verifyToken, isVerified, categoryController.index);
+apiRoutes.get("/category", categoryController.index);
 apiRoutes.get(
   "/category-companies/:category_id",
   verifyToken,
