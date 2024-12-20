@@ -70,13 +70,20 @@ exports.postCodePasswordResetRequest = tryCatch(async (req, res, next) => {
   });
 });
 
+exports.postCodePasswordResetVerification=tryCatch(async(req,res,next)=>{
+  const passReset = new CodePasswordReset();
+  await passReset.verify(req,res);
+  res.status(200).send({status:true,result:{message:'Code Verified Successfully, verification_token was added to the client Cookies, sent the new password with credintials..'}})
+});
+
+
 exports.postCodePasswordReset = tryCatch(async (req, res, next) => {
   // BEFORE: verifyPasswordResetToken Middleware
   const updatedUser = await new CodePasswordReset().update(req);
   res.send({
     status: true,
     result: {
-      message: "Password Updated Succefully",
+      message: "Password Updated Succefully, try to login",
       user: updatedUser,
     },
   });

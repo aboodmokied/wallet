@@ -17,6 +17,7 @@ const { body } = require("express-validator");
 const Category = require("../models/Category");
 const userCanVerifyTransaction = require("../middlewares/userCanVerifyTransaction");
 const authorizePermission = require("../services/authorization/middlewares/authorizePermission");
+const verifyCodePassResetToken = require("../services/code-password-reset/middlewares/verifyCodePassResetToken");
 
 apiRoutes.post("/login", validateRequest("api-login"), authController.login);
 apiRoutes.get("/refresh", authController.refresh);
@@ -49,15 +50,17 @@ apiRoutes.post(
 
 // password reset
 apiRoutes.post(
-  "/auth/password-reset/request",
-  validateRequest("request-reset"),
-  authController.postPasswordResetRequest
+  "/password-reset/request",
+  authController.postCodePasswordResetRequest
 );
 apiRoutes.post(
-  "/auth/password-reset",
-  validateRequest("reset"),
-  verifyPassResetToken("body"),
-  authController.postPasswordReset
+  "/password-reset/verify",
+  authController.postCodePasswordResetVerification
+);
+apiRoutes.post(
+  "/password-reset",
+  verifyCodePassResetToken,
+  authController.postCodePasswordReset
 );
 
 // email verification
