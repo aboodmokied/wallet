@@ -1,5 +1,6 @@
 const AccessToken = require("../../models/AccessToken");
 const ApiAuth = require("../../services/api-authentication/ApiAuth");
+const CodePasswordReset = require("../../services/code-password-reset/CodePasswordReset");
 const PasswordReset = require("../../services/password-reset/PasswordReset");
 const Register = require("../../services/registration/Register");
 const tryCatch = require("../../util/tryCatch");
@@ -53,14 +54,14 @@ exports.getCurrentUser = (req, res, next) => {
 // })
 
 // pass reset
-exports.postPasswordResetRequest = tryCatch(async (req, res, next) => {
+exports.postCodePasswordResetRequest = tryCatch(async (req, res, next) => {
   const { email, guard } = req.body;
-  const passReset = new PasswordReset();
+  const codePassReset = new CodePasswordReset();
   // const wasSent=await passReset.withEmail(email).withGuard(guard).request(process.env.FRONT_HOST);
-  const wasSent = await passReset
+  await codePassReset
     .withEmail(email)
     .withGuard(guard)
-    .request("www.my-front.com");
+    .request();
   res.send({
     status: true,
     result: {
