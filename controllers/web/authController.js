@@ -138,6 +138,7 @@ exports.getPasswordResetRequest=(req,res,next)=>{
     })
 };
 exports.postPasswordResetRequest=tryCatch(async(req,res,next)=>{
+    console.log('0000000000000');
     const {email,guard}=req.body;
     const passReset=new PasswordReset();
     const wasSent=await passReset.withEmail(email).withGuard(guard).request();

@@ -106,7 +106,7 @@ class CodePasswordReset{
                             uniqueId: `${Date.now()}-${Math.random()}`,
                           };
                         const verification_token=jwt.sign(payload,'sec.abood');
-                        await PasswordResetCode.update({verification_token:null,revoked:true},{where:{email,guard}})
+                        await PasswordResetCode.update({signature:null,revoked:true},{where:{email,guard}})
                         const signature=verification_token.split('.')[2];
                         await passResetCode.update({signature});
                         res.cookie("verification_token", verification_token, {
@@ -127,7 +127,7 @@ class CodePasswordReset{
         throw new ValidationError([{path:'code',msg:`Invalid Code, Remaining Attemps: ${passResetCode.attemps}`}]);
     }
 
-    async update(req){
+    async update(req,res){
         // everything was verified
         const {password}=req.body;
         const {targetUserEmail, targetUserGuard}=req; // added by verifyPassResetToken Middleware

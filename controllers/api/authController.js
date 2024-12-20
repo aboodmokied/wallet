@@ -79,7 +79,7 @@ exports.postCodePasswordResetVerification=tryCatch(async(req,res,next)=>{
 
 exports.postCodePasswordReset = tryCatch(async (req, res, next) => {
   // BEFORE: verifyPasswordResetToken Middleware
-  const updatedUser = await new CodePasswordReset().update(req);
+  const updatedUser = await new CodePasswordReset().update(req,res);
   res.send({
     status: true,
     result: {
