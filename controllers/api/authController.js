@@ -65,14 +65,14 @@ exports.postCodePasswordResetRequest = tryCatch(async (req, res, next) => {
   res.send({
     status: true,
     result: {
-      message: "Mail was sent, check your email box",
+      message: "Code was sent, check your email box",
     },
   });
 });
 
-exports.postPasswordReset = tryCatch(async (req, res, next) => {
+exports.postCodePasswordReset = tryCatch(async (req, res, next) => {
   // BEFORE: verifyPasswordResetToken Middleware
-  const updatedUser = await new PasswordReset().update(req);
+  const updatedUser = await new CodePasswordReset().update(req);
   res.send({
     status: true,
     result: {
