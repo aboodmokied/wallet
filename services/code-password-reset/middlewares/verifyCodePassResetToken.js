@@ -3,10 +3,6 @@ const PasswordResetCode = require("../../../models/PasswordResetCode");
 const tryCatch = require("../../../util/tryCatch");
 
 const verifyCodePassResetToken=tryCatch(async(req,res,next)=>{
-    // token
-    // exp
-    // after update
-    // set token to null
     const { cookies } = req;
     const { verification_token } = cookies;
     if (verification_token) {

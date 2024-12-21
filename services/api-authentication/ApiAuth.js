@@ -210,16 +210,16 @@ class ApiAuth {
                 const user = await model.findByPk(refreshToken.user_id);
                 if (user) {
                   // get a vaild exist access token
-                  const validExistAccessToken = await AccessToken.findOne({
-                    where: {
-                      refresh_id: refreshToken.id,
-                      revoked: false,
-                      expiresAt: { [Op.gt]: Date.now() },
-                    },
-                  });
-                  if (validExistAccessToken) {
-                    return { accessToken: validExistAccessToken, user };
-                  }
+                  // const validExistAccessToken = await AccessToken.findOne({
+                  //   where: {
+                  //     refresh_id: refreshToken.id,
+                  //     revoked: false,
+                  //     expiresAt: { [Op.gt]: Date.now() },
+                  //   },
+                  // });
+                  // if (validExistAccessToken) {
+                  //   return { accessToken: validExistAccessToken, user };
+                  // }
                   // generate new Access token
                   const { accessToken } = await this.#generateAccess(
                     user,

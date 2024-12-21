@@ -9,6 +9,28 @@ class User extends SystemUser{
 
 
 User.init({
+    id:{
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    email: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+        unique:true
+    },
+    name: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    verified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
     national_id:{
         type:DataTypes.STRING,
         allowNull:true,
