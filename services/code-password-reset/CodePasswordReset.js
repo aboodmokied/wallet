@@ -120,10 +120,12 @@ class CodePasswordReset{
                 }
             }else{
                 passResetCode.attemps-=1;
+                await passResetCode.save();
             }
-            await passResetCode.save();
         }
-        // throw new BadRequestError('Invalid Code');
+        if(passResetCode.attemps==0){
+            throw new BadRequestError('No Remaining Attemps');
+        }
         throw new ValidationError([{path:'code',msg:`Invalid Code, Remaining Attemps: ${passResetCode.attemps}`}]);
     }
 

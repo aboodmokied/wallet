@@ -9,7 +9,6 @@ const verifyCodePassResetToken=tryCatch(async(req,res,next)=>{
     // set token to null
     const { cookies } = req;
     const { verification_token } = cookies;
-    console.log({suiiii:verification_token});
     if (verification_token) {
         const signature = verification_token.split(".")[2];
         if (signature) {
