@@ -28,6 +28,18 @@ const User = require("../models/User");
 const userCanVerifyTransaction = require("../middlewares/userCanVerifyTransaction");
 const authConfig = require("../config/authConfig");
 const NotFoundError = require("../Errors/ErrorTypes/NotFoundError");
+const { validateGuard, validateOauthGuard, validateRegisterByAdminGuard } = require("../validation/validations/guardValidations");
+const { validateEmail, validateEmailExistence, validateEmailIsFound, normalizeEmailInQuery } = require("../validation/validations/emailValidations");
+const { validateLoginPassword, validateRegisterPassword, validateConfirmPassword } = require("../validation/validations/passwordValidations");
+const { validateOauthProcess, validateToken, validateCode, validateTiming, validateVerificationCode, validateAmount, validateAmountInQuery } = require("../validation/validations/otherValidations");
+const { validateName } = require("../validation/validations/nameValidations");
+const { validateRoleName, validateRoleExistance } = require("../validation/validations/roleValidations");
+const { validatePermissionExistance } = require("../validation/validations/permissionValidations");
+const { validateUserExistance, validateUserInParam } = require("../validation/validations/userValidations");
+const { validateCategoryName, validateCategoryIsFound } = require("../validation/validations/categoryValidations");
+const { validateChargingPointIsFound } = require("../validation/validations/chargingPointValidations");
+const { validateTargetPhone, validateTargetPhoneInQuery } = require("../validation/validations/phoneValidations");
+const { validateTransaction, validateTransactionInParam } = require("../validation/validations/transactionsValidations");
 
 const webRoutes = express.Router();
 
@@ -56,14 +68,18 @@ webRoutes.get("/", isAuthenticated, async (req, res, next) => {
 webRoutes.get(
   "/auth/login/:guard",
   isGuest,
-  validateRequest("login-page"),
+  validateRequest([validateGuard("param", false, true)]),
   authController.getLogin
 );
 webRoutes.get("/auth/quick-login", isGuest, authController.getQuickLogin);
 webRoutes.post(
   "/auth/login",
   isGuest,
-  validateRequest("login"),
+  validateRequest([
+    validateEmail,
+    validateGuard("body", false, true),
+    validateLoginPassword,
+  ]),
   authController.postLogin
 );
 
@@ -71,7 +87,7 @@ webRoutes.post(
 webRoutes.get(
   "/auth/google/:process/:guard",
   isGuest,
-  validateRequest("oauth-request"),
+  validateRequest([validateOauthProcess, validateOauthGuard]),
   oAuthController.googleAuthRequest
 );
 webRoutes.get("/api/auth/google/callback", oAuthController.googleAuthResponse);
@@ -80,13 +96,20 @@ webRoutes.get("/api/auth/google/callback", oAuthController.googleAuthResponse);
 webRoutes.get(
   "/auth/register/:guard",
   isGuest,
-  validateRequest("register-page"),
+  validateRequest([validateGuard("param", true, true)]),
   authController.getRegister
 );
 webRoutes.post(
   "/auth/register",
   isGuest,
-  validateRequest("register"),
+  validateRequest([
+    validateEmail,
+    validateEmailExistence,
+    validateName,
+    validateGuard("body"),
+    validateRegisterPassword,
+    validateConfirmPassword,
+  ]),
   authController.postRegister
 );
 
@@ -117,14 +140,21 @@ webRoutes.get(
   "/auth/register-by-admin/request/:guard",
   isAuthenticated,
   conditionalMiddleware("can-create-charging-point"),
-  validateRequest("register-by-admin-request-page"),
+  validateRequest([
+    validateGuard('param'),
+    validateRegisterByAdminGuard('param',['by-admin','by-system-owner']
+    )]),
   authController.getRegisterByAdminRequest
 );
 webRoutes.post(
   "/auth/register-by-admin/request",
   isAuthenticated,
   conditionalMiddleware("can-create-charging-point"),
-  validateRequest("register-by-admin-request"),
+  validateRequest([
+    validateGuard('body'),
+    validateRegisterByAdminGuard('body',['by-admin','by-system-owner']),
+    validateEmailExistence
+  ]),
   authController.postRegisterByAdminRequest
 );
 webRoutes.get(
@@ -135,7 +165,13 @@ webRoutes.get(
 webRoutes.post(
   "/auth/register-by-admin",
   isGuest,
-  validateRequest("register-by-admin-create"),
+  validateRequest([
+    validateGuard('body'),
+    validateName,
+    validateEmail,
+    validateRegisterPassword,
+    validateConfirmPassword
+  ]),
   authController.postRegisterByAdminCreate
 );
 
@@ -158,24 +194,32 @@ webRoutes.get("/authTest", (req, res, next) => {
 // pass reset
 webRoutes.get(
   "/auth/password-reset/:guard/request",
-  validateRequest("request-reset-page"),
+  validateRequest([validateGuard("param")]),
   authController.getPasswordResetRequest
 );
 webRoutes.post(
   "/auth/password-reset/request",
-  validateRequest("request-reset"),
+  validateRequest([
+    validateGuard("body"),
+    validateEmailIsFound
+    ]),
   authController.postPasswordResetRequest
 );
 
 webRoutes.get(
   "/auth/password-reset/:token",
-  validateRequest("reset-page"),
+  validateRequest([normalizeEmailInQuery]),
   verifyPassResetToken("url"),
   authController.getPasswordReset
 );
 webRoutes.post(
   "/auth/password-reset",
-  validateRequest("reset"),
+  validateRequest([
+    validateToken,
+    validateEmail,
+    validateRegisterPassword,
+    validateConfirmPassword,
+  ]),
   verifyPassResetToken("body"),
   authController.postPasswordReset
 );
@@ -198,35 +242,47 @@ webRoutes.post(
   "/cms/role",
   isAuthenticated,
   authorizeSuperAdmin,
-  validateRequest("create-role"),
+  validateRequest([
+    validateRoleName
+]),
   RoleController.store
 );
 webRoutes.get(
   "/cms/role/:roleId",
   isAuthenticated,
   authorizeSuperAdmin,
-  validateRequest("role-page"),
+  validateRequest([
+    validateRoleExistance('param')
+]),
   RoleController.show
 );
 webRoutes.post(
   "/cms/role/assignPermission",
   isAuthenticated,
   authorizeSuperAdmin,
-  validateRequest("assign-role-permission"),
+  validateRequest([
+    validatePermissionExistance,
+    validateRoleExistance('body')
+]),
   RoleController.assignPermission
 );
 webRoutes.post(
   "/cms/role/revokePermission",
   isAuthenticated,
   authorizeSuperAdmin,
-  validateRequest("revoke-role-permission"),
+  validateRequest([
+    validatePermissionExistance,
+    validateRoleExistance('body')
+]),
   RoleController.revokePermission
 );
 webRoutes.delete(
   "/cms/role/:roleId",
   isAuthenticated,
   authorizeSuperAdmin,
-  validateRequest("delete-role"),
+  validateRequest([
+    validateRoleExistance('param')
+]),
   RoleController.destroy
 );
 // user
@@ -234,21 +290,30 @@ webRoutes.get(
   "/cms/user/:guard/all",
   isAuthenticated,
   authorizePermission("can-show-users"),
-  validateRequest("users-page"),
+  validateRequest([
+    validateGuard('param'),
+]),
   userController.index
 );
 webRoutes.get(
   "/cms/user/:guard/:id",
   isAuthenticated,
   authorizePermission("can-show-users"),
-  validateRequest("user-page"),
+  validateRequest([
+    validateGuard('param'),
+    validateUserExistance
+
+]),
   userController.show
 );
 webRoutes.get(
   "/cms/user-roles/:guard/:id",
   isAuthenticated,
   authorizePermission("can-show-user-roles"),
-  validateRequest("user-page"),
+  validateRequest([
+    validateGuard('param'),
+    validateUserExistance
+]),
   userController.getUserRoles
 );
 webRoutes.post(
@@ -274,7 +339,7 @@ webRoutes.get(
 );
 webRoutes.post(
   "/auth/verify-email",
-  validateRequest("verify-email"),
+  validateRequest([validateCode]),
   verifyEmailToken,
   authController.verifyEmail
 );
@@ -297,14 +362,18 @@ webRoutes.post(
   "/category",
   isAuthenticated,
   authorizePermission("can-create-category"),
-  validateRequest("create-category"),
+  validateRequest([
+    validateCategoryName
+]),
   categoryController.store
 );
 webRoutes.get(
   "/category-companies/:category_id",
   isAuthenticated,
   authorizePermission("can-show-wallet-users"),
-  validateRequest("category-companies"),
+  validateRequest([
+    validateCategoryIsFound
+]),
   categoryController.categoryCompanies
 );
 
@@ -313,7 +382,9 @@ webRoutes.get(
   "/wallet-user/:guard/all",
   isAuthenticated,
   authorizePermission("can-show-wallet-users"),
-  validateRequest("users-page"),
+  validateRequest([
+    validateGuard('param'),
+]),
   walletUserController.index
 );
 // webRoutes.get(
@@ -331,7 +402,9 @@ webRoutes.patch(
   "/charging-point/pending",
   isAuthenticated,
   authorizePermission("can-pending-charging-point"),
-  validateRequest("ch-point-operation"),
+  validateRequest([
+    validateChargingPointIsFound
+]),
   chPointController.pending
 );
 // delete
@@ -339,7 +412,9 @@ webRoutes.delete(
   "/charging-point",
   isAuthenticated,
   authorizePermission("can-delete-charging-point"),
-  validateRequest("ch-point-operation"),
+  validateRequest([
+    validateChargingPointIsFound
+]),
   chPointController.destroy
 );
 
@@ -348,14 +423,20 @@ webRoutes.get(
   "/report/system-transactions",
   isAuthenticated,
   authorizePermission("can-show-transactions-reports"),
-  validateRequest("system-transactions-report"),
+  validateRequest([
+    validateTiming
+]),
   reportController.dailySystemTransactions
 );
 webRoutes.get(
   "/report/system-user-transactions/:guard/:user_id",
   isAuthenticated,
   authorizePermission("can-show-transactions-reports"),
-  validateRequest("user-transactions-report"),
+  validateRequest([
+    validateTiming,
+    validateGuard('param'),
+    validateUserInParam
+]),
   reportController.dailySystemUserTransactions
 );
 
@@ -381,7 +462,10 @@ webRoutes.get(
   isAuthenticated,
   isVerified,
   authorizePermission("can-charge"),
-  validateRequest("confirm-charging-page"),
+  validateRequest([
+    validateAmountInQuery,
+    validateTargetPhoneInQuery
+]),
   transactionController.getConfirm
 );
 // // post amount with target-phone
@@ -390,7 +474,10 @@ webRoutes.post(
   isAuthenticated,
   isVerified,
   authorizePermission("can-charge"),
-  validateRequest("charging"),
+  validateRequest([
+    validateAmount,
+    validateTargetPhone
+]),
   transactionController.charging
 ); // redirect to verification page
 // // verify
@@ -398,7 +485,9 @@ webRoutes.get(
   "/verify/:transaction_id",
   isAuthenticated,
   isVerified,
-  validateRequest("verify-transaction-page"),
+  validateRequest([
+    validateTransactionInParam
+]),
   transactionController.getVerify
 );
 webRoutes.post(
@@ -406,7 +495,10 @@ webRoutes.post(
   isAuthenticated,
   isVerified,
   userCanVerifyTransaction,
-  validateRequest("verify-transaction"),
+  validateRequest([
+    validateTransaction,
+    validateVerificationCode
+]),
   transactionController.verifyTransaction
 );
 

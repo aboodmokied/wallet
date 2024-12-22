@@ -13,17 +13,44 @@ const verifyEmailToken = require("../services/mail/middlewares/verifyEmailToken"
 const verifyPassResetToken = require("../services/password-reset/middlewares/verifyPassResetToken");
 const isVerified = require("../middlewares/isVerified");
 const QueryFeatures = require("../util/QueryFeatures");
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 const Category = require("../models/Category");
 const userCanVerifyTransaction = require("../middlewares/userCanVerifyTransaction");
 const authorizePermission = require("../services/authorization/middlewares/authorizePermission");
 const verifyCodePassResetToken = require("../services/code-password-reset/middlewares/verifyCodePassResetToken");
+const { validateLoginPassword, validateRegisterPassword, validateConfirmPassword } = require("../validation/validations/passwordValidations");
+const { validateGuard, validateOauthGuard } = require("../validation/validations/guardValidations");
+const { validateEmail, validateEmailExistence, validateEmailIsFound } = require("../validation/validations/emailValidations");
+const { validateName } = require("../validation/validations/nameValidations");
+const { customUserRegisterationValidations, customCompanyRegisterationValidations, validateOauthProcess, validateAmount, validateCode, validateVerificationCode } = require("../validation/validations/otherValidations");
+const { validateTargetPhone, validateTargetCompanyPhone } = require("../validation/validations/phoneValidations");
+const { validateCategoryIsFound } = require("../validation/validations/categoryValidations");
+const Company = require("../models/Company");
+const Transaction = require("../models/Transaction");
+const { validateTransactionInParam, validateTransaction } = require("../validation/validations/transactionsValidations");
+const { validateCompany } = require("../validation/validations/companyValidations");
 
-apiRoutes.post("/login", validateRequest("api-login"), authController.login);
+apiRoutes.post("/login", validateRequest([
+  validateEmail,
+  validateGuard("body", false, false, true),
+  validateLoginPassword,
+])
+, authController.login);
+
+
 apiRoutes.get("/refresh", authController.refresh);
 apiRoutes.post(
   "/register",
-  validateRequest("api-register"),
+  validateRequest([
+    validateEmail,
+    validateEmailExistence,
+    validateName,
+    validateGuard("body", true, false, true),
+    validateRegisterPassword,
+    validateConfirmPassword,
+    ...customUserRegisterationValidations,
+    ...customCompanyRegisterationValidations
+  ]),
   authController.register
 );
 apiRoutes.get("/logout",verifyToken,authController.logout);
@@ -31,7 +58,7 @@ apiRoutes.get("/logout",verifyToken,authController.logout);
 // Oauth
 apiRoutes.get(
   "/auth/google/:process/:guard",
-  validateRequest("oauth-request"),
+  validateRequest([validateOauthProcess, validateOauthGuard]),
   oAuthController.googleAuthRequest
 );
 apiRoutes.get("/auth/google/callback", oAuthController.googleAuthResponse);
@@ -51,14 +78,27 @@ apiRoutes.post(
 // password reset
 apiRoutes.post(
   "/password-reset/request",
+  validateRequest([
+    validateGuard(),
+    validateEmailIsFound
+  ]),
   authController.postCodePasswordResetRequest
 );
 apiRoutes.post(
   "/password-reset/verify",
+  validateRequest([
+    validateGuard(),
+    validateEmailIsFound,
+    validateCode
+  ]),
   authController.postCodePasswordResetVerification
 );
 apiRoutes.post(
   "/password-reset",
+  validateRequest([
+    validateRegisterPassword,
+    validateConfirmPassword
+  ]),
   verifyCodePassResetToken,
   authController.postCodePasswordReset
 );
@@ -72,7 +112,7 @@ apiRoutes.get(
 apiRoutes.post(
   "/auth/verify-email",
   verifyToken,
-  validateRequest("verify-email"),
+  validateRequest([validateCode]),
   verifyEmailToken,
   authController.verifyEmail
 );
@@ -92,7 +132,10 @@ apiRoutes.post(
   verifyToken,
   isVerified,
   authorizePermission("can-transfer"),
-  validateRequest("transfer"),
+  validateRequest([
+    validateTargetPhone,
+    validateAmount,
+]),
   transactionController.transfer
 );
 
@@ -103,7 +146,9 @@ apiRoutes.get(
   "/category-companies/:category_id",
   verifyToken,
   isVerified,
-  validateRequest("category-companies"),
+  validateRequest([
+    validateCategoryIsFound
+]),
   categoryController.getCategoryCompanies
 );
 // company
@@ -111,16 +156,22 @@ apiRoutes.get(
   "/company/:company_id",
   verifyToken,
   isVerified,
-  validateRequest("get-company"),
+  validateRequest([
+    validateCompany
+]),
   companyController.show
 );
+
 // operation
 apiRoutes.post(
   "/payment",
   verifyToken,
   isVerified,
   authorizePermission("can-payment"),
-  validateRequest("payment"),
+  validateRequest([
+    validateTargetCompanyPhone,
+    validateAmount,
+]),
   transactionController.payment
 );
 
@@ -128,7 +179,10 @@ apiRoutes.post(
   "/verify-transaction",
   verifyToken,
   userCanVerifyTransaction,
-  validateRequest("verify-transaction"),
+  validateRequest([
+    validateTransaction,
+    validateVerificationCode
+]),
   transactionController.verifyTransaction
 );
 
@@ -145,7 +199,9 @@ apiRoutes.get(
   verifyToken,
   isVerified,
   authorizePermission("has-transactions"),
-  validateRequest("show-transaction"),
+  validateRequest([
+    validateTransactionInParam
+]),
   transactionController.showCurrentUserTransaction
 );
 
