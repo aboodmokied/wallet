@@ -10,6 +10,7 @@ const CompanyTransaction = require("../../models/CompanyTransaction");
 const Payment = require("../../models/Payment");
 const ChargingPointTransaction = require("../../models/ChargingPointTransaction");
 const AuthorizationError = require("../../Errors/ErrorTypes/AuthorizationError");
+const QueryFeatures = require("../../util/QueryFeatures");
 
 const transactionBuilder=new TransactionBuilder();
 
@@ -145,15 +146,15 @@ exports.currentUserTransactions=tryCatch(async(req,res,next)=>{
     }
     
     const queryFeatures = new QueryFeatures(req);
-    const transactions = await queryFeatures.findAllWithFeatures(
+    const {data,responseMetaData} = await queryFeatures.findAllWithFeatures(
         transactionModel,
         {
             ...whereOptions,
         }
     );
     res.status(200).send({status:true,result:{
-        transactions,
-        responseMetaData: transactions.responseMetaData
+        transactions:data,
+        responseMetaData
     }})
 });
 

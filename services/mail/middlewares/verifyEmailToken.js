@@ -1,5 +1,6 @@
 // const authConfig = require("../../../config/authConfig");
 const BadRequestError = require("../../../Errors/ErrorTypes/BadRequestError");
+const ValidationError = require("../../../Errors/ErrorTypes/ValidationError");
 // const NotFoundError = require("../../../Errors/ErrorTypes/NotFoundError");
 const VerifyEmailToken = require("../../../models/verifyEmailToken");
 const tryCatch = require("../../../util/tryCatch");
@@ -35,7 +36,8 @@ const verifyEmailToken = tryCatch(async (req, res, next) => {
     // }
     // }
   }
-  throw new BadRequestError("Invalid Token");
+  // throw new BadRequestError("Invalid Token");
+  throw new ValidationError([{path:'code',msg:'Invalid Code'}]);
 });
 
 module.exports = verifyEmailToken;

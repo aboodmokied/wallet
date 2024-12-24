@@ -55,10 +55,10 @@ class Mail{
         };
         model.prototype.verifyEmail=async function(){
             const {email,guard}=this;
-            const count=await VerifyEmailToken.count({where:{email,guard,revoked:false}});
-            if(count){
-                return 'Verification message already sent, check your email.'
-            }
+            // const count=await VerifyEmailToken.count({where:{email,guard,revoked:false}});
+            // if(count){
+            //     return 'Verification message already sent, check your email.'
+            // }
             const service=email.split('@')[1]?.split('.')[0];
             const code=Math.floor(100000 + Math.random() * 900000).toString();
             // const token=crypto.randomBytes(32).toString('hex');

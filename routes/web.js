@@ -453,7 +453,7 @@ webRoutes.get(
   "/charging",
   isAuthenticated,
   isVerified,
-  authorizePermission("can-charge"),
+  // authorizePermission("can-charge"),
   transactionController.getCharging
 );
 // get user by user phone
@@ -461,7 +461,7 @@ webRoutes.get(
   "/confirm",
   isAuthenticated,
   isVerified,
-  authorizePermission("can-charge"),
+  // authorizePermission("can-charge"),
   validateRequest([
     validateAmountInQuery,
     validateTargetPhoneInQuery
@@ -473,7 +473,7 @@ webRoutes.post(
   "/charging",
   isAuthenticated,
   isVerified,
-  authorizePermission("can-charge"),
+  // authorizePermission("can-charge"),
   validateRequest([
     validateAmount,
     validateTargetPhone

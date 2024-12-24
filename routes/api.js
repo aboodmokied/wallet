@@ -29,6 +29,8 @@ const Company = require("../models/Company");
 const Transaction = require("../models/Transaction");
 const { validateTransactionInParam, validateTransaction } = require("../validation/validations/transactionsValidations");
 const { validateCompany } = require("../validation/validations/companyValidations");
+const Wallet = require("../models/Wallet");
+const CompanyWallet = require("../models/CompanyWallet");
 
 apiRoutes.post("/login", validateRequest([
   validateEmail,
@@ -105,17 +107,30 @@ apiRoutes.post(
 
 // email verification
 apiRoutes.get(
-  "/auth/verify-email/request",
+  "/verify-email/request",
   verifyToken,
   authController.verifyEmailRequest
 );
 apiRoutes.post(
-  "/auth/verify-email",
+  "/verify-email",
   verifyToken,
   validateRequest([validateCode]),
   verifyEmailToken,
   authController.verifyEmail
 );
+
+
+// user wallet
+apiRoutes.get('/current-user-wallet',verifyToken,tryCatch(async(req,res,next)=>{
+  const {id,guard}=req.user;
+  let wallet;
+  if(guard=='user'){
+    wallet=await Wallet.findOne({where:{user_id:id}});
+  }else if(guard=='company'){
+    wallet=await CompanyWallet.findOne({where:{company_id:id}});
+  }
+  res.status(200).send({status:true,result:{wallet}});
+}));
 
 // *** transaction operations
 
@@ -188,17 +203,17 @@ apiRoutes.post(
 
 // loggedin user transactions
 apiRoutes.get(
-  "/current-user-transaction",
+  "/current-user-transactions",
   verifyToken,
   isVerified,
-  authorizePermission("has-transactions"),
+  // authorizePermission("has-transactions"),
   transactionController.currentUserTransactions
 );
 apiRoutes.get(
   "/current-user-transaction/:transaction_id",
   verifyToken,
   isVerified,
-  authorizePermission("has-transactions"),
+  // authorizePermission("has-transactions"),
   validateRequest([
     validateTransactionInParam
 ]),
