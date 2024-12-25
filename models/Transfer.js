@@ -11,11 +11,11 @@ const Transfer = Application.connection.define("transfer", {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
-  source_old_balance: {
+  source_user_old_balance: {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
-  target_old_balance: {
+  target_user_old_balance: {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },

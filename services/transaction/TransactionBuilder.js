@@ -18,92 +18,107 @@ class TransactionBuilder {
 
   async build(req, operationType) {
     let operation;
-    if(operationType=='transfer'){
-        const { target_phone, info, amount } = req.body;
-        const sourceUser=req.user;
-        const sourceUserWallet=await sourceUser.getWallet();
-        if (sourceUserWallet.balance < amount) {
-          throw new BadRequestError("Your Balance Not Enough");
-        }
-        const targetUser = await User.findOne({
-          where: { phone: target_phone },
-        });
-        const targetUserWallet=await targetUser.getWallet();
-        const transactionData = {
-          amount,
-          verification_code: this.#generateVerificationCode(),
-          wallet_id: sourceUserWallet.id,
-          date: Date.now(),
-          user_id: sourceUser.id,
-          target_user_id:targetUser.id,
-          target_wallet_id:targetUserWallet.id,
-          source_user_old_balance:sourceUserWallet.balance,
-          target_user_old_balance:targetUserWallet.balance,
-          source_user_current_balance:sourceUserWallet.balance - amount,
-          target_user_current_balance:targetUserWallet.balance + amount,
-        };
-        const transferOperationData = {
-          wallet_id: sourceUserWallet.id,
-          user_id: sourceUser.id,
-          target_id: targetUser.id,
-          target_wallet_id: targetUserWallet.id,
-          info,
-        };
-        operation = await Transfer.create(transferOperationData, { customData:transactionData });
-    }else if(operationType=='payment'){
-        const { target_company_phone, amount } = req.body;
-        const sourceUser=req.user;
-        const sourceUserWallet=await sourceUser.getWallet();
-        if (sourceUserWallet.balance < amount) {
-          throw new BadRequestError("Your Balance Not Enough");
-        }
-        const targetCompany = await Company.findOne({
-          where: { phone: target_company_phone },
-        });
-        const transactionData = {
-          amount,
-          verification_code: this.#generateVerificationCode(),
-          wallet_id: sourceUserWallet.id,
-          date: Date.now(),
-          user_id: sourceUser.id,
-          source_user_old_balance:sourceUserWallet.balance,
-          source_user_current_balance:sourceUserWallet.balance - amount,
-        };
-        const paymentOperationData = {
-          wallet_id: sourceUserWallet.id,
-          user_id: sourceUser.id,
-          company_id: targetCompany.id,
-          company_wallet_id: targetCompany.company_wallet_id,
-        };
-        operation = await Payment.create(paymentOperationData, { customData:transactionData });
-      }else if(operationType=='charging'){
-        const { target_phone, amount } = req.body;
-        const chargingPoint=req.user;
-        if(chargingPoint.wasPending){
-          throw BadRequestError("This ChargingPoint Was Pending By System Owner, so you can't be able to perform charging operations");
-        }
-        const targetUser = await User.findOne({
-          where: { phone: target_phone },
-        });
-        const targetUserWallet=await targetUser.getWallet();
-        const transactionData = {
-          amount,
-          verification_code: this.#generateVerificationCode(),
-          date: Date.now(),
-          target_user_id: targetUser.id,
-          target_wallet_id: targetUserWallet.id,
-          target_user_old_balance:targetUserWallet.balance,
-          target_user_current_balance:targetUserWallet.balance + amount,
-        };
-        const chargingOperationData = {
-          wallet_id: targetUserWallet.id,
-          user_id: targetUser.id,
-          charging_point_id: chargingPoint.id,
-        };
-        operation = await Charging.create(chargingOperationData, {
-          customData:transactionData,
-        });
-    }else{
+    if (operationType == "transfer") {
+      const { target_phone, info, amount } = req.body;
+      const sourceUser = req.user;
+      const sourceUserWallet = await sourceUser.getWallet();
+      if (sourceUserWallet.balance < amount) {
+        throw new BadRequestError("Your Balance Not Enough");
+      }
+      const targetUser = await User.findOne({
+        where: { phone: target_phone },
+      });
+      const targetUserWallet = await targetUser.getWallet();
+      const transactionData = {
+        amount,
+        verification_code: this.#generateVerificationCode(),
+        // wallet_id: sourceUserWallet.id,
+        date: Date.now(),
+        source_id: sourceUser.id,
+        target_id: targetUser.id,
+        // user_id: sourceUser.id,
+        // target_user_id:targetUser.id,
+        // target_wallet_id:targetUserWallet.id,
+        // source_user_old_balance:sourceUserWallet.balance,
+        // target_user_old_balance:targetUserWallet.balance,
+        // source_user_current_balance:sourceUserWallet.balance - amount,
+        // target_user_current_balance:targetUserWallet.balance + amount,
+      };
+      const transferOperationData = {
+        source_wallet_id: sourceUserWallet.id,
+        source_user_id: sourceUser.id,
+        target_id: targetUser.id,
+        target_wallet_id: targetUserWallet.id,
+        info,
+        // source_user_old_balance:sourceUserWallet.balance,
+        // target_user_old_balance:targetUserWallet.balance,
+        // source_user_current_balance:sourceUserWallet.balance - amount,
+        // target_user_current_balance:targetUserWallet.balance + amount,
+      };
+      operation = await Transfer.create(transferOperationData, {
+        customData: transactionData,
+      });
+    } else if (operationType == "payment") {
+      const { target_company_phone, amount } = req.body;
+      const sourceUser = req.user;
+      const sourceUserWallet = await sourceUser.getWallet();
+      if (sourceUserWallet.balance < amount) {
+        throw new BadRequestError("Your Balance Not Enough");
+      }
+      const targetCompany = await Company.findOne({
+        where: { phone: target_company_phone },
+      });
+      const companyWallet = await targetCompany.getCompanyWallet();
+      const transactionData = {
+        amount,
+        verification_code: this.#generateVerificationCode(),
+        date: Date.now(),
+        source_id: sourceUser.id,
+        target_id: targetCompany.id,
+      };
+      const paymentOperationData = {
+        wallet_id: sourceUserWallet.id,
+        user_id: sourceUser.id,
+        company_id: targetCompany.id,
+        company_wallet_id: targetCompany.company_wallet_id,
+        // user_old_balance:sourceUserWallet.balance,
+        // user_current_balance:sourceUserWallet.balance - amount,
+        // company_old_balance:companyWallet.balance,
+        // company_current_balance:companyWallet.balance + amount
+      };
+      operation = await Payment.create(paymentOperationData, {
+        customData: transactionData,
+      });
+    } else if (operationType == "charging") {
+      const { target_phone, amount } = req.body;
+      const chargingPoint = req.user;
+      if (chargingPoint.wasPending) {
+        throw BadRequestError(
+          "This ChargingPoint Was Pending By System Owner, so you can't be able to perform charging operations"
+        );
+      }
+      const targetUser = await User.findOne({
+        where: { phone: target_phone },
+      });
+      const targetUserWallet = await targetUser.getWallet();
+      const transactionData = {
+        amount,
+        verification_code: this.#generateVerificationCode(),
+        date: Date.now(),
+        source_id: chargingPoint.id,
+        target_id: targetUser.id,
+      };
+      const chargingOperationData = {
+        wallet_id: targetUserWallet.id,
+        user_id: targetUser.id,
+        charging_point_id: chargingPoint.id,
+        // user_old_balance:sourceUserWallet.balance,
+        // user_current_balance:sourceUserWallet.balance - amount,
+      };
+      operation = await Charging.create(chargingOperationData, {
+        customData: transactionData,
+      });
+    } else {
       throw new BadRequestError("operation not provided");
     }
 
@@ -112,7 +127,9 @@ class TransactionBuilder {
 
   async verify(req) {
     const { transaction_id, verification_code } = req.body;
-    const transaction = await Transaction.scope('withVerificationCode').findByPk(transaction_id);
+    const transaction = await Transaction.scope(
+      "withVerificationCode"
+    ).findByPk(transaction_id);
     if (transaction.verified_at) {
       throw new BadRequestError("Transaction Already verified");
     }
@@ -151,7 +168,7 @@ class TransactionBuilder {
         const targetCompanyWallet = await CompanyWallet.findByPk(
           company_wallet_id
         );
-        
+
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
         const companyTransaction = await CompanyTransaction.create({
           amount,
@@ -190,14 +207,10 @@ class TransactionBuilder {
     return succeed;
   }
 
-  #generateVerificationCode(){
-    const code=Math.floor(100000 + Math.random() * 900000);
+  #generateVerificationCode() {
+    const code = Math.floor(100000 + Math.random() * 900000);
     return code.toString();
   }
 }
 
 module.exports = TransactionBuilder;
-
-//Ch transaction => 1731233645000
-//transaction => 1731233645000
-//ch =>
