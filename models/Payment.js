@@ -4,7 +4,7 @@ const Company = require("./Company");
 const User = require("./User");
 
 const Payment = Application.connection.define("payment", {
-  wallet_id: {
+  user_wallet_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
   },

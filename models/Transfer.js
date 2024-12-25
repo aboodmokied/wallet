@@ -3,7 +3,7 @@ const Application = require("../Application");
 const User = require("./User");
 
 const Transfer = Application.connection.define("transfer", {
-  source_wallet_id: {
+  source_user_wallet_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
   },

@@ -4,7 +4,7 @@ const ChargingPoint = require("./ChargingPoint");
 const User = require("./User");
 
 const Charging = Application.connection.define("charging", {
-  wallet_id: {
+  user_wallet_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
   },

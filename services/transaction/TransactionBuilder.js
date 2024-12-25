@@ -45,10 +45,10 @@ class TransactionBuilder {
         // target_user_current_balance:targetUserWallet.balance + amount,
       };
       const transferOperationData = {
-        source_wallet_id: sourceUserWallet.id,
+        source_user_wallet_id: sourceUserWallet.id,
         source_user_id: sourceUser.id,
         target_id: targetUser.id,
-        target_wallet_id: targetUserWallet.id,
+        target_user_wallet_id: targetUserWallet.id,
         info,
         // source_user_old_balance:sourceUserWallet.balance,
         // target_user_old_balance:targetUserWallet.balance,
@@ -77,7 +77,7 @@ class TransactionBuilder {
         target_id: targetCompany.id,
       };
       const paymentOperationData = {
-        wallet_id: sourceUserWallet.id,
+        user_wallet_id: sourceUserWallet.id,
         user_id: sourceUser.id,
         company_id: targetCompany.id,
         company_wallet_id: targetCompany.company_wallet_id,
@@ -109,7 +109,7 @@ class TransactionBuilder {
         target_id: targetUser.id,
       };
       const chargingOperationData = {
-        wallet_id: targetUserWallet.id,
+        user_wallet_id: targetUserWallet.id,
         user_id: targetUser.id,
         charging_point_id: chargingPoint.id,
         // user_old_balance:sourceUserWallet.balance,
@@ -124,7 +124,16 @@ class TransactionBuilder {
 
     return operation;
   }
-
+  async #validateAmountIsEnough(transaction){
+    const {source_id,operation_type}=transaction;
+    if(operation_type=='transfer'||operation_type=='payment'){
+      const sourceUser=await User.findByPk(source_id);
+      const sourceWallet=await sourceUser.getWallet();
+      if(amount>sourceWallet.balance){
+        throw new BadRequestError("Your Balance Not Enough");
+      }
+  }
+}
   async verify(req) {
     const { transaction_id, verification_code } = req.body;
     const transaction = await Transaction.scope(
@@ -140,6 +149,7 @@ class TransactionBuilder {
     if (transaction.verification_code != verification_code) {
       throw new BadRequestError("Invalid Verification Code");
     }
+    await this.#validateAmountIsEnough(transaction); // if there is any changies occured on balance before verification
     await transaction.update({ verified_at: Date.now() });
     return transaction;
   }
@@ -149,21 +159,24 @@ class TransactionBuilder {
     const { operation_type, operation_id, amount } = transaction;
     const OperationModel = transactionConfig.operations[operation_type]?.model;
     const operationInsatance = await OperationModel.findByPk(operation_id);
-    const sourceWallet = await transaction.getSourceWallet();
-    const targetWallet = await transaction.getTargetWallet();
-
+    // const sourceWallet = await transaction.getSourceWallet();
+    // const targetWallet = await transaction.getTargetWallet();
+    let sourceWallet;
+    let targetWallet;
     // const target=await operationInsatance.getTarget();
     // const targetWallet=await operationInsatance.getTargetWallet();
     switch (operation_type) {
       case "transfer":
-        const { target_wallet_id } = operationInsatance;
+        const { target_user_wallet_id,source_user_wallet_id } = operationInsatance;
         // const targetWallet = await Wallet.findByPk(target_wallet_id);
+        sourceWallet=await Wallet.findByPk(source_user_wallet_id);
+        targetWallet=await Wallet.findByPk(target_user_wallet_id);
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
         await targetWallet.update({ balance: targetWallet.balance + amount });
         succeed = true;
         break;
       case "payment":
-        const { company_wallet_id, company_id } = operationInsatance;
+        const { company_wallet_id, company_id,user_wallet_id } = operationInsatance;
         // const companyInstance=await Company.findByPk(company_id);
         const targetCompanyWallet = await CompanyWallet.findByPk(
           company_wallet_id
