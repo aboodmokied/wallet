@@ -68,7 +68,7 @@ class TransactionBuilder {
       const targetCompany = await Company.findOne({
         where: { phone: target_company_phone },
       });
-      const companyWallet = await targetCompany.getCompanyWallet();
+      // const companyWallet = await targetCompany.getCompanyWallet();
       const transactionData = {
         amount,
         verification_code: this.#generateVerificationCode(),
@@ -171,46 +171,46 @@ class TransactionBuilder {
         // const targetWallet = await Wallet.findByPk(target_wallet_id);
         sourceWallet=await Wallet.findByPk(source_user_wallet_id);
         targetWallet=await Wallet.findByPk(target_user_wallet_id);
+        // update operation instance
+        await operationInsatance.update({
+          source_user_old_balance:sourceWallet.balance,
+          target_user_old_balance:targetWallet.balance,
+          source_user_current_balance:sourceWallet.balance - amount,
+          target_user_current_balance:targetWallet.balance + amount,
+        });
+        // update wallets
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
         await targetWallet.update({ balance: targetWallet.balance + amount });
         succeed = true;
         break;
       case "payment":
-        const { company_wallet_id, company_id,user_wallet_id } = operationInsatance;
-        // const companyInstance=await Company.findByPk(company_id);
-        const targetCompanyWallet = await CompanyWallet.findByPk(
-          company_wallet_id
-        );
-
+        const { company_wallet_id,user_wallet_id } = operationInsatance;
+        sourceWallet=await Wallet.findByPk(user_wallet_id);
+        targetWallet=await CompanyWallet.findByPk(company_wallet_id);
+        // update operation instance
+        await operationInsatance.update({
+          user_old_balance:sourceWallet.balance,
+          user_current_balance:sourceWallet.balance - amount,
+          company_old_balance:targetWallet.balance,
+          company_current_balance:targetWallet.balance + amount
+        });
+        // update wallets
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
-        const companyTransaction = await CompanyTransaction.create({
-          amount,
-          old_balance: targetCompanyWallet.balance,
-          current_balance: targetCompanyWallet.balance + amount,
-          date: transaction.date,
-          company_id,
-          company_wallet_id,
-          payment_id: operationInsatance.id,
+        await targetWallet.update({
+          balance: targetWallet.balance + amount,
         });
-        // await operationInsatance.update({company_transaction_id:companyTransaction.id});
-        operationInsatance.company_transaction_id = companyTransaction.id;
-        await operationInsatance.save();
-        await targetCompanyWallet.update({
-          balance: targetCompanyWallet.balance + amount,
-        });
+        
         succeed = true;
         break;
       case "charging":
-        const { charging_point_id } = operationInsatance;
-        const chargingPointTransaction = await ChargingPointTransaction.create({
-          amount,
-          date: transaction.date,
-          charging_point_id,
-          charging_id: operationInsatance.id,
-        });
+        const { user_wallet_id:u_w_id } = operationInsatance;
+        targetWallet=await Wallet.findByPk(u_w_id);
+        // update operation instance
         await operationInsatance.update({
-          charging_point_transaction_id: chargingPointTransaction.id,
+          user_old_balance:targetWallet.balance,
+          user_current_balance:targetWallet.balance + amount
         });
+        // update wallets
         await targetWallet.update({ balance: targetWallet.balance + amount });
         succeed = true;
         break;
