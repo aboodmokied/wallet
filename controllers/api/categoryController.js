@@ -8,6 +8,14 @@ exports.index = tryCatch(async (req, res, next) => {
   res.status(200).send({ status: true, result: { categories } });
 });
 
+exports.store=tryCatch(async(req,res,next)=>{
+  const {name}=req.body;
+  await Category.create({name});
+  res.status(201).send({
+    message:'Category Created Successfully'
+  })
+});
+
 exports.getCategoryCompanies = tryCatch(async (req, res, next) => {
   const { category_id } = req.params;
   const qf = new QueryFeatures(req);

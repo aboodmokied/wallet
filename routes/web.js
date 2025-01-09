@@ -11,7 +11,6 @@ const isGuest = require("../services/authentication/middlewares/isGuest");
 const validateRequest = require("../validation/middlewares/validateRequest");
 const authorizePermission = require("../services/authorization/middlewares/authorizePermission");
 
-const categoryController = require("../controllers/web/categoryController");
 const transactionController = require("../controllers/web/transactionController");
 const walletUserController = require("../controllers/web/walletUserController");
 const authorizeSuperAdmin = require("../services/authorization/middlewares/authorizeSuperAdmin");
@@ -311,51 +310,51 @@ webRoutes.post(
 
 // vrify email
 
-// need to modify
-webRoutes.get(
-  "/auth/verify-email/request",
-  isAuthenticated,
-  authController.verifyEmailRequest
-);
-webRoutes.post(
-  "/auth/verify-email",
-  validateRequest([validateCode]),
-  verifyEmailToken,
-  authController.verifyEmail
-);
+// // need to modify
+// webRoutes.get(
+//   "/auth/verify-email/request",
+//   isAuthenticated,
+//   authController.verifyEmailRequest
+// );
+// webRoutes.post(
+//   "/auth/verify-email",
+//   validateRequest([validateCode]),
+//   verifyEmailToken,
+//   authController.verifyEmail
+// );
 
 // (system-owner)
-// category
-webRoutes.get(
-  "/category",
-  isAuthenticated,
-  authorizePermission("can-show-categories"),
-  categoryController.index
-);
-webRoutes.get(
-  "/category/create",
-  isAuthenticated,
-  authorizePermission("can-create-category"),
-  categoryController.create
-);
-webRoutes.post(
-  "/category",
-  isAuthenticated,
-  authorizePermission("can-create-category"),
-  validateRequest([
-    validateCategoryName
-]),
-  categoryController.store
-);
-webRoutes.get(
-  "/category-companies/:category_id",
-  isAuthenticated,
-  authorizePermission("can-show-wallet-users"),
-  validateRequest([
-    validateCategoryIsFound
-]),
-  categoryController.categoryCompanies
-);
+// // category
+// webRoutes.get(
+//   "/category",
+//   isAuthenticated,
+//   authorizePermission("can-show-categories"),
+//   categoryController.index
+// );
+// webRoutes.get(
+//   "/category/create",
+//   isAuthenticated,
+//   authorizePermission("can-create-category"),
+//   categoryController.create
+// );
+// webRoutes.post(
+//   "/category",
+//   isAuthenticated,
+//   authorizePermission("can-create-category"),
+//   validateRequest([
+//     validateCategoryName
+// ]),
+//   categoryController.store
+// );
+// webRoutes.get(
+//   "/category-companies/:category_id",
+//   isAuthenticated,
+//   authorizePermission("can-show-wallet-users"),
+//   validateRequest([
+//     validateCategoryIsFound
+// ]),
+//   categoryController.categoryCompanies
+// );
 
 // wallet users
 webRoutes.get(

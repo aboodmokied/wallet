@@ -50,6 +50,7 @@ const {
 } = require("../validation/validations/phoneValidations");
 const {
   validateCategoryIsFound,
+  validateCategoryName,
 } = require("../validation/validations/categoryValidations");
 const Company = require("../models/Company");
 const Transaction = require("../models/Transaction");
@@ -356,6 +357,33 @@ apiRoutes.post(
     validateRoleExistance('body')
   ]),
   userController.userRevokeRole
+);
+
+
+
+//systemOwner routes
+// category
+webRoutes.get(
+  "/category",
+  verifyToken,
+  categoryController.index
+);
+webRoutes.post(
+  "/category",
+  verifyToken,
+  authorizePermission("can-create-category"),
+  validateRequest([
+    validateCategoryName
+]),
+  categoryController.store
+);
+webRoutes.get(
+  "/category-companies/:category_id",
+  isAuthenticated,
+  validateRequest([
+    validateCategoryIsFound
+]),
+  categoryController.getCategoryCompanies
 );
 
 module.exports = apiRoutes;
