@@ -64,6 +64,8 @@ const Wallet = require("../models/Wallet");
 const CompanyWallet = require("../models/CompanyWallet");
 const { validateRoleName, validateRoleExistance } = require("../validation/validations/roleValidations");
 const { validatePermissionExistance } = require("../validation/validations/permissionValidations");
+const { validateUserExistance, validateUserInParam } = require("../validation/validations/userValidations");
+const authorizeSuperAdmin = require("../services/authorization/middlewares/authorizeSuperAdmin");
 
 apiRoutes.post(
   "/login",
@@ -302,5 +304,58 @@ apiRoutes.get(
     roleController.revokePermission
   );
 
-  
+  // user
+apiRoutes.get(
+  "/cms/user/:guard/all",
+  verifyToken,
+  authorizePermission("can-show-users"),
+  validateRequest([
+    validateGuard('param'),
+]),
+  userController.index
+);
+apiRoutes.get(
+  "/cms/user/:guard/:user_id",
+  verifyToken,
+  authorizePermission("can-show-users"),
+  validateRequest([
+    validateGuard('param'),
+    validateUserInParam
+
+]),
+  userController.show
+);
+apiRoutes.get(
+  "/cms/user-roles/:guard/:user_id",
+  verifyToken,
+  authorizePermission("can-show-user-roles"),
+  validateRequest([
+    validateGuard('param'),
+    validateUserInParam
+]),
+  userController.getUserRoles
+);
+apiRoutes.post(
+  "/cms/user-roles/assignRole",
+  verifyToken,
+  authorizeSuperAdmin,
+  validateRequest([
+    validateGuard('body'),
+    validateUserExistance,
+    validateRoleExistance('body')
+  ]),
+  userController.userAssignRole
+);
+apiRoutes.post(
+  "/cms/user-roles/revokeRole",
+  verifyToken,
+  authorizeSuperAdmin,
+  validateRequest([
+    validateGuard('body'),
+    validateUserExistance,
+    validateRoleExistance('body')
+  ]),
+  userController.userRevokeRole
+);
+
 module.exports = apiRoutes;

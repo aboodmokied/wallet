@@ -1,8 +1,8 @@
 const { param } = require("express-validator");
 const authConfig = require("../../config/authConfig");
 
-exports.validateUserExistance = param("id").custom(async (id, { req }) => {
-    const { guard } = req.params;
+exports.validateUserExistance = body("user_id").custom(async (id, { req }) => {
+    const { guard } = req.body;
     if (guard in authConfig.guards) {
       const guardObj = authConfig.guards[guard];
       const model = authConfig.providers[guardObj.provider]?.model;

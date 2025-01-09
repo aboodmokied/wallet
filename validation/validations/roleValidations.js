@@ -13,7 +13,7 @@ exports.validateRoleName = body("name")
 
 exports.validateRoleExistance = (existsIn = "body") => {
   const holder = require("express-validator")[existsIn];
-  return holder("roleId")
+  return holder("role_id")
     .notEmpty()
     .withMessage("Role id required")
     .custom(async (roleId) => {

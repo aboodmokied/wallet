@@ -11,10 +11,8 @@ const isGuest = require("../services/authentication/middlewares/isGuest");
 const validateRequest = require("../validation/middlewares/validateRequest");
 const authorizePermission = require("../services/authorization/middlewares/authorizePermission");
 
-const RoleController = require("../controllers/web/RoleController");
 const categoryController = require("../controllers/web/categoryController");
 const transactionController = require("../controllers/web/transactionController");
-const userController = require("../controllers/web/userController");
 const walletUserController = require("../controllers/web/walletUserController");
 const authorizeSuperAdmin = require("../services/authorization/middlewares/authorizeSuperAdmin");
 const verifyPassResetToken = require("../services/password-reset/middlewares/verifyPassResetToken");
@@ -33,8 +31,6 @@ const { validateEmail, validateEmailExistence, validateEmailIsFound, normalizeEm
 const { validateLoginPassword, validateRegisterPassword, validateConfirmPassword } = require("../validation/validations/passwordValidations");
 const { validateOauthProcess, validateToken, validateCode, validateTiming, validateVerificationCode, validateAmount, validateAmountInQuery } = require("../validation/validations/otherValidations");
 const { validateName } = require("../validation/validations/nameValidations");
-const { validateRoleName, validateRoleExistance } = require("../validation/validations/roleValidations");
-const { validatePermissionExistance } = require("../validation/validations/permissionValidations");
 const { validateUserExistance, validateUserInParam } = require("../validation/validations/userValidations");
 const { validateCategoryName, validateCategoryIsFound } = require("../validation/validations/categoryValidations");
 const { validateChargingPointIsFound } = require("../validation/validations/chargingPointValidations");
@@ -64,24 +60,7 @@ webRoutes.get("/", isAuthenticated, async (req, res, next) => {
 // webRoutes.get('/home/systemOwner')
 // webRoutes.get('/home/chargingPoint')
 
-// login
-webRoutes.get(
-  "/auth/login/:guard",
-  isGuest,
-  validateRequest([validateGuard("param", false, true)]),
-  authController.getLogin
-);
-webRoutes.get("/auth/quick-login", isGuest, authController.getQuickLogin);
-webRoutes.post(
-  "/auth/login",
-  isGuest,
-  validateRequest([
-    validateEmail,
-    validateGuard("body", false, true),
-    validateLoginPassword,
-  ]),
-  authController.postLogin
-);
+
 
 // Oauth
 webRoutes.get(
@@ -287,48 +266,48 @@ webRoutes.post(
 // );
 
 // user
-webRoutes.get(
-  "/cms/user/:guard/all",
-  isAuthenticated,
-  authorizePermission("can-show-users"),
-  validateRequest([
-    validateGuard('param'),
-]),
-  userController.index
-);
-webRoutes.get(
-  "/cms/user/:guard/:id",
-  isAuthenticated,
-  authorizePermission("can-show-users"),
-  validateRequest([
-    validateGuard('param'),
-    validateUserExistance
+// webRoutes.get(
+//   "/cms/user/:guard/all",
+//   isAuthenticated,
+//   authorizePermission("can-show-users"),
+//   validateRequest([
+//     validateGuard('param'),
+// ]),
+//   userController.index
+// );
+// webRoutes.get(
+//   "/cms/user/:guard/:id",
+//   isAuthenticated,
+//   authorizePermission("can-show-users"),
+//   validateRequest([
+//     validateGuard('param'),
+//     validateUserExistance
 
-]),
-  userController.show
-);
-webRoutes.get(
-  "/cms/user-roles/:guard/:id",
-  isAuthenticated,
-  authorizePermission("can-show-user-roles"),
-  validateRequest([
-    validateGuard('param'),
-    validateUserExistance
-]),
-  userController.getUserRoles
-);
-webRoutes.post(
-  "/cms/user-roles/assignRole",
-  isAuthenticated,
-  authorizeSuperAdmin,
-  userController.userAssignRole
-);
-webRoutes.post(
-  "/cms/user-roles/revokeRole",
-  isAuthenticated,
-  authorizeSuperAdmin,
-  userController.userRevokeRole
-);
+// ]),
+//   userController.show
+// );
+// webRoutes.get(
+//   "/cms/user-roles/:guard/:id",
+//   isAuthenticated,
+//   authorizePermission("can-show-user-roles"),
+//   validateRequest([
+//     validateGuard('param'),
+//     validateUserExistance
+// ]),
+//   userController.getUserRoles
+// );
+// webRoutes.post(
+//   "/cms/user-roles/assignRole",
+//   isAuthenticated,
+//   authorizeSuperAdmin,
+//   userController.userAssignRole
+// );
+// webRoutes.post(
+//   "/cms/user-roles/revokeRole",
+//   isAuthenticated,
+//   authorizeSuperAdmin,
+//   userController.userRevokeRole
+// );
 
 // vrify email
 
