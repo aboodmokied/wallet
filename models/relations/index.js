@@ -106,15 +106,31 @@ Company.belongsTo(Category, {
   foreignKey: "category_id",
 });
 
-
-
 // // Users and Transaction
-Transaction.belongsTo(User, { as: 'sourceUser', foreignKey: 'source_id' });
-Transaction.belongsTo(User, { as: 'targetUser', foreignKey: 'target_id' });
-Transaction.belongsTo(Company, { as: 'targetCompany', foreignKey: 'target_id' });
-Transaction.belongsTo(ChargingPoint, { as: 'sourceChargingPoint', foreignKey: 'source_id' });
+Transaction.belongsTo(User, { as: "sourceUser", foreignKey: "source_id" });
+Transaction.belongsTo(User, { as: "targetUser", foreignKey: "target_id" });
+Transaction.belongsTo(Company, {
+  as: "targetCompany",
+  foreignKey: "target_id",
+});
+Transaction.belongsTo(ChargingPoint, {
+  as: "sourceChargingPoint",
+  foreignKey: "source_id",
+});
 
-
+// Transaction and operations
+Transaction.hasOne(Charging, {
+  foreignKey: "transaction_id",
+  onDelete: "NO ACTION",
+});
+Transaction.hasOne(Payment, {
+  foreignKey: "transaction_id",
+  onDelete: "NO ACTION",
+});
+Transaction.hasOne(Transfer, {
+  foreignKey: "transaction_id",
+  onDelete: "NO ACTION",
+});
 // // Operations
 
 // Transfer

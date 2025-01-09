@@ -1,5 +1,9 @@
 const { DataTypes, Op } = require("sequelize");
 const Application = require("../Application");
+const User = require("./User");
+const Company = require("./Company");
+const ChargingPoint = require("./ChargingPoint");
+const BadRequestError = require("../Errors/ErrorTypes/BadRequestError");
 
 const Transaction = Application.connection.define(
   "transation",
@@ -71,6 +75,28 @@ Transaction.prototype.getOperation = async function () {
     transactionConfig.operations[this.operation_type]?.model;
   const operation = await operationModel.findByPk(this.operation_id);
   return operation;
+};
+
+Transaction.prototype.getUsers = async function () {
+  const { source_id, target_id, operation_type } = this;
+  let sourceUser, targetUser;
+  switch (operation_type) {
+    case "transfer":
+      sourceUser = await User.findByPk(source_id);
+      targetUser = await User.findByPk(target_id);
+      break;
+    case "payment":
+      sourceUser = await User.findByPk(source_id);
+      targetUser = await Company.findByPk(target_id);
+      break;
+    case "charging":
+      sourceUser = await ChargingPoint.findByPk(source_id);
+      targetUser = await User.findByPk(target_id);
+      break;
+    default:
+      throw BadRequestError("this operation_type not provided");
+  }
+  return { sourceUser, targetUser };
 };
 
 module.exports = Transaction;

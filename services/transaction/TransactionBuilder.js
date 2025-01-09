@@ -1,5 +1,6 @@
 const transactionConfig = require("../../config/transactionConfig");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
+const ValidationError = require("../../Errors/ErrorTypes/ValidationError");
 const Charging = require("../../models/Charging");
 const ChargingPointTransaction = require("../../models/ChargingPointTransaction");
 const Company = require("../../models/Company");
@@ -47,7 +48,7 @@ class TransactionBuilder {
       const transferOperationData = {
         source_user_wallet_id: sourceUserWallet.id,
         source_user_id: sourceUser.id,
-        target_id: targetUser.id,
+        target_user_id: targetUser.id,
         target_user_wallet_id: targetUserWallet.id,
         info,
         // source_user_old_balance:sourceUserWallet.balance,
@@ -124,16 +125,16 @@ class TransactionBuilder {
 
     return operation;
   }
-  async #validateAmountIsEnough(transaction){
-    const {source_id,operation_type}=transaction;
-    if(operation_type=='transfer'||operation_type=='payment'){
-      const sourceUser=await User.findByPk(source_id);
-      const sourceWallet=await sourceUser.getWallet();
-      if(amount>sourceWallet.balance){
+  async #validateAmountIsEnough(transaction) {
+    const { source_id, operation_type, amount } = transaction;
+    if (operation_type == "transfer" || operation_type == "payment") {
+      const sourceUser = await User.findByPk(source_id);
+      const sourceWallet = await sourceUser.getWallet();
+      if (amount > sourceWallet.balance) {
         throw new BadRequestError("Your Balance Not Enough");
       }
+    }
   }
-}
   async verify(req) {
     const { transaction_id, verification_code } = req.body;
     const transaction = await Transaction.scope(
@@ -147,7 +148,10 @@ class TransactionBuilder {
       throw new BadRequestError("Request Timeout");
     }
     if (transaction.verification_code != verification_code) {
-      throw new BadRequestError("Invalid Verification Code");
+      // throw new BadRequestError("Invalid Verification Code");
+      throw new ValidationError([
+        { path: "verification_code", msg: "Invalid Verification Code" },
+      ]);
     }
     await this.#validateAmountIsEnough(transaction); // if there is any changies occured on balance before verification
     await transaction.update({ verified_at: Date.now() });
@@ -167,16 +171,17 @@ class TransactionBuilder {
     // const targetWallet=await operationInsatance.getTargetWallet();
     switch (operation_type) {
       case "transfer":
-        const { target_user_wallet_id,source_user_wallet_id } = operationInsatance;
+        const { target_user_wallet_id, source_user_wallet_id } =
+          operationInsatance;
         // const targetWallet = await Wallet.findByPk(target_wallet_id);
-        sourceWallet=await Wallet.findByPk(source_user_wallet_id);
-        targetWallet=await Wallet.findByPk(target_user_wallet_id);
+        sourceWallet = await Wallet.findByPk(source_user_wallet_id);
+        targetWallet = await Wallet.findByPk(target_user_wallet_id);
         // update operation instance
         await operationInsatance.update({
-          source_user_old_balance:sourceWallet.balance,
-          target_user_old_balance:targetWallet.balance,
-          source_user_current_balance:sourceWallet.balance - amount,
-          target_user_current_balance:targetWallet.balance + amount,
+          source_user_old_balance: sourceWallet.balance,
+          target_user_old_balance: targetWallet.balance,
+          source_user_current_balance: sourceWallet.balance - amount,
+          target_user_current_balance: targetWallet.balance + amount,
         });
         // update wallets
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
@@ -184,31 +189,31 @@ class TransactionBuilder {
         succeed = true;
         break;
       case "payment":
-        const { company_wallet_id,user_wallet_id } = operationInsatance;
-        sourceWallet=await Wallet.findByPk(user_wallet_id);
-        targetWallet=await CompanyWallet.findByPk(company_wallet_id);
+        const { company_wallet_id, user_wallet_id } = operationInsatance;
+        sourceWallet = await Wallet.findByPk(user_wallet_id);
+        targetWallet = await CompanyWallet.findByPk(company_wallet_id);
         // update operation instance
         await operationInsatance.update({
-          user_old_balance:sourceWallet.balance,
-          user_current_balance:sourceWallet.balance - amount,
-          company_old_balance:targetWallet.balance,
-          company_current_balance:targetWallet.balance + amount
+          user_old_balance: sourceWallet.balance,
+          user_current_balance: sourceWallet.balance - amount,
+          company_old_balance: targetWallet.balance,
+          company_current_balance: targetWallet.balance + amount,
         });
         // update wallets
         await sourceWallet.update({ balance: sourceWallet.balance - amount });
         await targetWallet.update({
           balance: targetWallet.balance + amount,
         });
-        
+
         succeed = true;
         break;
       case "charging":
-        const { user_wallet_id:u_w_id } = operationInsatance;
-        targetWallet=await Wallet.findByPk(u_w_id);
+        const { user_wallet_id: u_w_id } = operationInsatance;
+        targetWallet = await Wallet.findByPk(u_w_id);
         // update operation instance
         await operationInsatance.update({
-          user_old_balance:targetWallet.balance,
-          user_current_balance:targetWallet.balance + amount
+          user_old_balance: targetWallet.balance,
+          user_current_balance: targetWallet.balance + amount,
         });
         // update wallets
         await targetWallet.update({ balance: targetWallet.balance + amount });

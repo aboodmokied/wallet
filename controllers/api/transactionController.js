@@ -17,15 +17,21 @@ const ChargingPoint = require("../../models/ChargingPoint");
 const transactionBuilder = new TransactionBuilder();
 
 exports.transfer = tryCatch(async (req, res, next) => {
-  const opertaion = await transactionBuilder.build(req, "transfer");
-  const transaction = await Transaction.findByPk(opertaion.transaction_id);
-//   const tragetUser = await transaction.getTargetUser();
-  const users=await opertaion.getUsers();  
+  const operation = await transactionBuilder.build(req, "transfer");
+  const transaction = await Transaction.findByPk(operation.transaction_id);
+  const { info } = operation;
+  const opertaionInfo = {
+    info,
+    // oldBalance: source_user_old_balance,
+    // newBalance: source_user_current_balance,
+  };
+  //   const tragetUser = await transaction.getTargetUser();
+  const users = await transaction.getUsers();
   res.status(200).send({
     status: true,
     result: {
       message: "Operation Succeed, Verify it.",
-      opertaion,
+      opertaionInfo,
       transaction,
       users,
     },
@@ -33,16 +39,18 @@ exports.transfer = tryCatch(async (req, res, next) => {
 });
 
 exports.payment = tryCatch(async (req, res, next) => {
-  const opertaion = await transactionBuilder.build(req, "payment");
-  const transaction = await Transaction.findByPk(opertaion.transaction_id);
-  const users=await opertaion.getUsers();
+  const operation = await transactionBuilder.build(req, "payment");
+  const transaction = await Transaction.findByPk(operation.transaction_id);
+  const {} = operation;
+  const opertaionInfo = {};
+  const users = await transaction.getUsers();
   res.status(200).send({
     status: true,
     result: {
       message: "Operation Succeed, Verify it.",
-      opertaion,
+      opertaionInfo,
       transaction,
-      users
+      users,
     },
   });
 });
@@ -61,7 +69,7 @@ exports.show = tryCatch(async (req, res, next) => {
   const { transaction_id } = req.params;
   const transaction = await Transaction.findByPk(transaction_id);
   const operation = await transaction.getOperation();
-  const users=await operation.getUsers();
+  const users = await operation.getUsers();
   // const {operation_type,operation_id}=transaction;
   // const operationModel=transactionConfig.operations[operation_type]?.model;
   // const opertaionObject=await operationModel.findByPk(operation_id);
@@ -70,7 +78,7 @@ exports.show = tryCatch(async (req, res, next) => {
     result: {
       transaction,
       operation,
-      users
+      users,
     },
   });
 });
@@ -142,93 +150,161 @@ exports.verifyTransaction = tryCatch(async (req, res, next) => {
 
 exports.currentUserTransactions = tryCatch(async (req, res, next) => {
   const user = req.user;
-  const whereOptions = {
-  [Op.or]: [{ source_id: user.id }, { target_id: user.id }],
-  verified_at: { [Op.ne]: null },
-  };
+  let whereOptions = {};
+  if (user.guard == "user") {
+    whereOptions = {
+      [Op.or]: [
+        {
+          [Op.and]: [
+            { operation_type: "transfer" },
+            { [Op.or]: [{ source_id: user.id }, { target_id: user.id }] },
+          ],
+        },
+        {
+          [Op.and]: [{ operation_type: "payment" }, { source_id: user.id }],
+        },
+        {
+          [Op.and]: [{ operation_type: "charging" }, { target_id: user.id }],
+        },
+      ],
+      verified_at: { [Op.ne]: null },
+    };
+  } else if (user.guard == "company") {
+    whereOptions = {
+      operation_type: "payment",
+      target_id: user.id,
+      verified_at: { [Op.ne]: null },
+    };
+  } else if (user.guard == "company") {
+    whereOptions = {
+      operation_type: "charging",
+      source_id: user.id,
+      verified_at: { [Op.ne]: null },
+    };
+  }
   const queryFeatures = new QueryFeatures(req);
+  // const { data, responseMetaData } = await queryFeatures.findAllWithFeatures(
+  //   Transaction,
+  //   {
+  //     ...whereOptions,
+  //   },
+  //   {
+  //     include: [
+  //       {
+  //         model: User,
+  //         as: 'sourceUser',
+  //         required: false,
+  //         where: Application.connection.literal("operation_type = 'transfer' OR operation_type = 'payment'")
+  //       },
+  //       {
+  //         model: User,
+  //         as: 'targetUser',
+  //         required: false,
+  //         where: Application.connection.literal("operation_type = 'transfer' OR operation_type = 'charging'")
+  //       },
+  //       {
+  //         model: Company,
+  //         as: 'targetCompany',
+  //         required: false,
+  //         where: Application.connection.literal("operation_type = 'payment'")
+  //       },
+  //       {
+  //         model: ChargingPoint,
+  //         as: 'sourceChargingPoint',
+  //         required: false,
+  //         where: Application.connection.literal("operation_type = 'charging'")
+  //       },
+  //     ]
+  //   }
+  // );
   const { data, responseMetaData } = await queryFeatures.findAllWithFeatures(
     Transaction,
     {
       ...whereOptions,
-    },
-    {
-      include: [
-        {
-          model: User,
-          as: 'sourceUser',
-          required: false,
-          where: Application.connection.literal("operation_type = 'transfer' OR operation_type = 'payment'")
-        },
-        {
-          model: User,
-          as: 'targetUser',
-          required: false,
-          where: Application.connection.literal("operation_type = 'transfer' OR operation_type = 'charging'")
-        },
-        {
-          model: Company,
-          as: 'targetCompany',
-          required: false,
-          where: Application.connection.literal("operation_type = 'payment'")
-        },
-        {
-          model: ChargingPoint,
-          as: 'sourceChargingPoint',
-          required: false,
-          where: Application.connection.literal("operation_type = 'charging'")
-        },
-      ]
     }
   );
+  const transactionsWithUsers = [];
+  for (let transaction of data) {
+    const users = await transaction.getUsers();
+    const transactionWithUsers = { data: transaction, users };
+    transactionsWithUsers.push(transactionWithUsers);
+  }
+  // const transactionsWithUsers = data.map(async (trs) => {
+  //   const { sourceUser, targetUser } = await trs.getUsers();
+  //   trs.sourceUser = sourceUser;
+  //   trs.targetUser = targetUser;
+  //   return trs;
+  // });
+
   res.status(200).send({
     status: true,
     result: {
-      transactions: data,
+      transactions: transactionsWithUsers,
       responseMetaData,
     },
   });
 });
 
 exports.showCurrentUserTransaction = tryCatch(async (req, res, next) => {
-  const { guard } = req.user;
   const { transaction_id } = req.params;
-  let transaction;
-  let operation;
-  let transactionUserId;
-  if (guard == "user") {
-    transaction = await Transaction.findByPk(transaction_id);
-    operation = await transaction.getOperation();
-    transactionUserId = transaction.user_id ?? transaction.target_user_id;
-  } else if (guard == "company") {
-    transaction = await CompanyTransaction.findByPk(transaction_id);
-    operation = await transaction.getPayment();
-    transactionUserId = transaction.company_id;
-  } else if (guard == "chargingPoint") {
-    transaction = await ChargingPointTransaction.findByPk(transaction_id);
-    operation = await transaction.getCharging();
-    transactionUserId = transaction.charging_point_id;
-  } else {
-    throw new BadRequestError("This type of users has no transactions");
+  const transaction = await Transaction.findByPk(transaction_id);
+  const operation = await transaction.getOperation();
+  const users = await transaction.getUsers();
+  const { sourceUser, targetUser } = users;
+  const { id, guard } = req.user;
+  let yourIdentity;
+  if (id == sourceUser.id && guard == sourceUser.guard) {
+    yourIdentity = "sender";
+    const operationInfo = {};
+    if (transaction.operation_type == "transfer") {
+      const { source_user_old_balance, source_user_current_balance, info } =
+        operation;
+      operationInfo.oldBalance = source_user_old_balance;
+      operationInfo.currentBalance = source_user_current_balance;
+      operationInfo.info = info;
+    } else if (transaction.operation_type == "payment") {
+      const { user_old_balance, user_current_balance } = operation;
+      operationInfo.oldBalance = user_old_balance;
+      operationInfo.currentBalance = user_current_balance;
+    }
+    return res.status(200).send({
+      status: true,
+      result: {
+        transaction,
+        operationInfo,
+        users,
+        yourIdentity,
+      },
+    });
   }
-  if (req.user.id != transactionUserId) {
-    throw new AuthorizationError();
+  if (id == targetUser.id && guard == targetUser.guard) {
+    yourIdentity = "receiver";
+    const operationInfo = {};
+    if (transaction.operation_type == "transfer") {
+      const { target_user_old_balance, target_user_current_balance, info } =
+        operation;
+      operationInfo.oldBalance = target_user_old_balance;
+      operationInfo.currentBalance = target_user_current_balance;
+      operationInfo.info = info;
+    } else if (transaction.operation_type == "payment") {
+      const { company_old_balance, company_current_balance } = operation;
+      operationInfo.oldBalance = company_old_balance;
+      operationInfo.currentBalance = company_current_balance;
+    } else if (transaction.operation_type == "charging") {
+      const { user_old_balance, user_current_balance } = operation;
+      operationInfo.oldBalance = user_old_balance;
+      operationInfo.currentBalance = user_current_balance;
+    }
+    return res.status(200).send({
+      status: true,
+      result: {
+        transaction,
+        operationInfo,
+        users,
+        yourIdentity,
+      },
+    });
   }
-  const users = await operation.getUsers();
-  res.status(200).send({
-    status: true,
-    result: {
-      transaction,
-      operation,
-      users,
-    },
-  });
-});
 
-// in sequelize if i have Transaction model each transaction has operation_type with source_id and target_id,
-// the operations are Transfer, Charging and Payment each Operation has its own model,
-// i need findAll transaction and include the users for each transaction according to
-// its operation_type and source_id target_id, the users in the system are User, Company and Charging Point
-// if the operation_type is Payment source_id refers to User and target_id refers to Company,
-// if the operation_type is Transfer source_id refers to User and target_id refers to another User (i need to destingushe between the two users),
-// if the operation_type is Charging source_id refers to ChargingPoint and target_id refers to User,
+  throw new AuthorizationError();
+});
