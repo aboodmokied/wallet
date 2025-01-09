@@ -183,108 +183,109 @@ webRoutes.post(
 // webRoutes.post('/auth/create-admin',isGuest,adminController.store);
 
 // logout
-webRoutes.get("/auth/logout", isAuthenticated, authController.logout);
+// webRoutes.get("/auth/logout", isAuthenticated, authController.logout);
 
-webRoutes.get("/authTest", (req, res, next) => {
-  console.log(req.url);
-  res.send({ status: true });
-});
+// webRoutes.get("/authTest", (req, res, next) => {
+//   console.log(req.url);
+//   res.send({ status: true });
+// });
 
 
 // pass reset
-webRoutes.get(
-  "/auth/password-reset/:guard/request",
-  validateRequest([validateGuard("param")]),
-  authController.getPasswordResetRequest
-);
-webRoutes.post(
-  "/auth/password-reset/request",
-  validateRequest([
-    validateGuard("body"),
-    validateEmailIsFound
-    ]),
-  authController.postPasswordResetRequest
-);
+// webRoutes.get(
+//   "/auth/password-reset/:guard/request",
+//   validateRequest([validateGuard("param")]),
+//   authController.getPasswordResetRequest
+// );
+// webRoutes.post(
+//   "/auth/password-reset/request",
+//   validateRequest([
+//     validateGuard("body"),
+//     validateEmailIsFound
+//     ]),
+//   authController.postPasswordResetRequest
+// );
 
-webRoutes.get(
-  "/auth/password-reset/:token",
-  validateRequest([normalizeEmailInQuery]),
-  verifyPassResetToken("url"),
-  authController.getPasswordReset
-);
-webRoutes.post(
-  "/auth/password-reset",
-  validateRequest([
-    validateToken,
-    validateEmail,
-    validateRegisterPassword,
-    validateConfirmPassword,
-  ]),
-  verifyPassResetToken("body"),
-  authController.postPasswordReset
-);
+// webRoutes.get(
+//   "/auth/password-reset/:token",
+//   validateRequest([normalizeEmailInQuery]),
+//   verifyPassResetToken("url"),
+//   authController.getPasswordReset
+// );
+// webRoutes.post(
+//   "/auth/password-reset",
+//   validateRequest([
+//     validateToken,
+//     validateEmail,
+//     validateRegisterPassword,
+//     validateConfirmPassword,
+//   ]),
+//   verifyPassResetToken("body"),
+//   authController.postPasswordReset
+// );
 
 // cms
 // role
-webRoutes.get(
-  "/cms/role",
-  isAuthenticated,
-  authorizeSuperAdmin,
-  RoleController.index
-);
-webRoutes.get(
-  "/cms/role/create",
-  isAuthenticated,
-  authorizeSuperAdmin,
-  RoleController.create
-);
-webRoutes.post(
-  "/cms/role",
-  isAuthenticated,
-  authorizeSuperAdmin,
-  validateRequest([
-    validateRoleName
-]),
-  RoleController.store
-);
-webRoutes.get(
-  "/cms/role/:roleId",
-  isAuthenticated,
-  authorizeSuperAdmin,
-  validateRequest([
-    validateRoleExistance('param')
-]),
-  RoleController.show
-);
-webRoutes.post(
-  "/cms/role/assignPermission",
-  isAuthenticated,
-  authorizeSuperAdmin,
-  validateRequest([
-    validatePermissionExistance,
-    validateRoleExistance('body')
-]),
-  RoleController.assignPermission
-);
-webRoutes.post(
-  "/cms/role/revokePermission",
-  isAuthenticated,
-  authorizeSuperAdmin,
-  validateRequest([
-    validatePermissionExistance,
-    validateRoleExistance('body')
-]),
-  RoleController.revokePermission
-);
-webRoutes.delete(
-  "/cms/role/:roleId",
-  isAuthenticated,
-  authorizeSuperAdmin,
-  validateRequest([
-    validateRoleExistance('param')
-]),
-  RoleController.destroy
-);
+// webRoutes.get(
+//   "/cms/role",
+//   isAuthenticated,
+//   authorizeSuperAdmin,
+//   RoleController.index
+// );
+// webRoutes.get(
+//   "/cms/role/create",
+//   isAuthenticated,
+//   authorizeSuperAdmin,
+//   RoleController.create
+// );
+// webRoutes.post(
+//   "/cms/role",
+//   isAuthenticated,
+//   authorizeSuperAdmin,
+//   validateRequest([
+//     validateRoleName
+// ]),
+//   RoleController.store
+// );
+// webRoutes.get(
+//   "/cms/role/:roleId",
+//   isAuthenticated,
+//   authorizeSuperAdmin,
+//   validateRequest([
+//     validateRoleExistance('param')
+// ]),
+//   RoleController.show
+// );
+// webRoutes.post(
+//   "/cms/role/assignPermission",
+//   isAuthenticated,
+//   authorizeSuperAdmin,
+//   validateRequest([
+//     validatePermissionExistance,
+//     validateRoleExistance('body')
+// ]),
+//   RoleController.assignPermission
+// );
+// webRoutes.post(
+//   "/cms/role/revokePermission",
+//   isAuthenticated,
+//   authorizeSuperAdmin,
+//   validateRequest([
+//     validatePermissionExistance,
+//     validateRoleExistance('body')
+// ]),
+//   RoleController.revokePermission
+// );
+// webRoutes.delete(
+//   "/cms/role/:roleId",
+//   isAuthenticated,
+//   authorizeSuperAdmin,
+//   validateRequest([
+//     validateRoleExistance('param')
+// ]),
+//   RoleController.destroy
+// );
+
 // user
 webRoutes.get(
   "/cms/user/:guard/all",

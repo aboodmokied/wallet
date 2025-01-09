@@ -5,6 +5,7 @@ const authController = require("../controllers/api/authController");
 const transactionController = require("../controllers/api/transactionController");
 const userController = require("../controllers/api/userController");
 const categoryController = require("../controllers/api/categoryController");
+const roleController = require("../controllers/api/roleController");
 const companyController = require("../controllers/api/companyController");
 const oAuthController = require("../controllers/oAuthController");
 const verifyToken = require("../services/api-authentication/middlewares/verifyToken");
@@ -61,6 +62,8 @@ const {
 } = require("../validation/validations/companyValidations");
 const Wallet = require("../models/Wallet");
 const CompanyWallet = require("../models/CompanyWallet");
+const { validateRoleName, validateRoleExistance } = require("../validation/validations/roleValidations");
+const { validatePermissionExistance } = require("../validation/validations/permissionValidations");
 
 apiRoutes.post(
   "/login",
@@ -238,16 +241,66 @@ apiRoutes.get(
   transactionController.showCurrentUserTransaction
 );
 
-// => role: systemOwner
-// transaction
+//  Admin Routes
+  // role
+  apiRoutes.get(
+    "/cms/role",
+    verifyToken,
+    authorizeSuperAdmin,
+    roleController.index
+  );
 
-// apiRoutes.get('/transaction/:transaction_id',transactionController.show);
+  apiRoutes.post(
+    "/cms/role",
+    verifyToken,
+    authorizeSuperAdmin,
+    validateRequest([
+      validateRoleName
+  ]),
+    roleController.store
+  );
 
-// // user transactions
-// apiRoutes.get('/user-transaction/:user_id',transactionController.userTransactions);
+  apiRoutes.get(
+    "/cms/role/:role_id",
+    verifyToken,
+    authorizeSuperAdmin,
+    validateRequest([
+      validateRoleExistance('param')
+  ]),
+    roleController.show
+  );
 
-// // company transactions
-// apiRoutes.get('/company-transaction/:company_id',transactionController.companyTransactions);
-// apiRoutes.get('/company-transaction/:transaction_id',transactionController.showCompanyTransaction);
+  apiRoutes.delete(
+    "/cms/role/:role_id",
+    verifyToken,
+    authorizeSuperAdmin,
+    validateRequest([
+      validateRoleExistance('param')
+  ]),
+    roleController.destroy
+  );
 
+
+  apiRoutes.post(
+    "/cms/role/assignPermission",
+    verifyToken,
+    authorizeSuperAdmin,
+    validateRequest([
+      validatePermissionExistance,
+      validateRoleExistance('body')
+  ]),
+    roleController.assignPermission
+  );
+  apiRoutes.post(
+    "/cms/role/revokePermission",
+    verifyToken,
+    authorizeSuperAdmin,
+    validateRequest([
+      validatePermissionExistance,
+      validateRoleExistance('body')
+  ]),
+    roleController.revokePermission
+  );
+
+  
 module.exports = apiRoutes;
