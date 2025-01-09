@@ -70,18 +70,18 @@ exports.showTransaction=tryCatch(async(req,res,next)=>{
     const {transaction_id,guard}=req.params;
     let transaction;
     let operation;
-    if(guard=='user'){
+    // if(guard=='user'){
         transaction=await Transaction.findByPk(transaction_id);
         operation=await transaction.getOperation();
-    }else if(guard=='company'){
-        transaction=await CompanyTransaction.findByPk(transaction_id);
-        operation=await transaction.getPayment();
-    }else if(guard=='chargingPoint'){
-        transaction=await ChargingPointTransaction.findByPk(transaction_id);
-        operation=await transaction.getCharging();
-    }else{
-        throw new BadRequestError('This type of users has no transactions');
-    }
+    // }else if(guard=='company'){
+    //     transaction=await CompanyTransaction.findByPk(transaction_id);
+    //     operation=await transaction.getPayment();
+    // }else if(guard=='chargingPoint'){
+    //     transaction=await ChargingPointTransaction.findByPk(transaction_id);
+    //     operation=await transaction.getCharging();
+    // }else{
+    //     throw new BadRequestError('This type of users has no transactions');
+    // }
     const users=await operation.getUsers();
     return res.render('wallet/transaction/transaction-details',{
         pageTitle:'Transaction Details',

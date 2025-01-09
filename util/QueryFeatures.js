@@ -175,7 +175,7 @@ class QueryFeatures {
     return this;
   }
 
-  async findAllWithFeatures(model, whereOptions = {}) {
+  async findAllWithFeatures(model, whereOptions = {}, otherOptions = {}) {
     await this.filter(model)
       .search(model)
       .fields()
@@ -186,7 +186,11 @@ class QueryFeatures {
       ...updatedQueryOptions.where,
       ...whereOptions,
     };
-    const data = await model.findAll(updatedQueryOptions);
+
+    const data = await model.findAll({
+      ...updatedQueryOptions,
+      ...otherOptions,
+    });
     this.responseMetaData.length = data.length;
     const result = { data, responseMetaData: this.responseMetaData };
     return result;

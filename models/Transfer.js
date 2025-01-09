@@ -3,23 +3,39 @@ const Application = require("../Application");
 const User = require("./User");
 
 const Transfer = Application.connection.define("transfer", {
-  wallet_id: {
+  source_user_wallet_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
-  user_id: {
+  source_user_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
+  },
+  source_user_old_balance: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  target_user_old_balance: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  source_user_current_balance: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  target_user_current_balance: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
   },
   // transaction_id: {
   //   type: DataTypes.BIGINT,
   //   allowNull: false,
   // },
-  target_id: {
+  target_user_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
-  target_wallet_id: {
+  target_user_wallet_id: {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
@@ -33,13 +49,13 @@ const Transfer = Application.connection.define("transfer", {
   },
 });
 
-Transfer.prototype.getUsers=async function(){
-  const sourceUser=await User.findByPk(this.user_id);
-  const targetUser=await User.findByPk(this.target_id);
+Transfer.prototype.getUsers = async function () {
+  const sourceUser = await User.findByPk(this.source_user_id);
+  const targetUser = await User.findByPk(this.target_user_id);
   return {
-      sourceUser,
-      targetUser
-  }
-}
+    sourceUser,
+    targetUser,
+  };
+};
 
 module.exports = Transfer;
