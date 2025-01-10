@@ -54,6 +54,22 @@ exports.payment = tryCatch(async (req, res, next) => {
     },
   });
 });
+exports.charging = tryCatch(async (req, res, next) => {
+  const operation = await transactionBuilder.build(req, "charging");
+  const transaction = await Transaction.findByPk(operation.transaction_id);
+  const {} = operation;
+  const opertaionInfo = {};
+  const users = await transaction.getUsers();
+  res.status(200).send({
+    status: true,
+    result: {
+      message: "Operation Succeed, Verify it.",
+      opertaionInfo,
+      transaction,
+      users,
+    },
+  });
+});
 
 // exports.charging=tryCatch(async(req,res,next)=>{
 //     const opertaion=await transactionBuilder.build(req,'charging');
@@ -175,7 +191,7 @@ exports.currentUserTransactions = tryCatch(async (req, res, next) => {
       target_id: user.id,
       verified_at: { [Op.ne]: null },
     };
-  } else if (user.guard == "company") {
+  } else if (user.guard == "chargingPoint") {
     whereOptions = {
       operation_type: "charging",
       source_id: user.id,

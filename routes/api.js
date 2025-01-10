@@ -7,6 +7,9 @@ const userController = require("../controllers/api/userController");
 const categoryController = require("../controllers/api/categoryController");
 const roleController = require("../controllers/api/roleController");
 const companyController = require("../controllers/api/companyController");
+const walletUserController = require("../controllers/api/walletUserController");
+const chPointController = require("../controllers/api/chPointController");
+const reportController = require("../controllers/api/reportController");
 const oAuthController = require("../controllers/oAuthController");
 const verifyToken = require("../services/api-authentication/middlewares/verifyToken");
 const validateRequest = require("../validation/middlewares/validateRequest");
@@ -41,6 +44,7 @@ const {
   validateAmount,
   validateCode,
   validateVerificationCode,
+  validateTiming,
 } = require("../validation/validations/otherValidations");
 const {
   validateTargetPhone,
@@ -67,6 +71,7 @@ const { validateRoleName, validateRoleExistance } = require("../validation/valid
 const { validatePermissionExistance } = require("../validation/validations/permissionValidations");
 const { validateUserExistance, validateUserInParam } = require("../validation/validations/userValidations");
 const authorizeSuperAdmin = require("../services/authorization/middlewares/authorizeSuperAdmin");
+const { validateChargingPointIsFound } = require("../validation/validations/chargingPointValidations");
 
 apiRoutes.post(
   "/login",
@@ -97,8 +102,8 @@ apiRoutes.get("/logout", verifyToken, authController.logout);
 // apiRoutes.get('/logout/all',verifyToken,authController.logout);
 // Oauth
 apiRoutes.get(
-  "/auth/google/:process/:guard",
-  validateRequest([validateOauthProcess, validateOauthGuard]),
+  "/auth/google/request/:guard",
+  validateRequest([validateOauthGuard]),
   oAuthController.googleAuthRequest
 );
 apiRoutes.get("/auth/google/callback", oAuthController.googleAuthResponse);
@@ -189,7 +194,18 @@ apiRoutes.post(
   ]),
   transactionController.transfer
 );
-
+// charging
+apiRoutes.post(
+  "/charging",
+  verifyToken,
+  isVerified,
+  authorizePermission("can-charge"),
+  validateRequest([
+    validateAmount,
+    validateTargetPhone
+]),
+  transactionController.charging
+);
 // payment
 // category
 apiRoutes.get("/category", categoryController.index);
@@ -363,12 +379,12 @@ apiRoutes.post(
 
 //systemOwner routes
 // category
-webRoutes.get(
+apiRoutes.get(
   "/category",
   verifyToken,
   categoryController.index
 );
-webRoutes.post(
+apiRoutes.post(
   "/category",
   verifyToken,
   authorizePermission("can-create-category"),
@@ -377,7 +393,7 @@ webRoutes.post(
 ]),
   categoryController.store
 );
-webRoutes.get(
+apiRoutes.get(
   "/category-companies/:category_id",
   isAuthenticated,
   validateRequest([
@@ -385,5 +401,69 @@ webRoutes.get(
 ]),
   categoryController.getCategoryCompanies
 );
+
+
+// wallet users
+apiRoutes.get(
+  "/wallet-user/:guard/all",
+  verifyToken,
+  authorizePermission("can-show-wallet-users"),
+  validateRequest([
+    validateGuard('param'),
+]),
+  walletUserController.index
+);
+
+
+// charging point
+
+// pending
+apiRoutes.patch(
+  "/charging-point/pending",
+  verifyToken,
+  authorizePermission("can-pending-charging-point"),
+  validateRequest([
+    validateChargingPointIsFound
+]),
+  chPointController.pending
+);
+// delete
+apiRoutes.delete(
+  "/charging-point",
+  verifyToken,
+  authorizePermission("can-delete-charging-point"),
+  validateRequest([
+    validateChargingPointIsFound
+]),
+  chPointController.destroy
+);
+
+// apiRoutes.get('/my-charging-point-transactions',isAuthenticated,reportController.dailyMyChPointTransactions);
+
+
+// reporting
+apiRoutes.get(
+  "/report/system-transactions",
+  verifyToken,
+  authorizePermission("can-show-transactions-reports"),
+  validateRequest([
+    validateTiming
+]),
+  reportController.dailySystemTransactions
+);
+apiRoutes.get(
+  "/report/system-user-transactions/:guard/:user_id",
+  verifyToken,
+  authorizePermission("can-show-transactions-reports"),
+  validateRequest([
+    validateTiming,
+    validateGuard('param'),
+    validateUserInParam
+]),
+  reportController.dailySystemUserTransactions
+);
+
+
+
 
 module.exports = apiRoutes;

@@ -157,13 +157,14 @@ class ApiAuth {
       .scope("withPassword")
       .findOne({ where: { ...req.body } });
     if (!user) throw new AuthenticationError("Wrong Credintials");
-    const isMatched = bcrypt.compareSync(password, user.password);
-    if (!isMatched) throw new AuthenticationError("Wrong Password");
+    if(!user.googleOAuth){
+      const isMatched = bcrypt.compareSync(password, user.password);
+      if (!isMatched) throw new AuthenticationError("Wrong Password");
+    }
     const { refreshInstance, refreshToken } = await this.#generateRefresh(
       user,
       revokePrev
     );
-
     const { accessToken } = await this.#generateAccess(
       user,
       refreshInstance,

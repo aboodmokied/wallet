@@ -2,17 +2,14 @@ const express = require("express");
 const isAuthenticated = require("../services/authentication/middlewares/isAuthenticated");
 const oAuthController = require("../controllers/oAuthController");
 const authController = require("../controllers/web/authController");
-const reportController = require("../controllers/web/reportController");
 const adminController = require("../controllers/web/adminController");
 const companyController = require("../controllers/web/companyController");
-const chPointController = require("../controllers/web/chPointController");
 const pagesConfig = require("../config/pagesConfig");
 const isGuest = require("../services/authentication/middlewares/isGuest");
 const validateRequest = require("../validation/middlewares/validateRequest");
 const authorizePermission = require("../services/authorization/middlewares/authorizePermission");
 
 const transactionController = require("../controllers/web/transactionController");
-const walletUserController = require("../controllers/web/walletUserController");
 const authorizeSuperAdmin = require("../services/authorization/middlewares/authorizeSuperAdmin");
 const verifyPassResetToken = require("../services/password-reset/middlewares/verifyPassResetToken");
 const isVerified = require("../middlewares/isVerified");
@@ -71,25 +68,25 @@ webRoutes.get(
 webRoutes.get("/api/auth/google/callback", oAuthController.googleAuthResponse);
 
 // register
-webRoutes.get(
-  "/auth/register/:guard",
-  isGuest,
-  validateRequest([validateGuard("param", true, true)]),
-  authController.getRegister
-);
-webRoutes.post(
-  "/auth/register",
-  isGuest,
-  validateRequest([
-    validateEmail,
-    validateEmailExistence,
-    validateName,
-    validateGuard("body"),
-    validateRegisterPassword,
-    validateConfirmPassword,
-  ]),
-  authController.postRegister
-);
+// webRoutes.get(
+//   "/auth/register/:guard",
+//   isGuest,
+//   validateRequest([validateGuard("param", true, true)]),
+//   authController.getRegister
+// );
+// webRoutes.post(
+//   "/auth/register",
+//   isGuest,
+//   validateRequest([
+//     validateEmail,
+//     validateEmailExistence,
+//     validateName,
+//     validateGuard("body"),
+//     validateRegisterPassword,
+//     validateConfirmPassword,
+//   ]),
+//   authController.postRegister
+// );
 
 // by admin register
 
@@ -356,16 +353,16 @@ webRoutes.post(
 //   categoryController.categoryCompanies
 // );
 
-// wallet users
-webRoutes.get(
-  "/wallet-user/:guard/all",
-  isAuthenticated,
-  authorizePermission("can-show-wallet-users"),
-  validateRequest([
-    validateGuard('param'),
-]),
-  walletUserController.index
-);
+// // wallet users
+// webRoutes.get(
+//   "/wallet-user/:guard/all",
+//   isAuthenticated,
+//   authorizePermission("can-show-wallet-users"),
+//   validateRequest([
+//     validateGuard('param'),
+// ]),
+//   walletUserController.index
+// );
 // webRoutes.get(
 //   "/wallet-user/:guard/:id",
 //   isAuthenticated,
@@ -374,114 +371,113 @@ webRoutes.get(
 //   walletUserController.show
 // );
 
-// charging point
+// // charging point
 
-// pending
-webRoutes.patch(
-  "/charging-point/pending",
-  isAuthenticated,
-  authorizePermission("can-pending-charging-point"),
-  validateRequest([
-    validateChargingPointIsFound
-]),
-  chPointController.pending
-);
-// delete
-webRoutes.delete(
-  "/charging-point",
-  isAuthenticated,
-  authorizePermission("can-delete-charging-point"),
-  validateRequest([
-    validateChargingPointIsFound
-]),
-  chPointController.destroy
-);
+// // pending
+// webRoutes.patch(
+//   "/charging-point/pending",
+//   isAuthenticated,
+//   authorizePermission("can-pending-charging-point"),
+//   validateRequest([
+//     validateChargingPointIsFound
+// ]),
+//   chPointController.pending
+// );
+// // delete
+// webRoutes.delete(
+//   "/charging-point",
+//   isAuthenticated,
+//   authorizePermission("can-delete-charging-point"),
+//   validateRequest([
+//     validateChargingPointIsFound
+// ]),
+//   chPointController.destroy
+// );
 
-// reporting
-webRoutes.get(
-  "/report/system-transactions",
-  isAuthenticated,
-  authorizePermission("can-show-transactions-reports"),
-  validateRequest([
-    validateTiming
-]),
-  reportController.dailySystemTransactions
-);
-webRoutes.get(
-  "/report/system-user-transactions/:guard/:user_id",
-  isAuthenticated,
-  authorizePermission("can-show-transactions-reports"),
-  validateRequest([
-    validateTiming,
-    validateGuard('param'),
-    validateUserInParam
-]),
-  reportController.dailySystemUserTransactions
-);
+// // reporting
+// webRoutes.get(
+//   "/report/system-transactions",
+//   isAuthenticated,
+//   authorizePermission("can-show-transactions-reports"),
+//   validateRequest([
+//     validateTiming
+// ]),
+//   reportController.dailySystemTransactions
+// );
+// webRoutes.get(
+//   "/report/system-user-transactions/:guard/:user_id",
+//   isAuthenticated,
+//   authorizePermission("can-show-transactions-reports"),
+//   validateRequest([
+//     validateTiming,
+//     validateGuard('param'),
+//     validateUserInParam
+// ]),
+//   reportController.dailySystemUserTransactions
+// );
 
 // transaction
-webRoutes.get(
-  "/transaction/:guard/:transaction_id",
-  transactionController.showTransaction
-);
+// webRoutes.get(
+//   "/transaction/:guard/:transaction_id",
+//   transactionController.showTransaction
+// );
 
 
 // charging
 // =>show charging page
-webRoutes.get(
-  "/charging",
-  isAuthenticated,
-  isVerified,
-  // authorizePermission("can-charge"),
-  transactionController.getCharging
-);
+// webRoutes.get(
+//   "/charging",
+//   isAuthenticated,
+//   isVerified,
+//   // authorizePermission("can-charge"),
+//   transactionController.getCharging
+// );
 // get user by user phone
-webRoutes.get(
-  "/confirm",
-  isAuthenticated,
-  isVerified,
-  // authorizePermission("can-charge"),
-  validateRequest([
-    validateAmountInQuery,
-    validateTargetPhoneInQuery
-]),
-  transactionController.getConfirm
-);
+// webRoutes.get(
+//   "/confirm",
+//   isAuthenticated,
+//   isVerified,
+//   // authorizePermission("can-charge"),
+//   validateRequest([
+//     validateAmountInQuery,
+//     validateTargetPhoneInQuery
+// ]),
+//   transactionController.getConfirm
+// );
 // // post amount with target-phone
-webRoutes.post(
-  "/charging",
-  isAuthenticated,
-  isVerified,
-  // authorizePermission("can-charge"),
-  validateRequest([
-    validateAmount,
-    validateTargetPhone
-]),
-  transactionController.charging
-); // redirect to verification page
+// webRoutes.post(
+//   "/charging",
+//   isAuthenticated,
+//   isVerified,
+//   // authorizePermission("can-charge"),
+//   validateRequest([
+//     validateAmount,
+//     validateTargetPhone
+// ]),
+//   transactionController.charging
+// ); // redirect to verification page
 // // verify
-webRoutes.get(
-  "/verify/:transaction_id",
-  isAuthenticated,
-  isVerified,
-  validateRequest([
-    validateTransactionInParam
-]),
-  transactionController.getVerify
-);
-webRoutes.post(
-  "/verify",
-  isAuthenticated,
-  isVerified,
-  userCanVerifyTransaction,
-  validateRequest([
-    validateTransaction,
-    validateVerificationCode
-]),
-  transactionController.verifyTransaction
-);
+// webRoutes.get(
+//   "/verify/:transaction_id",
+//   isAuthenticated,
+//   isVerified,
+//   validateRequest([
+//     validateTransactionInParam
+// ]),
+//   transactionController.getVerify
+// );
+// webRoutes.post(
+//   "/verify",
+//   isAuthenticated,
+//   isVerified,
+//   userCanVerifyTransaction,
+//   validateRequest([
+//     validateTransaction,
+//     validateVerificationCode
+// ]),
+//   transactionController.verifyTransaction
+// );
 
 // my-charging-point transactions
-webRoutes.get('/my-charging-point-transactions',isAuthenticated,reportController.dailyMyChPointTransactions);
 
 module.exports = webRoutes;

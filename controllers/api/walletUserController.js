@@ -15,16 +15,13 @@ exports.index = tryCatch(async (req, res, next) => {
   }
   const guardObj = authConfig.guards[guard];
   const model = authConfig.providers[guardObj.provider]?.model;
-  // const users=await model.findAll({where:{guard:guard}});
   const queryFeatures = new QueryFeatures(req);
-  const users = await queryFeatures.findAllWithFeatures(model);
-  req.session.pagePath = req.path;
-  res.render("wallet/wallet-user/users", {
-    pageTitle: guard,
-    users: users.data,
+  const {data,responseMetaData} = await queryFeatures.findAllWithFeatures(model);
+  res.send({status:true,result:{
+    users: data,
     guard,
-    responseMetaData: users.responseMetaData,
-  });
+    responseMetaData,
+  }})
 });
 
 // exports.show = tryCatch(async (req, res, next) => {
