@@ -74,7 +74,7 @@ webRoutes.post('/auth/login',isGuest,validateRequest([
   validateLoginPassword
 ]),authController.postLogin);
 
-
+webRoutes.get("/auth/quick-login", isGuest, authController.getQuickLogin);
 // register
 webRoutes.get(
   "/auth/register/:guard",

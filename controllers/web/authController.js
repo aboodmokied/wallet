@@ -131,8 +131,13 @@ exports.getRegisterByAdminCreate = tryCatch(async (req, res, next) => {
 exports.postRegisterByAdminCreate = tryCatch(async (req, res, next) => {
   const byAdmin = new ByAdminRegister();
   const newUser = await byAdmin.create(req);
-  req.session.targetUser = newUser;
-  res.redirect("/auth/quick-login");
+  if(newUser.guard=='admin'){
+    req.session.targetUser = newUser;
+    return res.redirect("/auth/quick-login");
+  }
+  res.render('auth/message',{
+    message:'User Created Successfully, try to login'
+  })
 });
 
 // password reset
