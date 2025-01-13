@@ -3,6 +3,7 @@ const isAuthenticated = require("../services/authentication/middlewares/isAuthen
 const oAuthController = require("../controllers/oAuthController");
 const authController = require("../controllers/web/authController");
 const adminController = require("../controllers/web/adminController");
+const userController = require("../controllers/web/userController");
 const companyController = require("../controllers/web/companyController");
 const roleController = require("../controllers/web/roleController");
 const pagesConfig = require("../config/pagesConfig");
@@ -72,6 +73,7 @@ webRoutes.post('/auth/login',isGuest,validateRequest([
   validateEmailIsFound,
   validateLoginPassword
 ]),authController.postLogin);
+
 
 // register
 webRoutes.get(
@@ -268,48 +270,48 @@ webRoutes.delete(
 );
 
 // user
-// webRoutes.get(
-//   "/cms/user/:guard/all",
-//   isAuthenticated,
-//   authorizePermission("can-show-users"),
-//   validateRequest([
-//     validateGuard('param'),
-// ]),
-//   userController.index
-// );
-// webRoutes.get(
-//   "/cms/user/:guard/:id",
-//   isAuthenticated,
-//   authorizePermission("can-show-users"),
-//   validateRequest([
-//     validateGuard('param'),
-//     validateUserExistance
+webRoutes.get(
+  "/cms/user/:guard/all",
+  isAuthenticated,
+  authorizePermission("can-show-users"),
+  validateRequest([
+    validateGuard('param'),
+]),
+  userController.index
+);
+webRoutes.get(
+  "/cms/user/:guard/:user_id",
+  isAuthenticated,
+  authorizePermission("can-show-users"),
+  validateRequest([
+    validateGuard('param'),
+    validateUserInParam
 
-// ]),
-//   userController.show
-// );
-// webRoutes.get(
-//   "/cms/user-roles/:guard/:id",
-//   isAuthenticated,
-//   authorizePermission("can-show-user-roles"),
-//   validateRequest([
-//     validateGuard('param'),
-//     validateUserExistance
-// ]),
-//   userController.getUserRoles
-// );
-// webRoutes.post(
-//   "/cms/user-roles/assignRole",
-//   isAuthenticated,
-//   authorizeSuperAdmin,
-//   userController.userAssignRole
-// );
-// webRoutes.post(
-//   "/cms/user-roles/revokeRole",
-//   isAuthenticated,
-//   authorizeSuperAdmin,
-//   userController.userRevokeRole
-// );
+]),
+  userController.show
+);
+webRoutes.get(
+  "/cms/user-roles/:guard/:user_id",
+  isAuthenticated,
+  authorizePermission("can-show-user-roles"),
+  validateRequest([
+    validateGuard('param'),
+    validateUserInParam
+]),
+  userController.getUserRoles
+);
+webRoutes.post(
+  "/cms/user-roles/assignRole",
+  isAuthenticated,
+  authorizeSuperAdmin,
+  userController.userAssignRole
+);
+webRoutes.post(
+  "/cms/user-roles/revokeRole",
+  isAuthenticated,
+  authorizeSuperAdmin,
+  userController.userRevokeRole
+);
 
 // vrify email
 

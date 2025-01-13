@@ -6,6 +6,7 @@ const CompanyTransaction = require("../../models/CompanyTransaction");
 const QueryFeatures = require("../../util/QueryFeatures");
 const tryCatch = require("../../util/tryCatch");
 const Transaction = require("../../models/Transaction");
+const User = require("../../models/User");
 
 exports.index = tryCatch(async (req, res, next) => {
   // BEFORE: type validation
@@ -22,6 +23,13 @@ exports.index = tryCatch(async (req, res, next) => {
     guard,
     responseMetaData,
   }})
+});
+
+
+exports.getUserByPhone=tryCatch(async(req,res,next)=>{
+  const {target_phone}=req.body;
+  const user=await User.findOne({where:{phone:target_phone}});
+  res.send({status:true,result:{user}})
 });
 
 // exports.show = tryCatch(async (req, res, next) => {

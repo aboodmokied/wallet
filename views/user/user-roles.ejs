@@ -31,8 +31,8 @@
                 <td>
                     <form action="/cms/user-roles/revokeRole" method="POST">
                         <!-- userId,guard,roleId -->
-                         <input type="hidden" name="userId" value="<%= locals.user.id %>">
-                         <input type="hidden" name="roleId" value="<%= role.id %>">
+                         <input type="hidden" name="user_id" value="<%= locals.user.id %>">
+                         <input type="hidden" name="role_id" value="<%= role.id %>">
                          <input type="hidden" name="guard" value="<%= locals.user.guard %>">
                         <button type="submit" class="btn btn-block btn-danger m-0 <%= role.isMain?'disabled':'' %>">Revoke</button>
                     </form>
@@ -79,8 +79,8 @@
                     <td>
                         <form action="/cms/user-roles/assignRole" method="POST">
                             <!-- userId,guard,roleId -->
-                            <input type="hidden" name="userId" value="<%= locals.user.id %>">
-                            <input type="hidden" name="roleId" value="<%= role.id %>">
+                            <input type="hidden" name="user_id" value="<%= locals.user.id %>">
+                            <input type="hidden" name="role_id" value="<%= role.id %>">
                             <input type="hidden" name="guard" value="<%= locals.user.guard %>">
                             <button type="submit" class="btn btn-block btn-primary m-0 <%= role.isMain?'disabled':'' %>">Assign</button>
                         </form>

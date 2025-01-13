@@ -3,7 +3,7 @@ const tryCatch = require("../util/tryCatch");
 const apiRoutes = express.Router();
 const authController = require("../controllers/api/authController");
 const transactionController = require("../controllers/api/transactionController");
-const userController = require("../controllers/api/userController");
+const userController = require("../controllers/web/userController");
 const categoryController = require("../controllers/api/categoryController");
 // const roleController = require("../controllers/web/roleController");
 const companyController = require("../controllers/api/companyController");
@@ -180,7 +180,7 @@ apiRoutes.post(
     validateTargetPhone,
     validateTargetPhoneIsNotForTheSameUser,
   ]),
-  userController.getUserByPhone
+  walletUserController.getUserByPhone
 );
 apiRoutes.post(
   "/transfer",
