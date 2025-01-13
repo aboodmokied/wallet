@@ -1,4 +1,4 @@
-const { param } = require("express-validator");
+const { param, body } = require("express-validator");
 const authConfig = require("../../config/authConfig");
 
 exports.validateUserExistance = body("user_id").custom(async (id, { req }) => {

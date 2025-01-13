@@ -1,6 +1,6 @@
 const authConfig = {
   defaults: {
-    defaultGuard: "user",
+    defaultGuard: "admin",
   },
   commonRole: {
     // role shared between all users
@@ -11,7 +11,7 @@ const authConfig = {
     admin: {
       name: "admin",
       oauth: false,
-      drivers: ["token"],
+      drivers: ["session"],
       registeration: "by-admin", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "admins", // mainProvider: contain all users types
       role: {
@@ -42,7 +42,7 @@ const authConfig = {
       name: "chargingPoint",
       oauth: false,
       drivers: ["token"],
-      registeration: "by-system-owner", // (that means any user can create a student account) or admin: (only admin can create new accounts)
+      registeration: "global", // (that means any user can create a student account) or admin: (only admin can create new accounts)
       provider: "chargingPoints", // mainProvider: contain all users types
       role: {
         name: "charging-point",

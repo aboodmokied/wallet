@@ -40,6 +40,8 @@ exports.validateEmailExistence = body("email")
   });
 
 exports.validateEmailIsFound = body("email")
+  .notEmpty()
+  .withMessage('Email Required')
   .normalizeEmail()
   .custom(async (input, { req }) => {
     const guardObj = authConfig.guards[req.body.guard];

@@ -1,4 +1,6 @@
 const authConfig = require("../../config/authConfig");
+const ValidationError = require("../../Errors/ErrorTypes/ValidationError");
+const User = require("../../models/User");
 const QueryFeatures = require("../../util/QueryFeatures");
 const tryCatch = require("../../util/tryCatch");
 
@@ -65,4 +67,11 @@ exports.userRevokeRole=tryCatch(async(req,res,next)=>{
     res.send({status:true,result:{
         message:'Role Revoked Successfully'
     }})
+});
+
+
+exports.getUserByPhone=tryCatch(async(req,res,next)=>{
+    const {target_phone}=req.body;
+    const user=await User.findOne({where:{phone:target_phone}});
+    res.send({status:true,result:{user}})
 });

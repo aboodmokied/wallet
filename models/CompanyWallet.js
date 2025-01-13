@@ -4,7 +4,7 @@ const Application = require("../Application");
 const CompanyWallet=Application.connection.define('company_wallet',{
     balance:{
         type:DataTypes.DOUBLE,
-        defaultValue:0.0
+        defaultValue:100.0
     },
     company_id:{
         type:DataTypes.BIGINT,

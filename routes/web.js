@@ -4,6 +4,7 @@ const oAuthController = require("../controllers/oAuthController");
 const authController = require("../controllers/web/authController");
 const adminController = require("../controllers/web/adminController");
 const companyController = require("../controllers/web/companyController");
+const roleController = require("../controllers/web/roleController");
 const pagesConfig = require("../config/pagesConfig");
 const isGuest = require("../services/authentication/middlewares/isGuest");
 const validateRequest = require("../validation/middlewares/validateRequest");
@@ -32,6 +33,8 @@ const { validateCategoryName, validateCategoryIsFound } = require("../validation
 const { validateChargingPointIsFound } = require("../validation/validations/chargingPointValidations");
 const { validateTargetPhone, validateTargetPhoneInQuery } = require("../validation/validations/phoneValidations");
 const { validateTransaction, validateTransactionInParam } = require("../validation/validations/transactionsValidations");
+const { validateRoleExistance, validateRoleName } = require("../validation/validations/roleValidations");
+const { validatePermissionExistance } = require("../validation/validations/permissionValidations");
 
 const webRoutes = express.Router();
 
@@ -51,42 +54,45 @@ webRoutes.get("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// home pages
-// webRoutes.get('/home/admin',)
-// webRoutes.get('/home/systemOwner')
-// webRoutes.get('/home/chargingPoint')
-
-
-
 // Oauth
-webRoutes.get(
-  "/auth/google/:process/:guard",
-  isGuest,
-  validateRequest([validateOauthProcess, validateOauthGuard]),
-  oAuthController.googleAuthRequest
-);
-webRoutes.get("/api/auth/google/callback", oAuthController.googleAuthResponse);
+// webRoutes.get(
+//   "/auth/google/:process/:guard",
+//   isGuest,
+//   validateRequest([validateOauthProcess, validateOauthGuard]),
+//   oAuthController.googleAuthRequest
+// );
+// webRoutes.get("/api/auth/google/callback", oAuthController.googleAuthResponse);
+// login
+webRoutes.get('/auth/login/:guard',isGuest,validateRequest([
+  validateGuard('param',false,true)
+]),authController.getLogin);
+
+webRoutes.post('/auth/login',isGuest,validateRequest([
+  validateGuard('body',false,true),
+  validateEmailIsFound,
+  validateLoginPassword
+]),authController.postLogin);
 
 // register
-// webRoutes.get(
-//   "/auth/register/:guard",
-//   isGuest,
-//   validateRequest([validateGuard("param", true, true)]),
-//   authController.getRegister
-// );
-// webRoutes.post(
-//   "/auth/register",
-//   isGuest,
-//   validateRequest([
-//     validateEmail,
-//     validateEmailExistence,
-//     validateName,
-//     validateGuard("body"),
-//     validateRegisterPassword,
-//     validateConfirmPassword,
-//   ]),
-//   authController.postRegister
-// );
+webRoutes.get(
+  "/auth/register/:guard",
+  isGuest,
+  validateRequest([validateGuard("param", true, true)]),
+  authController.getRegister
+);
+webRoutes.post(
+  "/auth/register",
+  isGuest,
+  validateRequest([
+    validateEmail,
+    validateEmailExistence,
+    validateName,
+    validateGuard("body"),
+    validateRegisterPassword,
+    validateConfirmPassword,
+  ]),
+  authController.postRegister
+);
 
 // by admin register
 
@@ -158,7 +164,7 @@ webRoutes.post(
 // webRoutes.post('/auth/create-admin',isGuest,adminController.store);
 
 // logout
-// webRoutes.get("/auth/logout", isAuthenticated, authController.logout);
+webRoutes.get("/auth/logout", isAuthenticated, authController.logout);
 
 // webRoutes.get("/authTest", (req, res, next) => {
 //   console.log(req.url);
@@ -167,99 +173,99 @@ webRoutes.post(
 
 
 // pass reset
-// webRoutes.get(
-//   "/auth/password-reset/:guard/request",
-//   validateRequest([validateGuard("param")]),
-//   authController.getPasswordResetRequest
-// );
-// webRoutes.post(
-//   "/auth/password-reset/request",
-//   validateRequest([
-//     validateGuard("body"),
-//     validateEmailIsFound
-//     ]),
-//   authController.postPasswordResetRequest
-// );
+webRoutes.get(
+  "/auth/password-reset/:guard/request",
+  validateRequest([validateGuard("param")]),
+  authController.getPasswordResetRequest
+);
+webRoutes.post(
+  "/auth/password-reset/request",
+  validateRequest([
+    validateGuard("body"),
+    validateEmailIsFound
+    ]),
+  authController.postPasswordResetRequest
+);
 
-// webRoutes.get(
-//   "/auth/password-reset/:token",
-//   validateRequest([normalizeEmailInQuery]),
-//   verifyPassResetToken("url"),
-//   authController.getPasswordReset
-// );
-// webRoutes.post(
-//   "/auth/password-reset",
-//   validateRequest([
-//     validateToken,
-//     validateEmail,
-//     validateRegisterPassword,
-//     validateConfirmPassword,
-//   ]),
-//   verifyPassResetToken("body"),
-//   authController.postPasswordReset
-// );
+webRoutes.get(
+  "/auth/password-reset/:token",
+  validateRequest([normalizeEmailInQuery]),
+  verifyPassResetToken("url"),
+  authController.getPasswordReset
+);
+webRoutes.post(
+  "/auth/password-reset",
+  validateRequest([
+    validateToken,
+    validateEmail,
+    validateRegisterPassword,
+    validateConfirmPassword,
+  ]),
+  verifyPassResetToken("body"),
+  authController.postPasswordReset
+);
 
 // cms
 // role
-// webRoutes.get(
-//   "/cms/role",
-//   isAuthenticated,
-//   authorizeSuperAdmin,
-//   RoleController.index
-// );
-// webRoutes.get(
-//   "/cms/role/create",
-//   isAuthenticated,
-//   authorizeSuperAdmin,
-//   RoleController.create
-// );
-// webRoutes.post(
-//   "/cms/role",
-//   isAuthenticated,
-//   authorizeSuperAdmin,
-//   validateRequest([
-//     validateRoleName
-// ]),
-//   RoleController.store
-// );
-// webRoutes.get(
-//   "/cms/role/:roleId",
-//   isAuthenticated,
-//   authorizeSuperAdmin,
-//   validateRequest([
-//     validateRoleExistance('param')
-// ]),
-//   RoleController.show
-// );
-// webRoutes.post(
-//   "/cms/role/assignPermission",
-//   isAuthenticated,
-//   authorizeSuperAdmin,
-//   validateRequest([
-//     validatePermissionExistance,
-//     validateRoleExistance('body')
-// ]),
-//   RoleController.assignPermission
-// );
-// webRoutes.post(
-//   "/cms/role/revokePermission",
-//   isAuthenticated,
-//   authorizeSuperAdmin,
-//   validateRequest([
-//     validatePermissionExistance,
-//     validateRoleExistance('body')
-// ]),
-//   RoleController.revokePermission
-// );
-// webRoutes.delete(
-//   "/cms/role/:roleId",
-//   isAuthenticated,
-//   authorizeSuperAdmin,
-//   validateRequest([
-//     validateRoleExistance('param')
-// ]),
-//   RoleController.destroy
-// );
+webRoutes.get(
+  "/cms/role",
+  isAuthenticated,
+  authorizeSuperAdmin,
+  roleController.index
+);
+webRoutes.get(
+  "/cms/role/create",
+  isAuthenticated,
+  authorizeSuperAdmin,
+  roleController.create
+);
+webRoutes.post(
+  "/cms/role",
+  isAuthenticated,
+  authorizeSuperAdmin,
+  validateRequest([
+    validateRoleName
+]),
+  roleController.store
+);
+webRoutes.get(
+  "/cms/role/:role_id",
+  isAuthenticated,
+  authorizeSuperAdmin,
+  validateRequest([
+    validateRoleExistance('param')
+]),
+  roleController.show
+);
+webRoutes.post(
+  "/cms/role/assignPermission",
+  isAuthenticated,
+  authorizeSuperAdmin,
+  validateRequest([
+    validatePermissionExistance,
+    validateRoleExistance('body')
+]),
+  roleController.assignPermission
+);
+webRoutes.post(
+  "/cms/role/revokePermission",
+  isAuthenticated,
+  authorizeSuperAdmin,
+  validateRequest([
+    validatePermissionExistance,
+    validateRoleExistance('body')
+]),
+  roleController.revokePermission
+);
+webRoutes.delete(
+  "/cms/role/:role_id",
+  isAuthenticated,
+  authorizeSuperAdmin,
+  validateRequest([
+    validateRoleExistance('param')
+]),
+  roleController.destroy
+);
 
 // user
 // webRoutes.get(

@@ -1,22 +1,26 @@
 const Role = require("../../models/Role");
-const QueryFeatures = require("../../util/QueryFeatures");
+const tryCatch = require("../../util/tryCatch");
 
 exports.index=tryCatch(async(req,res,next)=>{
-    const qf=new QueryFeatures(req);
-    const {data,responseMetaData}=await qf.findAllWithFeatures(Role);
-    res.send({status:true,result:{
-        roles:data,
-        responseMetaData
-    }})        
+    const systemRoles=await Role.findAll({where:{isMain:true}});
+    const customRoles=await Role.findAll({where:{isMain:false}});
+    res.render('authorization/roles',{
+        pageTitle:'Roles',
+        systemRoles,
+        customRoles
+    })        
 })
-
+exports.create=(req,res,next)=>{
+    req.session.pagePath=req.url;
+    res.render('authorization/create-role',{
+        pageTitle:'Create Role'
+    })
+}
 
 exports.store=tryCatch(async(req,res,next)=>{
     const {name}=req.body;
-    await Role.create({name});
-    res.status(201).send({status:true,result:{
-        message:'Role Created Successfully'
-    }})
+    const newRole=await Role.create({name});
+    res.redirect(`/cms/role/${newRole.id}`);
 })
 
 
@@ -25,11 +29,11 @@ exports.show=tryCatch(async(req,res,next)=>{
     const role=await Role.findByPk(role_id);
     const rolePermissions=await role.getPermissions();
     const availablePermissions=await role.getAvailablePermissions();
-    res.send({status:true,result:{
+    res.render('authorization/role-details',{
         role,
         rolePermissions,
         availablePermissions
-    }})
+    })
 })
 
 
@@ -40,24 +44,19 @@ exports.destroy=tryCatch(async(req,res,next)=>{
         throw new BadRequestError('main role not deletable');
     }
     await role.destroy();
-    res.send({status:true,result:{
-        message:'Role Deleted Successfully'
-    }})
+    res.redirect('/cms/role')
 })
 
 
 exports.assignPermission=tryCatch(async(req,res,next)=>{
+    console.log('here');
     const {role_id:role,permission_id:permission}=req.body;
     await Role.assignPermission(role,permission);
-    res.send({status:true,result:{
-        message:'Permission Assigned Successfully'
-    }})
+    res.redirect(`/cms/role/${role}`);
 })
 
 exports.revokePermission=tryCatch(async(req,res,next)=>{
     const {role_id:role,permission_id:permission}=req.body;
     await Role.revokePermission(role,permission);
-    res.send({status:true,result:{
-        message:'Permission Revoked Successfully'
-    }})
+    res.redirect(`/cms/role/${role}`);
 })

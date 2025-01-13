@@ -5,7 +5,7 @@ const authController = require("../controllers/api/authController");
 const transactionController = require("../controllers/api/transactionController");
 const userController = require("../controllers/api/userController");
 const categoryController = require("../controllers/api/categoryController");
-const roleController = require("../controllers/api/roleController");
+// const roleController = require("../controllers/web/roleController");
 const companyController = require("../controllers/api/companyController");
 const walletUserController = require("../controllers/api/walletUserController");
 const chPointController = require("../controllers/api/chPointController");
@@ -260,120 +260,120 @@ apiRoutes.get(
   transactionController.showCurrentUserTransaction
 );
 
-//  Admin Routes
-  // role
-  apiRoutes.get(
-    "/cms/role",
-    verifyToken,
-    authorizeSuperAdmin,
-    roleController.index
-  );
+// //  Admin Routes
+//   // role
+//   apiRoutes.get(
+//     "/cms/role",
+//     verifyToken,
+//     authorizeSuperAdmin,
+//     roleController.index
+//   );
 
-  apiRoutes.post(
-    "/cms/role",
-    verifyToken,
-    authorizeSuperAdmin,
-    validateRequest([
-      validateRoleName
-  ]),
-    roleController.store
-  );
+//   apiRoutes.post(
+//     "/cms/role",
+//     verifyToken,
+//     authorizeSuperAdmin,
+//     validateRequest([
+//       validateRoleName
+//   ]),
+//     roleController.store
+//   );
 
-  apiRoutes.get(
-    "/cms/role/:role_id",
-    verifyToken,
-    authorizeSuperAdmin,
-    validateRequest([
-      validateRoleExistance('param')
-  ]),
-    roleController.show
-  );
+//   apiRoutes.get(
+//     "/cms/role/:role_id",
+//     verifyToken,
+//     authorizeSuperAdmin,
+//     validateRequest([
+//       validateRoleExistance('param')
+//   ]),
+//     roleController.show
+//   );
 
-  apiRoutes.delete(
-    "/cms/role/:role_id",
-    verifyToken,
-    authorizeSuperAdmin,
-    validateRequest([
-      validateRoleExistance('param')
-  ]),
-    roleController.destroy
-  );
+//   apiRoutes.delete(
+//     "/cms/role/:role_id",
+//     verifyToken,
+//     authorizeSuperAdmin,
+//     validateRequest([
+//       validateRoleExistance('param')
+//   ]),
+//     roleController.destroy
+//   );
 
 
-  apiRoutes.post(
-    "/cms/role/assignPermission",
-    verifyToken,
-    authorizeSuperAdmin,
-    validateRequest([
-      validatePermissionExistance,
-      validateRoleExistance('body')
-  ]),
-    roleController.assignPermission
-  );
-  apiRoutes.post(
-    "/cms/role/revokePermission",
-    verifyToken,
-    authorizeSuperAdmin,
-    validateRequest([
-      validatePermissionExistance,
-      validateRoleExistance('body')
-  ]),
-    roleController.revokePermission
-  );
+//   apiRoutes.post(
+//     "/cms/role/assignPermission",
+//     verifyToken,
+//     authorizeSuperAdmin,
+//     validateRequest([
+//       validatePermissionExistance,
+//       validateRoleExistance('body')
+//   ]),
+//     roleController.assignPermission
+//   );
+//   apiRoutes.post(
+//     "/cms/role/revokePermission",
+//     verifyToken,
+//     authorizeSuperAdmin,
+//     validateRequest([
+//       validatePermissionExistance,
+//       validateRoleExistance('body')
+//   ]),
+//     roleController.revokePermission
+//   );
 
-  // user
-apiRoutes.get(
-  "/cms/user/:guard/all",
-  verifyToken,
-  authorizePermission("can-show-users"),
-  validateRequest([
-    validateGuard('param'),
-]),
-  userController.index
-);
-apiRoutes.get(
-  "/cms/user/:guard/:user_id",
-  verifyToken,
-  authorizePermission("can-show-users"),
-  validateRequest([
-    validateGuard('param'),
-    validateUserInParam
+//   // user
+// apiRoutes.get(
+//   "/cms/user/:guard/all",
+//   verifyToken,
+//   authorizePermission("can-show-users"),
+//   validateRequest([
+//     validateGuard('param'),
+// ]),
+//   userController.index
+// );
+// apiRoutes.get(
+//   "/cms/user/:guard/:user_id",
+//   verifyToken,
+//   authorizePermission("can-show-users"),
+//   validateRequest([
+//     validateGuard('param'),
+//     validateUserInParam
 
-]),
-  userController.show
-);
-apiRoutes.get(
-  "/cms/user-roles/:guard/:user_id",
-  verifyToken,
-  authorizePermission("can-show-user-roles"),
-  validateRequest([
-    validateGuard('param'),
-    validateUserInParam
-]),
-  userController.getUserRoles
-);
-apiRoutes.post(
-  "/cms/user-roles/assignRole",
-  verifyToken,
-  authorizeSuperAdmin,
-  validateRequest([
-    validateGuard('body'),
-    validateUserExistance,
-    validateRoleExistance('body')
-  ]),
-  userController.userAssignRole
-);
-apiRoutes.post(
-  "/cms/user-roles/revokeRole",
-  verifyToken,
-  authorizeSuperAdmin,
-  validateRequest([
-    validateGuard('body'),
-    validateUserExistance,
-    validateRoleExistance('body')
-  ]),
-  userController.userRevokeRole
-);
+// ]),
+//   userController.show
+// );
+// apiRoutes.get(
+//   "/cms/user-roles/:guard/:user_id",
+//   verifyToken,
+//   authorizePermission("can-show-user-roles"),
+//   validateRequest([
+//     validateGuard('param'),
+//     validateUserInParam
+// ]),
+//   userController.getUserRoles
+// );
+// apiRoutes.post(
+//   "/cms/user-roles/assignRole",
+//   verifyToken,
+//   authorizeSuperAdmin,
+//   validateRequest([
+//     validateGuard('body'),
+//     validateUserExistance,
+//     validateRoleExistance('body')
+//   ]),
+//   userController.userAssignRole
+// );
+// apiRoutes.post(
+//   "/cms/user-roles/revokeRole",
+//   verifyToken,
+//   authorizeSuperAdmin,
+//   validateRequest([
+//     validateGuard('body'),
+//     validateUserExistance,
+//     validateRoleExistance('body')
+//   ]),
+//   userController.userRevokeRole
+// );
 
 
 
@@ -395,7 +395,7 @@ apiRoutes.post(
 );
 apiRoutes.get(
   "/category-companies/:category_id",
-  isAuthenticated,
+  verifyToken,
   validateRequest([
     validateCategoryIsFound
 ]),
