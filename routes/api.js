@@ -2,6 +2,7 @@ const express = require("express");
 const tryCatch = require("../util/tryCatch");
 const apiRoutes = express.Router();
 const authController = require("../controllers/api/authController");
+const webAuthController = require("../controllers/web/authController");
 const transactionController = require("../controllers/api/transactionController");
 const userController = require("../controllers/web/userController");
 const categoryController = require("../controllers/api/categoryController");
@@ -30,6 +31,7 @@ const {
 const {
   validateGuard,
   validateOauthGuard,
+  validateRegisterByAdminGuard,
 } = require("../validation/validations/guardValidations");
 const {
   validateEmail,
@@ -413,10 +415,31 @@ apiRoutes.get(
 ]),
   walletUserController.index
 );
+apiRoutes.get(
+  "/wallet-user/:guard/:user_id",
+  verifyToken,
+  authorizePermission("can-show-wallet-users"),
+  validateRequest([
+    validateGuard('param'),
+    validateUserInParam
+]),
+  walletUserController.show
+);
 
 
 // charging point
-
+// create charging point
+apiRoutes.post(
+  "/auth/register-by-admin/request",
+  verifyToken,
+  // authorizePermission('can-create-chrging-point'),
+  validateRequest([
+    validateGuard('body'),
+    validateRegisterByAdminGuard('body',['by-system-owner']),
+    validateEmailExistence
+  ]),
+  webAuthController.postRegisterByAdminRequest
+);
 // pending
 apiRoutes.patch(
   "/charging-point/pending",
@@ -450,6 +473,15 @@ apiRoutes.get(
     validateTiming
 ]),
   reportController.dailySystemTransactions
+);
+apiRoutes.get(
+  "/transaction/:transaction_id",
+  verifyToken,
+  authorizePermission("can-show-all-transactions"),
+  validateRequest([
+    validateTransactionInParam
+]),
+  transactionController.show
 );
 apiRoutes.get(
   "/report/system-user-transactions/:guard/:user_id",

@@ -26,6 +26,8 @@ exports.validateEmail = body("email")
 
 
 exports.validateEmailExistence = body("email")
+  .notEmpty()
+  .withMessage('Email Required')
   .normalizeEmail()
   .custom(async (input, { req }) => {
     const guardObj = authConfig.guards[req.body.guard];

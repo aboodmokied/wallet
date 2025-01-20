@@ -85,7 +85,7 @@ exports.show = tryCatch(async (req, res, next) => {
   const { transaction_id } = req.params;
   const transaction = await Transaction.findByPk(transaction_id);
   const operation = await transaction.getOperation();
-  const users = await operation.getUsers();
+  const users = await transaction.getUsers();
   // const {operation_type,operation_id}=transaction;
   // const operationModel=transactionConfig.operations[operation_type]?.model;
   // const opertaionObject=await operationModel.findByPk(operation_id);

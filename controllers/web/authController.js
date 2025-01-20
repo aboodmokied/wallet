@@ -100,6 +100,11 @@ exports.getRegisterByAdminRequest = tryCatch(async (req, res, next) => {
 exports.postRegisterByAdminRequest = tryCatch(async (req, res, next) => {
   const byAdmin = new ByAdminRegister();
   const message = await byAdmin.request(req);
+  if(req.isApiRequest){
+    return res.send({status:true,result:{
+      message
+    }})
+  }
   res
     .with("message", message)
     .redirect(`/auth/register-by-admin/request/${req.body.guard}`);

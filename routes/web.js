@@ -122,20 +122,21 @@ const conditionalMiddleware = (permission) => {
 webRoutes.get(
   "/auth/register-by-admin/request/:guard",
   isAuthenticated,
-  conditionalMiddleware("can-create-charging-point"),
+  authorizeSuperAdmin,
   validateRequest([
     validateGuard('param'),
-    validateRegisterByAdminGuard('param',['by-admin','by-system-owner']
+    validateRegisterByAdminGuard('param',['by-admin']
     )]),
   authController.getRegisterByAdminRequest
 );
 webRoutes.post(
   "/auth/register-by-admin/request",
+  // conditionalMiddleware("can-create-charging-point"),
   isAuthenticated,
-  conditionalMiddleware("can-create-charging-point"),
+  authorizeSuperAdmin,
   validateRequest([
     validateGuard('body'),
-    validateRegisterByAdminGuard('body',['by-admin','by-system-owner']),
+    validateRegisterByAdminGuard('body',['by-admin']),
     validateEmailExistence
   ]),
   authController.postRegisterByAdminRequest

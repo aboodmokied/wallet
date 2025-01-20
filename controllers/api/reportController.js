@@ -8,81 +8,86 @@ const ChargingPointTransaction = require("../../models/ChargingPointTransaction"
 const authConfig = require("../../config/authConfig");
 const AuthorizationError = require("../../Errors/ErrorTypes/AuthorizationError");
 
-const getDates = (date, from, to) => {
-  if (Number(from) > Number(to)) {
-    throw new BadRequestError("timing is not valid");
-  }
-  const targetDate = new Date();
-  if (date) {
-    const splittedDate = date.split("-");
-    const year = splittedDate[0];
-    const month = splittedDate[1];
-    const day = splittedDate[2];
-    console.log({date});
-    targetDate.setUTCFullYear(year, month - 1, Number(day));
-  }
-  targetDate.setUTCHours(0, 0, 0, 0);
+// const getDates = (date, from, to) => {
+//   if (Number(from) > Number(to)) {
+//     throw new BadRequestError("timing is not valid");
+//   }
+//   const targetDate = new Date();
+//   if (date) {
+//     const splittedDate = date.split("-");
+//     const year = splittedDate[0];
+//     const month = splittedDate[1];
+//     const day = splittedDate[2];
+//     targetDate.setUTCFullYear(year, month - 1, Number(day));
+//   }
+//   targetDate.setUTCHours(0, 0, 0, 0);
 
-  const startDateInUTC = new Date(targetDate);
-  startDateInUTC.setUTCHours(Number(from), 0, 0, 0);
+//   const startDateInUTC = new Date(targetDate);
+//   startDateInUTC.setUTCHours(Number(from), 0, 0, 0);
 
-  const endtDateInUTC = new Date(targetDate);
-  endtDateInUTC.setUTCHours(Number(to), 59, 59, 999);
+//   const endtDateInUTC = new Date(targetDate);
+//   endtDateInUTC.setUTCHours(Number(to), 59, 59, 999);
 
-  const startDateMillS = startDateInUTC.getTime();
-  const endDateMillS = endtDateInUTC.getTime();
+//   const startDateMillS = startDateInUTC.getTime();
+//   const endDateMillS = endtDateInUTC.getTime();
 
-  const startDateInLocalTime = startDateInUTC.toLocaleString();
-  const endtDateInLocalTime = endtDateInUTC.toLocaleString();
+//   const startDateInLocalTime = startDateInUTC.toLocaleString();
+//   const endtDateInLocalTime = endtDateInUTC.toLocaleString();
 
-  return {
-    startDateInUTC,
-    endtDateInUTC,
-    startDateMillS,
-    endDateMillS,
-    startDateInLocalTime,
-    endtDateInLocalTime,
-  };
-};
+//   return {
+//     startDateInUTC,
+//     endtDateInUTC,
+//     startDateMillS,
+//     endDateMillS,
+//     startDateInLocalTime,
+//     endtDateInLocalTime,
+//   };
+// };
 
 exports.dailySystemTransactions = tryCatch(async (req, res, next) => {
-  const { date, from = 0, to = 23, dateFiltering } = req.query;
+  const { date, from, to, dateFiltering } = req.query;
   let timingData={};
   const whereOptions={};
   if(dateFiltering){
-    const {
-      startDateMillS,
-      endDateMillS,
-      startDateInUTC,
-      endtDateInUTC,
-      startDateInLocalTime,
-      endtDateInLocalTime,
-    } = getDates(date?.toString(), from, to);
-    whereOptions.date={ [Op.between]: [startDateMillS, endDateMillS] }
-    timingData={
-      startDateInUTC,
-      endtDateInUTC,
-      startDateMillS,
-      endDateMillS,
-      startDateInLocalTime,
-      endtDateInLocalTime
-    };
+    // const {
+    //   startDateMillS,
+    //   endDateMillS,
+    //   startDateInUTC,
+    //   endtDateInUTC,
+    //   startDateInLocalTime,
+    //   endtDateInLocalTime,
+    // } = getDates(date?.toString(), from, to);
+    whereOptions.date={ [Op.between]: [from,to] }
+    // timingData={
+    //   startDateInUTC,
+    //   endtDateInUTC,
+    //   startDateMillS,
+    //   endDateMillS,
+    //   startDateInLocalTime,
+    //   endtDateInLocalTime
+    // };
   }
   const queryFeatures = new QueryFeatures(req);
   const {data,responseMetaData} = await queryFeatures.findAllWithFeatures(Transaction, {
     verified_at: { [Op.ne]: null },
     ...whereOptions
   });
+  const transactionsWithUsers = [];
+  for (let transaction of data) {
+    const users = await transaction.getUsers();
+    const transactionWithUsers = { data: transaction, users };
+    transactionsWithUsers.push(transactionWithUsers);
+  }
   res.send({status:true,result:{
-    transactions: data,
+    transactions: transactionsWithUsers,
     responseMetaData,
-    ...timingData,
+    // ...timingData,
   }})
 });
 
 
 exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
-  const { date, from = 0, to = 23, dateFiltering } = req.query;
+  const { date, from, to, dateFiltering } = req.query;
   const { guard, user_id } = req.params;
   const guardObj = authConfig.guards[guard];
   const model = authConfig.providers[guardObj.provider]?.model;
@@ -119,26 +124,26 @@ exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
       verified_at: { [Op.ne]: null },
     };
   }
-  let timingData={};
+  // let timingData={};
   const dateWhereOptions={};
   if(dateFiltering){
-    const {
-      startDateMillS,
-      endDateMillS,
-      startDateInUTC,
-      endtDateInUTC,
-      startDateInLocalTime,
-      endtDateInLocalTime,
-    } = getDates(date?.toString(), from, to);
-    dateWhereOptions.date={ [Op.between]: [startDateMillS, endDateMillS] }
-    timingData={
-      startDateInUTC,
-      endtDateInUTC,
-      startDateMillS,
-      endDateMillS,
-      startDateInLocalTime,
-      endtDateInLocalTime
-    };
+    // const {
+    //   startDateMillS,
+    //   endDateMillS,
+    //   startDateInUTC,
+    //   endtDateInUTC,
+    //   startDateInLocalTime,
+    //   endtDateInLocalTime,
+    // } = getDates(date?.toString(), from, to);
+    dateWhereOptions.date={ [Op.between]: [from, to] }
+    // timingData={
+    //   startDateInUTC,
+    //   endtDateInUTC,
+    //   startDateMillS,
+    //   endDateMillS,
+    //   startDateInLocalTime,
+    //   endtDateInLocalTime
+    // };
   }
   const queryFeatures = new QueryFeatures(req);
   const {data,responseMetaData} = await queryFeatures.findAllWithFeatures(
@@ -148,11 +153,17 @@ exports.dailySystemUserTransactions = tryCatch(async (req, res, next) => {
       ...dateWhereOptions
     }
   );
+  const transactionsWithUsers = [];
+  for (let transaction of data) {
+    const users = await transaction.getUsers();
+    const transactionWithUsers = { data: transaction, users };
+    transactionsWithUsers.push(transactionWithUsers);
+  }
   res.send({status:true,result:{
     user,
-    transactions: data,
+    transactions: transactionsWithUsers,
     responseMetaData,
-    ...timingData,
+    // ...timingData,
   }})
 });
 

@@ -24,6 +24,26 @@ exports.index = tryCatch(async (req, res, next) => {
     responseMetaData,
   }})
 });
+exports.show = tryCatch(async (req, res, next) => {
+  // BEFORE: type validation
+  const { guard,user_id } = req.params;
+  if (guard == "admin" || guard == "systemOwner") {
+    throw new AuthorizationError("Not Allowed to see this user type");
+  }
+  const guardObj = authConfig.guards[guard];
+  const model = authConfig.providers[guardObj.provider]?.model;
+  const user=await model.findByPk(user_id);
+  let wallet;
+  if(guard=='user'){
+    wallet=await user.getWallet();
+  }else if(guard=='company'){
+    wallet=await user.getCompanyWallet();
+  }
+  res.send({status:true,result:{
+    user,
+    wallet
+  }})
+});
 
 
 exports.getUserByPhone=tryCatch(async(req,res,next)=>{

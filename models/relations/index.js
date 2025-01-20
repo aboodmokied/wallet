@@ -84,6 +84,7 @@ User.afterCreate("Create User Wallet", async (user) => {
 
 Company.hasOne(CompanyWallet, {
   foreignKey: "company_id",
+  as:'companyWallet',
   onDelete: "CASCADE",
 });
 
