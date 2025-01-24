@@ -341,6 +341,14 @@ class Authorize{
             const result=await this.addPermission(permissionInstance);
             return result;
         }
+        Role.prototype.assignPermissionIfNotAssigned=async function(permission){
+            const permissionInstance=await Permission.findOne({where:{[Op.or]:[{name:permission},{id:permission}]}});
+            const count=await RoleHasPermission.count({where:{roleId:this.id,permissionId:permissionInstance.id}});
+            if(!count){
+                await this.addPermission(permissionInstance);
+            }
+        }
+
         Role.prototype.revokePermission=async function(role,permission){
             const permissionInstance=await Permission.findOne({where:{[Op.or]:[{name:permission},{id:permission}]}});
             const result=await RoleHasPermission.destroy({where:{roleId:this.id,permissionId:permissionInstance.id}});

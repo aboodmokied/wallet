@@ -14,7 +14,7 @@ exports.validateTargetPhone = body("target_phone")
   });
 exports.validateTargetPhoneIsNotForTheSameUser = body("target_phone").custom(
   (target_phone, { req }) => {
-    if (target_phone == req.user?.phone) {
+    if (req.user?.guard=='user'&&target_phone == req.user?.phone) {
       throw new Error("you can't send money for your self!");
     }
     return true;

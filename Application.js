@@ -53,6 +53,7 @@ class Application {
     await this.#syncApiAuth();
     await this.#syncAuthorization();
     this.#applyAuthorization();
+    await this.#assignPermissions()
     this.#syncMailing();
     this.#applyMailing();
     this.#runSeeders();
@@ -132,6 +133,20 @@ class Application {
     // authorize.applyAuthorization(User);
     // authorize.applyAuthorization(Company);
   }
+  async #assignPermissions(){
+    const authorizationConfig=require('./config/authorizationConfig');
+    const Role = require("./models/Role");
+    const {rolePermissions}=authorizationConfig;
+    for(let role in rolePermissions){
+      const roleInstance=await Role.findOne({where:{name:role}});
+      if(roleInstance){
+        const permissions=rolePermissions[role];
+        for(let permission of permissions){
+          await roleInstance.assignPermissionIfNotAssigned(permission);
+        }
+      }
+    }
+  }
   #syncMailing() {
     const Mail = require("./services/mail/Mail");
     new Mail().setup();
@@ -150,6 +165,7 @@ class Application {
   }
 
   async #runSeeders(){
+    // category
     const Category = require("./models/Category");
     const categories=['University','School','Other'];
     for(let category of categories){
@@ -158,7 +174,24 @@ class Application {
         await Category.create({name:category});
       }
     }
-  }
+    // system owner
+    const SystemOwner = require("./models/SystemOwner");
+    const bcrypt=require('bcryptjs');
+    const Authorize = require("./services/authorization/Authorize");    
+    const count=await SystemOwner.count({where:{
+      email:process.env.SYSTEM_OWNER_EMAIL
+    }})
+    if(!count){
+      const newUser=await SystemOwner.create({
+        email:process.env.SYSTEM_OWNER_EMAIL,
+        name:process.env.SYSTEM_OWNER_NAME,
+        password:bcrypt.hashSync(process.env.SYSTEM_OWNER_PASSWORD,12),
+        verified:true
+      })
+      
+      await new Authorize().applySystemRoles(newUser);
+    }
+  } 
 }
 
 module.exports = Application;

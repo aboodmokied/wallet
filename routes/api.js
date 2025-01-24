@@ -432,7 +432,7 @@ apiRoutes.get(
 apiRoutes.post(
   "/auth/register-by-admin/request",
   verifyToken,
-  // authorizePermission('can-create-chrging-point'),
+  authorizePermission('can-create-chrging-point'),
   validateRequest([
     validateGuard('body'),
     validateRegisterByAdminGuard('body',['by-system-owner']),
@@ -477,7 +477,7 @@ apiRoutes.get(
 apiRoutes.get(
   "/transaction/:transaction_id",
   verifyToken,
-  authorizePermission("can-show-all-transactions"),
+  authorizePermission("can-show-transactions-reports"),
   validateRequest([
     validateTransactionInParam
 ]),

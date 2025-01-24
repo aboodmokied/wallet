@@ -98,26 +98,26 @@ webRoutes.post(
 
 // by admin register
 
-const conditionalMiddleware = (permission) => {
-  const Authorize = require("../services/authorization/Authorize");
-  new Authorize().addPermission(permission);
-  return async (req, res, next) => {
-    let guard;
-    if (req.method == "GET") {
-      guard = req.params.guard;
-    } else {
-      guard = req.body.guard;
-    }
-    const guardObj = authConfig.guards[guard];
-    if (guardObj?.registeration == "by-admin") {
-      return await authorizeSuperAdmin(req, res, next);
-    } else if (guardObj?.registeration == "by-system-owner") {
-      return await authorizePermission(permission, false)(req, res, next);
-    } else {
-      throw new BadRequestError("Process not allowed");
-    }
-  };
-};
+// const conditionalMiddleware = (permission) => {
+//   const Authorize = require("../services/authorization/Authorize");
+//   new Authorize().addPermission(permission);
+//   return async (req, res, next) => {
+//     let guard;
+//     if (req.method == "GET") {
+//       guard = req.params.guard;
+//     } else {
+//       guard = req.body.guard;
+//     }
+//     const guardObj = authConfig.guards[guard];
+//     if (guardObj?.registeration == "by-admin") {
+//       return await authorizeSuperAdmin(req, res, next);
+//     } else if (guardObj?.registeration == "by-system-owner") {
+//       return await authorizePermission(permission, false)(req, res, next);
+//     } else {
+//       throw new BadRequestError("Process not allowed");
+//     }
+//   };
+// };
 
 webRoutes.get(
   "/auth/register-by-admin/request/:guard",
