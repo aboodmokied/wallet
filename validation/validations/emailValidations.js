@@ -10,6 +10,9 @@ exports.validateEmail = body("email")
   .withMessage("Invalid Email")
   .custom((email) => {
     const service = email.split("@")[1]?.split(".")[0];
+    if(service=='gmail'){
+      return true;
+    }
     let valid = false;
     for (let mail in mails) {
       const mailObj = mails[mail];
@@ -18,9 +21,10 @@ exports.validateEmail = body("email")
         break;
       }
     }
-    // if(!valid){
-    //     throw new Error(`Email type ${service} not supported`);
-    // }
+    
+    if(!valid){
+        throw new Error(`Email type ${service} not supported`);
+    }
     return true;
   });
 
