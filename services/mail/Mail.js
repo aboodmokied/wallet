@@ -19,10 +19,8 @@ class Mail{
 
     #createTransporters(){
         const {mails}=mailConfig;
-        console.log({mails});
         for(let mail in mails){
             const mailObj=mails[mail];
-            console.log({mailObj});
             const service=mailObj.service;
             delete mailObj.service;
             this.#transporters[service]=nodemailer.createTransport({
