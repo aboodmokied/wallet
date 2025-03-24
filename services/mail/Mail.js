@@ -19,12 +19,16 @@ class Mail{
 
     #createTransporters(){
         const {mails}=mailConfig;
+        console.log({mails});
         for(let mail in mails){
             const mailObj=mails[mail];
-            this.#transporters[mailObj.service]=nodemailer.createTransport({
+            console.log({mailObj});
+            const service=mailObj.service;
+            delete mailObj.service;
+            this.#transporters[service]=nodemailer.createTransport({
                 ...mailObj
             })
-             this.#transporters[mailObj.service].verify((error, success) => {
+             this.#transporters[service].verify((error, success) => {
                 if (error) {
                     console.log(error);
                     throw new Error(`Error configuring transporter: ${mail}`);
@@ -44,7 +48,7 @@ class Mail{
             }
             transporter.sendMail({
                 from:{
-                    name:'Node-Starter',
+                    name:'Wallet',
                     address:transporter.options.auth.user,
                 },
                 to:email,
@@ -76,24 +80,24 @@ class Mail{
                 code,
             });
             console.log({code})
-            // const transporter=new Mail().getTransporter(service);
-            // if(!transporter){
-            //     throw new Error(`Transporter Not Found for this service: ${service}`)
-            // }
-            // transporter.sendMail({
-            //     from:{
-            //         name:'Node-Starter',
-            //         address:transporter.options.auth.user,
-            //     },
-            //     to:email,
-            //     subject: 'Email Verification',
-            //     html: `<p>Hello ${this.name},</p>
-            //         <p>Thank you for registering. Please click the link below to verify your email address:</p>
-            //         <p>${url}</p>`
-            // })
-            // if(!info){
-            //     throw new Error('Something went wrong when sending email');
-            // }
+            const transporter=new Mail().getTransporter(service);
+            if(!transporter){
+                throw new Error(`Transporter Not Found for this service: ${service}`)
+            }
+            const info=await transporter.sendMail({
+                from:{
+                    name:'Wallet',
+                    address:transporter.options.auth.user,
+                },
+                to:email,
+                subject: 'Email Verification',
+                html: `<p>Hello ${this.name},</p>
+                    <p>Thank you for registering. Please use the code below to verify your email address:</p>
+                    <p>${code}</p>`
+            })
+            if(!info){
+                throw new Error('Something went wrong when sending email');
+            }
             return 'Verifivation message was sent, check your email';
         };
         // class level
@@ -109,7 +113,7 @@ class Mail{
             }
             transporter.sendMail({
                 from:{
-                    name:'Node-Starter',
+                    name:'Wallet',
                     address:transporter.options.auth.user,
                 },
                 to:email,

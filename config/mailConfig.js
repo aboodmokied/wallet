@@ -21,7 +21,7 @@ const mailConfig={
         //     secure:false
         // },
         // yahoo:{
-        //     name:'yahoo',
+        //     service:'yahoo',
         //     auth:{
         //         user:process.env.YAHOO_USER,
         //         pass:process.env.YAHOO_PASS
