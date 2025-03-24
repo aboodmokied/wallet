@@ -9,7 +9,7 @@ const mailConfig={
             host:'smtp.gmail.com',
             port:587,
             secure:false
-        },
+        }, 
         // outlook:{
         //     service:'hotmail',
         //     auth:{
