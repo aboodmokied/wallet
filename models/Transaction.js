@@ -3,7 +3,7 @@ const Application = require("../Application");
 const User = require("./User");
 const Company = require("./Company");
 const ChargingPoint = require("./ChargingPoint");
-// const BadRequestError = require("../Errors/ErrorTypes/BadRequestError");
+const BadRequestError = require("../Errors/ErrorTypes/BadRequestError");
 
 const Transaction = Application.connection.define(
   "transation",

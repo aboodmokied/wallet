@@ -1,6 +1,6 @@
 const AppError = require("../Errors/AppError");
 const { Server } = require("../config/errorConfig");
-// const { errorLogger } = require("../logging/Logger");
+const { errorLogger } = require("../logging/logger");
 
 const errorHandler = (error, req, res, next) => {
   console.log(error);
@@ -42,13 +42,11 @@ const errorHandler = (error, req, res, next) => {
   }
   // server error
   console.log(error);
-  // errorLogger.error(`ServerError: 500 - ${error.stack}`);
-  res
-    .status(Server.statusCode)
-    .send({
-      status: false,
-      error: { type: Server.type, message: Server.message },
-    });
+  errorLogger.error(`ServerError: 500 - ${error.stack}`);
+  res.status(Server.statusCode).send({
+    status: false,
+    error: { type: Server.type, message: Server.message },
+  });
 };
 
 module.exports = errorHandler;
