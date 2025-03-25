@@ -1,7 +1,7 @@
 const mailConfig = require("../../config/mailConfig");
 const nodemailer = require("nodemailer");
 const NotFoundError = require("../../Errors/ErrorTypes/NotFoundError");
-// const VerifyEmailToken = require("../../models/verifyEmailToken");
+const VerifyEmailToken = require("../../models/VerifyEmailToken");
 const crypto = require("crypto");
 
 class Mail {
@@ -71,12 +71,12 @@ class Mail {
       // const url=hostUrl
       // ?`${hostUrl}/verify-email/${hashedToken}?email=${email}`
       // :`${process.env.APP_Url}:${process.env.PORT||3000}/auth/verify-email/${hashedToken}?email=${email}`;
-      // await VerifyEmailToken.update({revoked:true},{where:{email,guard}})
-      // const verifyEmailToken=await VerifyEmailToken.create({
-      //     email,
-      //     guard,
-      //     code,
-      // });
+      await VerifyEmailToken.update({revoked:true},{where:{email,guard}})
+      const verifyEmailToken=await VerifyEmailToken.create({
+          email,
+          guard,
+          code,
+      });
       console.log({ code });
       const transporter = new Mail().getTransporter(service);
       if (!transporter) {
