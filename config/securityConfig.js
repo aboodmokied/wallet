@@ -12,7 +12,7 @@ module.exports = {
   corsConfig: {
     allowedOrigins: [
       "http://localhost:5173",
-      "https://www.yoursite.com",
+      "https://wallet-react-ten.vercel.app",
       "http://localhost:5500",
       "http://localhost:3000",
     ],
