@@ -1,15 +1,15 @@
 const mailConfig = {
   mails: {
-    // gmail:{
-    //     service:'gmail',
-    //     auth:{
-    //         user:process.env.GMAIL_USER,
-    //         pass:process.env.GMAIL_PASS
-    //     },
-    //     host:'smtp.gmail.com',
-    //     port:587,
-    //     secure:false
-    // },
+    gmail:{
+        service:'gmail',
+        auth:{
+            user:process.env.GMAIL_USER,
+            pass:process.env.GMAIL_PASS
+        },
+        host:'smtp.gmail.com',
+        port:587,
+        secure:false
+    },
     // outlook:{
     //     service:'hotmail',
     //     auth:{

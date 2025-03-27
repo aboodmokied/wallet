@@ -19,6 +19,7 @@ class TransactionBuilder {
 
   async build(req, operationType) {
     let operation;
+    let verificationCode=null;
     if (operationType == "transfer") {
       const { target_phone, info, amount } = req.body;
       const sourceUser = req.user;
@@ -122,7 +123,7 @@ class TransactionBuilder {
     } else {
       throw new BadRequestError("operation not provided");
     }
-
+    
     return operation;
   }
   async #validateAmountIsEnough(transaction) {

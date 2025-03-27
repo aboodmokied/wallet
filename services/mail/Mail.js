@@ -37,7 +37,9 @@ class Mail {
 
   applyMailing(model) {
     // object level
+    console.log('Apply Mailing',model.name);
     model.prototype.sendEmail = async function ({ subject, html }) {
+      console.log('here');
       const { email } = this;
       const service = email.split("@")[1]?.split(".")[0];
       const transporter = new Mail().getTransporter(service);
@@ -52,6 +54,26 @@ class Mail {
         to: email,
         subject,
         html,
+      });
+      return true;
+    };
+    model.prototype.verifyTransaction = async function ({ subject, code }) {
+      const { email } = this;
+      const service = email.split("@")[1]?.split(".")[0];
+      const transporter = new Mail().getTransporter(service);
+      if (!transporter) {
+        throw new Error(`Transporter Not Found for this service: ${service}`);
+      }
+      transporter.sendMail({
+        from: {
+          name: "Wallet",
+          address: transporter.options.auth.user,
+        },
+        to: email,
+        subject,
+        html:`<p>Hello ${this.name},</p>
+        <p>Please use the code below to verify your transaction:</p>
+        <p>${code}</p>`,
       });
       return true;
     };
@@ -123,24 +145,6 @@ class Mail {
     };
   }
 
-  async sendEmail(email, { subject, html }) {
-    const service = email.split("@")[1]?.split(".")[0];
-    const transporter = new Mail().getTransporter(service);
-    if (!transporter) {
-      throw new Error(`Transporter Not Found for this service: ${service}`);
-    }
-    transporter.sendMail({
-      from: {
-        name: "Node-Starter",
-        address: transporter.options.auth.user,
-      },
-      to: email,
-      subject,
-      html,
-    });
-    // return info?.messageId ? true:false;
-    return true;
-  }
 }
 
 module.exports = Mail;

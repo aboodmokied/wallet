@@ -60,7 +60,7 @@ class Database {
 
   async migrate() {
     try {
-      await this.#connection.sync({ force: false });
+      // await this.#connection.sync({ force: false });
     } catch (error) {
       if (error.original?.errno == 1049) {
         // database not found
