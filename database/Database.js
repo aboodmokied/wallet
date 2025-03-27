@@ -16,7 +16,18 @@ class Database {
   connect() {
     this.#connectionSetting =
       database.connections[this.#testing ? `${this.#db}-testing` : this.#db];
-    this.#connection = new Sequelize(this.#connectionSetting);
+    this.#connection = new Sequelize(process.env.DB_URL,{
+      dialect:process.env.DB_DIALECT,
+      database:process.env.DB_NAME
+    });
+    (async () => {
+      try {
+        await this.#connection.authenticate();
+        console.log("✅ Connection has been established successfully.");
+      } catch (error) {
+        console.error("❌ Unable to connect to the database:", error);
+      }
+    })();
     return this.#connection;
   }
 
@@ -32,11 +43,8 @@ class Database {
         this.#testing ? `${this.#db}-testing` : this.#db
       ];
       let connection = mysql
-        .createPool({
-          user,
-          password,
-          host,
-          port,
+        .createPool(process.env.DB_URL,{
+          database:process.env.DB_NAME
         })
         .promise();
       try {
@@ -52,7 +60,7 @@ class Database {
 
   async migrate() {
     try {
-      // await this.#connection.sync({ force: false });
+      await this.#connection.sync({ force: false });
     } catch (error) {
       if (error.original?.errno == 1049) {
         // database not found
