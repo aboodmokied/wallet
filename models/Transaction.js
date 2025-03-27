@@ -93,8 +93,8 @@ Transaction.prototype.getUsers = async function () {
       sourceUser = await ChargingPoint.findByPk(source_id);
       targetUser = await User.findByPk(target_id);
       break;
-    default:
-      throw BadRequestError("this operation_type not provided");
+    // default:
+    //   throw BadRequestError("this operation_type not provided");
   }
   return { sourceUser, targetUser };
 };

@@ -3,7 +3,7 @@ const pagesConfig = require("../../config/pagesConfig");
 const BadRequestError = require("../../Errors/ErrorTypes/BadRequestError");
 const NotFoundError = require("../../Errors/ErrorTypes/NotFoundError");
 const CreateByAdminRequest = require("../../models/CreateByAdminRequest");
-const VerifyEmailToken = require("../../models/verifyEmailToken");
+// const VerifyEmailToken = require("../../models/VerifyEmailToken");
 const Authenticate = require("../../services/authentication/Authenticate");
 const PasswordReset = require("../../services/password-reset/PasswordReset");
 const ByAdminRegister = require("../../services/registration/ByAdminRegister");
@@ -100,10 +100,13 @@ exports.getRegisterByAdminRequest = tryCatch(async (req, res, next) => {
 exports.postRegisterByAdminRequest = tryCatch(async (req, res, next) => {
   const byAdmin = new ByAdminRegister();
   const message = await byAdmin.request(req);
-  if(req.isApiRequest){
-    return res.send({status:true,result:{
-      message
-    }})
+  if (req.isApiRequest) {
+    return res.send({
+      status: true,
+      result: {
+        message,
+      },
+    });
   }
   res
     .with("message", message)
@@ -136,13 +139,13 @@ exports.getRegisterByAdminCreate = tryCatch(async (req, res, next) => {
 exports.postRegisterByAdminCreate = tryCatch(async (req, res, next) => {
   const byAdmin = new ByAdminRegister();
   const newUser = await byAdmin.create(req);
-  if(newUser.guard=='admin'){
+  if (newUser.guard == "admin") {
     req.session.targetUser = newUser;
     return res.redirect("/auth/quick-login");
   }
-  res.render('auth/message',{
-    message:'User Created Successfully, try to login'
-  })
+  res.render("auth/message", {
+    message: "User Created Successfully, try to login",
+  });
 });
 
 // password reset

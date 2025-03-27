@@ -1,36 +1,36 @@
-const mailConfig={
-    mails:{
-        gmail:{
-            service:'gmail',
-            auth:{
-                user:process.env.GMAIL_USER,
-                pass:process.env.GMAIL_PASS
-            },
-            host:'smtp.gmail.com',
-            port:587,
-            secure:false
-        }, 
-        // outlook:{
-        //     service:'hotmail',
-        //     auth:{
-        //         user:process.env.OUTLOOK_USER,
-        //         pass:process.env.OUTLOOK_PASS
-        //     },
-        //     host:'smtp.office365.com',
-        //     port:587,
-        //     secure:false
-        // },
-        // yahoo:{
-        //     service:'yahoo',
-        //     auth:{
-        //         user:process.env.YAHOO_USER,
-        //         pass:process.env.YAHOO_PASS
-        //     },
-        //     host:'smtp.mail.yahoo.com',
-        //     port:587,
-        //     secure:false
-        // }
-    }
+const mailConfig = {
+  mails: {
+    gmail:{
+        service:'gmail',
+        auth:{
+            user:process.env.GMAIL_USER,
+            pass:process.env.GMAIL_PASS
+        },
+        host:'smtp.gmail.com',
+        port:587,
+        secure:false
+    },
+    // outlook:{
+    //     service:'hotmail',
+    //     auth:{
+    //         user:process.env.OUTLOOK_USER,
+    //         pass:process.env.OUTLOOK_PASS
+    //     },
+    //     host:'smtp.office365.com',
+    //     port:587,
+    //     secure:false
+    // },
+    // yahoo:{
+    //     service:'yahoo',
+    //     auth:{
+    //         user:process.env.YAHOO_USER,
+    //         pass:process.env.YAHOO_PASS
+    //     },
+    //     host:'smtp.mail.yahoo.com',
+    //     port:587,
+    //     secure:false
+    // }
+  },
 };
 
 // GMAIL_USER=your-gmail@gmail.com
@@ -40,4 +40,4 @@ const mailConfig={
 // YAHOO_USER=your-yahoo@yahoo.com
 // YAHOO_PASS=your-yahoo-password
 
-module.exports=mailConfig;
+module.exports = mailConfig;

@@ -26,7 +26,6 @@ exports.logout = tryCatch(async (req, res, next) => {
 });
 
 exports.refresh = tryCatch(async (req, res, next) => {
-  console.log("suii");
   const { accessToken, user } = await new ApiAuth().refresh(req);
   res.send({ status: true, result: { accessToken, user } });
 });

@@ -15,10 +15,15 @@ const Application = require("../../Application");
 const ChargingPoint = require("../../models/ChargingPoint");
 
 const transactionBuilder = new TransactionBuilder();
-
 exports.transfer = tryCatch(async (req, res, next) => {
   const operation = await transactionBuilder.build(req, "transfer");
-  const transaction = await Transaction.findByPk(operation.transaction_id);
+  const transaction = await Transaction.scope(
+    "withVerificationCode"
+  ).findByPk(operation.transaction_id);
+  // send verification code
+  const verificationCode=transaction.verification_code;
+  delete transaction.verification_code;
+  req.user.verifyTransaction({subject: "Transfer Verification",code:verificationCode});
   const { info } = operation;
   const opertaionInfo = {
     info,
@@ -40,7 +45,13 @@ exports.transfer = tryCatch(async (req, res, next) => {
 
 exports.payment = tryCatch(async (req, res, next) => {
   const operation = await transactionBuilder.build(req, "payment");
-  const transaction = await Transaction.findByPk(operation.transaction_id);
+  const transaction = await Transaction.scope(
+    "withVerificationCode"
+  ).findByPk(operation.transaction_id);
+  // send verification code
+  const verificationCode=transaction.verification_code;
+  delete transaction.verification_code;
+  req.user.sendEmail({subject: "Payment Verification",code:verificationCode});
   const {} = operation;
   const opertaionInfo = {};
   const users = await transaction.getUsers();
@@ -56,7 +67,13 @@ exports.payment = tryCatch(async (req, res, next) => {
 });
 exports.charging = tryCatch(async (req, res, next) => {
   const operation = await transactionBuilder.build(req, "charging");
-  const transaction = await Transaction.findByPk(operation.transaction_id);
+  const transaction = await Transaction.scope(
+    "withVerificationCode"
+  ).findByPk(operation.transaction_id);
+  // send verification code
+  const verificationCode=transaction.verification_code;
+  delete transaction.verification_code;
+  req.user.sendEmail({subject: "Charging Verification",code:verificationCode});
   const {} = operation;
   const opertaionInfo = {};
   const users = await transaction.getUsers();

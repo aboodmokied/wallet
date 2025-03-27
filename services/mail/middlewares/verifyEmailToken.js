@@ -2,7 +2,7 @@
 const BadRequestError = require("../../../Errors/ErrorTypes/BadRequestError");
 const ValidationError = require("../../../Errors/ErrorTypes/ValidationError");
 // const NotFoundError = require("../../../Errors/ErrorTypes/NotFoundError");
-const VerifyEmailToken = require("../../../models/verifyEmailToken");
+const VerifyEmailToken = require("../../../models/VerifyEmailToken");
 const tryCatch = require("../../../util/tryCatch");
 
 const verifyEmailToken = tryCatch(async (req, res, next) => {
