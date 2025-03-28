@@ -13,6 +13,7 @@ module.exports = {
     allowedOrigins: [
       "http://localhost:5173",
       "https://wallet-react-ten.vercel.app",
+      "https://wallet-react.onrender.com",
       "http://localhost:5500",
       "http://localhost:3000",
     ],
