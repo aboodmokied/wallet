@@ -183,6 +183,7 @@ class ApiAuth {
 
   async refresh(req) {
     const { cookies } = req;
+    console.log({cookies});
     const { refresh } = cookies;
     if (refresh) {
       const signature = refresh.split(".")[2];
