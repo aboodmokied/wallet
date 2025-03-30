@@ -66,7 +66,7 @@ class Application {
 
     this.#app.set("view engine", "ejs");
     this.#app.set("views", path.join(rootPath, "views"));
-
+    this.#app.use(express.static(path.join(__dirname, "../client/dist")));
     this.#app.use(express.static(path.join(rootPath, "public")));
     this.#app.use(express.static(path.join(rootPath, "public", "adminlte")));
   }
@@ -93,6 +93,9 @@ class Application {
     const Kernal = require("./Kernal");
     this.#app.use(Kernal.web, require("./routes/web"));
     this.#app.use("/api", Kernal.api, require("./routes/api"));
+    this.#app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+    });
     // global error handler
     this.#app.use(Kernal.error);
   }
