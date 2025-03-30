@@ -46,13 +46,8 @@ webRoutes.get("/", isAuthenticated, async (req, res, next) => {
       return res.redirect("/cms/role");
     }
     return res.redirect(`/cms/user/${authConfig.defaults.defaultGuard}/all`);
-  } else if (guard == "systemOwner") {
-    return res.redirect("/report/system-transactions");
-  } else if (guard == "chargingPoint") {
-    return res.redirect("/charging");
-  } else {
-    throw new NotFoundError("Page Not Found For this guard");
   }
+    throw new NotFoundError("Page Not Found For this guard");
 });
 
 // Oauth

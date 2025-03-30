@@ -51,7 +51,7 @@ exports.postLogin = tryCatch(async (req, res, next) => {
       .with("errors", [{ msg: error }])
       .redirect(req.session.pagePath);
   }
-  res.redirect("/");
+  res.redirect("/web");
 });
 
 exports.logout = (req, res, next) => {
@@ -85,7 +85,7 @@ exports.postRegister = tryCatch(async (req, res, next) => {
   const user = await new Register().withGuard(guard).create(req);
   // res.with('old',{email:req.body.email}).redirect(pagesConfig.authentication.login.path(guard))
   req.session.targetUser = user;
-  res.redirect("/auth/quick-login");
+  res.redirect("/web/auth/quick-login");
 });
 
 // register by admin
@@ -110,7 +110,7 @@ exports.postRegisterByAdminRequest = tryCatch(async (req, res, next) => {
   }
   res
     .with("message", message)
-    .redirect(`/auth/register-by-admin/request/${req.body.guard}`);
+    .redirect(`/web/auth/register-by-admin/request/${req.body.guard}`);
 });
 
 exports.getRegisterByAdminCreate = tryCatch(async (req, res, next) => {
@@ -164,7 +164,7 @@ exports.postPasswordResetRequest = tryCatch(async (req, res, next) => {
   const wasSent = await passReset.withEmail(email).withGuard(guard).request();
   res
     .with("message", "Mail was sent, check your email box")
-    .redirect(`/auth/password-reset/${guard}/request`);
+    .redirect(`/web/auth/password-reset/${guard}/request`);
 });
 
 exports.getPasswordReset = (req, res, next) => {
@@ -186,7 +186,7 @@ exports.getPasswordReset = (req, res, next) => {
 exports.postPasswordReset = tryCatch(async (req, res, next) => {
   const updatedUser = await new PasswordReset().update(req);
   req.session.targetUser = updatedUser;
-  res.redirect("/auth/quick-login");
+  res.redirect("/web/auth/quick-login");
 });
 
 // verify account

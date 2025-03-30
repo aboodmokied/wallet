@@ -4,5 +4,5 @@ module.exports=(req,res,next)=>{
     if(req.session?.isAuthenticated){
         return next();
     }
-    res.redirect(`/auth/login/${authConfig.defaults.defaultGuard}`);
+    res.redirect(`/web/auth/login/${authConfig.defaults.defaultGuard}`);
 }

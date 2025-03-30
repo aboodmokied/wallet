@@ -91,7 +91,7 @@ class Application {
 
   #defineRoutes() {
     const Kernal = require("./Kernal");
-    this.#app.use(Kernal.web, require("./routes/web"));
+    this.#app.use("/web",Kernal.web, require("./routes/web"));
     this.#app.use("/api", Kernal.api, require("./routes/api"));
     this.#app.get("*", (req, res) => {
       res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
