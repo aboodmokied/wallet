@@ -4,13 +4,13 @@
   "main": "index.js",
   "scripts": {
     "client": "npm run dev --prefix client",
-    "server": "npm start --prefix server",
+    "server": "npm start --prefix ./server",
     "build": "npm run build --prefix client", 
-    "postinstall": "npm run build",           
     "start": "node server/app.js",
-    "install:client": "npm install --prefix client",
-    "install:server": "npm install --prefix server",
+    "install:client": "npm install --prefix ./client install ./client",
+    "install:server": "npm install --prefix ./server install ./server",
     "install": "npm run install:client && npm run install:server",
+    "postinstall": "npm run build",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "keywords": [],

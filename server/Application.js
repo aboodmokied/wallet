@@ -1,5 +1,6 @@
 const Database = require("./database/Database");
 const express = require("express");
+const path = require("path");
 
 class Application {
   #app = null;
@@ -62,7 +63,7 @@ class Application {
 
   #defineSettings() {
     const rootPath = require.main.path;
-    const path = require("path");
+    // const path = require("path");
 
     this.#app.set("view engine", "ejs");
     this.#app.set("views", path.join(rootPath, "views"));
