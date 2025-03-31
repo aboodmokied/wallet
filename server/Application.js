@@ -75,7 +75,7 @@ class Application {
     //   }
     //   next();
     // });
-    this.#app.use(express.static(path.join(rootPath,"..","client","dist")),{
+    this.#app.use(express.static(path.join(rootPath,"..","client","dist"),{
       setHeaders: (res, filePath) => {
         if (filePath.endsWith('.js')) {
           res.setHeader('Content-Type', 'application/javascript');
@@ -83,7 +83,7 @@ class Application {
           res.setHeader('Content-Type', 'text/css');
         }
       }
-    });
+    }));
     this.#app.use(express.static(path.join(rootPath, "public")));
     this.#app.use(express.static(path.join(rootPath, "public", "adminlte")));
   }
