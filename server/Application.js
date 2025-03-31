@@ -75,7 +75,7 @@ class Application {
       }
       next();
     });
-    this.#app.use(express.static(path.join(__dirname, "../client/dist")));
+    this.#app.use(express.static(path.join(rootPath,"..","client","dist")));
     this.#app.use(express.static(path.join(rootPath, "public")));
     this.#app.use(express.static(path.join(rootPath, "public", "adminlte")));
   }
