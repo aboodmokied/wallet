@@ -67,15 +67,23 @@ class Application {
 
     this.#app.set("view engine", "ejs");
     this.#app.set("views", path.join(rootPath, "views"));
-    this.#app.use((req, res, next) => {
-      if (req.url.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
-      } else if (req.url.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript');
+    // this.#app.use((req, res, next) => {
+    //   if (req.url.endsWith('.css')) {
+    //     res.setHeader('Content-Type', 'text/css');
+    //   } else if (req.url.endsWith('.js')) {
+    //     res.setHeader('Content-Type', 'application/javascript');
+    //   }
+    //   next();
+    // });
+    this.#app.use(express.static(path.join(rootPath,"..","client","dist")),{
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+        } else if (filePath.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css');
+        }
       }
-      next();
     });
-    this.#app.use(express.static(path.join(rootPath,"..","client","dist")));
     this.#app.use(express.static(path.join(rootPath, "public")));
     this.#app.use(express.static(path.join(rootPath, "public", "adminlte")));
   }
