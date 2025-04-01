@@ -75,6 +75,9 @@ class Application {
     //   }
     //   next();
     // });
+    this.#app.get("/", (req, res) => {
+      res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+    });
     this.#app.use(express.static(path.join(rootPath,"..","client","dist"),{
       setHeaders: (res, filePath) => {
         if (filePath.endsWith('.js')) {
@@ -110,9 +113,7 @@ class Application {
     const Kernal = require("./Kernal");
     this.#app.use("/web",Kernal.web, require("./routes/web"));
     this.#app.use("/api", Kernal.api, require("./routes/api"));
-    this.#app.get("/my-home", (req, res) => {
-      res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
-    });
+    
     // global error handler
     this.#app.use(Kernal.error);
   }
