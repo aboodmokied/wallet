@@ -76,7 +76,8 @@ class Application {
     //   next();
     // });
     this.#app.get("/", (req, res) => {
-      res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+      console.log({path:path.join(__dirname,"..","client","dist","index.html")});
+      res.sendFile(path.join(__dirname,"..","client","dist","index.html"));
     });
     this.#app.use(express.static(path.join(rootPath,"..","client","dist"),{
       setHeaders: (res, filePath) => {
