@@ -16,6 +16,7 @@ module.exports = {
       "https://wallet-react.onrender.com",
       "http://localhost:5500",
       "http://localhost:3000",
+      "https://wallet-production-06f2.up.railway.app"
     ],
   },
   passReset: {
