@@ -29,7 +29,7 @@
               <tr>
                 <td><%= role.name %></td>
                 <td>
-                    <form action="/cms/user-roles/revokeRole" method="POST">
+                    <form action="/web/cms/user-roles/revokeRole" method="POST">
                         <!-- userId,guard,roleId -->
                          <input type="hidden" name="user_id" value="<%= locals.user.id %>">
                          <input type="hidden" name="role_id" value="<%= role.id %>">
@@ -77,7 +77,7 @@
                 <tr>
                     <td><%= role.name %></td>
                     <td>
-                        <form action="/cms/user-roles/assignRole" method="POST">
+                        <form action="/web/cms/user-roles/assignRole" method="POST">
                             <!-- userId,guard,roleId -->
                             <input type="hidden" name="user_id" value="<%= locals.user.id %>">
                             <input type="hidden" name="role_id" value="<%= role.id %>">

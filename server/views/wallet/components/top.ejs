@@ -21,27 +21,27 @@
     <ul class="navbar-nav">
       <% if(locals.user.guard=='systemOwner'){ %>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="/report/system-transactions" class="nav-link">System Transactions</a>
+          <a href="/web/report/system-transactions" class="nav-link">System Transactions</a>
       </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="/category" class="nav-link">Category</a>
+          <a href="/web/category" class="nav-link">Category</a>
       </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="/wallet-user/user/all" class="nav-link">Wallet Users</a>
+          <a href="/web/wallet-user/user/all" class="nav-link">Wallet Users</a>
       </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="/wallet-user/company/all" class="nav-link">Wallet Companies</a>
+          <a href="/web/wallet-user/company/all" class="nav-link">Wallet Companies</a>
       </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="/wallet-user/chargingPoint/all" class="nav-link">Charging Points</a>
+          <a href="/web/wallet-user/chargingPoint/all" class="nav-link">Charging Points</a>
       </li>
       <% } %>
       <% if(locals.user.guard=='chargingPoint'){ %>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="/charging" class="nav-link">Charge</a>
+          <a href="/web/charging" class="nav-link">Charge</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="/my-charging-point-transactions" class="nav-link">My Transactions</a>
+          <a href="/web/my-charging-point-transactions" class="nav-link">My Transactions</a>
         </li>
       <% } %>
     </ul>
@@ -51,7 +51,7 @@
       
       <!-- Messages Dropdown Menu -->
       <li class="nav-item dropdown">
-        <a href="/auth/logout" class="gray">Logout</a>
+        <a href="/web/auth/logout" class="gray">Logout</a>
       </li>
       <!-- Notifications Dropdown Menu -->
     </ul>

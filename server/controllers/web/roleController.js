@@ -11,7 +11,7 @@ exports.index=tryCatch(async(req,res,next)=>{
     })        
 })
 exports.create=(req,res,next)=>{
-    req.session.pagePath=req.url;
+    req.session.pagePath=req.originalUrl;
     res.render('authorization/create-role',{
         pageTitle:'Create Role'
     })
@@ -20,7 +20,7 @@ exports.create=(req,res,next)=>{
 exports.store=tryCatch(async(req,res,next)=>{
     const {name}=req.body;
     const newRole=await Role.create({name});
-    res.redirect(`/cms/role/${newRole.id}`);
+    res.redirect(`/web/cms/role/${newRole.id}`);
 })
 
 
@@ -44,19 +44,18 @@ exports.destroy=tryCatch(async(req,res,next)=>{
         throw new BadRequestError('main role not deletable');
     }
     await role.destroy();
-    res.redirect('/cms/role')
+    res.redirect('/web/cms/role')
 })
 
 
 exports.assignPermission=tryCatch(async(req,res,next)=>{
-    console.log('here');
     const {role_id:role,permission_id:permission}=req.body;
     await Role.assignPermission(role,permission);
-    res.redirect(`/cms/role/${role}`);
+    res.redirect(`/web/cms/role/${role}`);
 })
 
 exports.revokePermission=tryCatch(async(req,res,next)=>{
     const {role_id:role,permission_id:permission}=req.body;
     await Role.revokePermission(role,permission);
-    res.redirect(`/cms/role/${role}`);
+    res.redirect(`/web/cms/role/${role}`);
 })

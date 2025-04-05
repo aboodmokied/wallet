@@ -22,7 +22,7 @@
     }) %>
 
 <div style="display: flex; justify-content: end;">
-    <form action="/cms/role/<%= locals.role.id %>" method="POST">
+    <form action="/web/cms/role/<%= locals.role.id %>" method="POST">
         <input type="hidden" name="_method" value="DELETE">
         <button type="submit" class="btn btn-block btn-danger m-3 <%= locals.role.isMain?'disabled':'' %>" style="width: 200px;">Delete Role</button>
     </form>

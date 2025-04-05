@@ -16,7 +16,7 @@ exports.getLogin = (req, res, next) => {
     authConfig.guards[guard].drivers.includes("session")
   );
   const { guard } = req.params;
-  req.session.pagePath = req.path;
+  req.session.pagePath = req.originalUrl;
   const guardObj = authConfig.guards[guard];
   res.render(pagesConfig.authentication.login.page, {
     pageTitle: `${guard[0].toUpperCase()}${guard.slice(1)} Login`,
@@ -31,7 +31,7 @@ exports.getQuickLogin = tryCatch(async (req, res, next) => {
     throw new BadRequestError();
   }
   const { email, guard, name } = req.session.targetUser;
-  req.session.pagePath = req.path;
+  req.session.pagePath = req.originalUrl;
   res.render("auth/quick-login", {
     pageTitle: "Quick Login",
     email,
@@ -70,7 +70,7 @@ exports.getRegister = (req, res, next) => {
       authConfig.guards[guard].drivers.includes("session")
   );
   const guardObj = authConfig.guards[guard];
-  req.session.pagePath = req.path;
+  req.session.pagePath = req.originalUrl;
   res.render("auth/register", {
     pageTitle: `${guard[0].toUpperCase()}${guard.slice(1)} Register`,
     currentGuard: guard,
@@ -91,7 +91,7 @@ exports.postRegister = tryCatch(async (req, res, next) => {
 // register by admin
 exports.getRegisterByAdminRequest = tryCatch(async (req, res, next) => {
   const { guard } = req.params;
-  req.session.pagePath = req.path;
+  req.session.pagePath = req.originalUrl;
   res.render("auth/by-admin-request", {
     pageTitle: `Create ${guard} Request`,
     guard,
@@ -128,7 +128,7 @@ exports.getRegisterByAdminCreate = tryCatch(async (req, res, next) => {
     throw new BadRequestError("Invalid Email");
   }
   const { guard } = createByAdminRequest;
-  req.session.pagePath = req.url;
+  req.session.pagePath = req.originalUrl;
   res.render("auth/by-admin-create", {
     pageTitle: `Create ${guard} Account`,
     token,
@@ -141,7 +141,7 @@ exports.postRegisterByAdminCreate = tryCatch(async (req, res, next) => {
   const newUser = await byAdmin.create(req);
   if (newUser.guard == "admin") {
     req.session.targetUser = newUser;
-    return res.redirect("/auth/quick-login");
+    return res.redirect("/web/auth/quick-login");
   }
   res.render("auth/message", {
     message: "User Created Successfully, try to login",
@@ -152,7 +152,7 @@ exports.postRegisterByAdminCreate = tryCatch(async (req, res, next) => {
 
 exports.getPasswordResetRequest = (req, res, next) => {
   const { guard } = req.params;
-  req.session.pagePath = req.path;
+  req.session.pagePath = req.originalUrl;
   res.render("auth/request-reset", {
     pageTitle: "Request Password Reset",
     guard,
@@ -172,7 +172,7 @@ exports.getPasswordReset = (req, res, next) => {
   const { token } = req.params;
   const { email } = req.query;
   const queryParams = req.query;
-  const fullPathWithQueryParams = `${req.path}?${new URLSearchParams(
+  const fullPathWithQueryParams = `${req.originalUrl}?${new URLSearchParams(
     queryParams
   ).toString()}`;
   req.session.pagePath = fullPathWithQueryParams;

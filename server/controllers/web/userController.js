@@ -51,7 +51,7 @@ exports.userAssignRole=tryCatch(async(req,res,next)=>{
     const model=authConfig.providers[guardObj.provider]?.model;
     const user=await model.findByPk(user_id);
     await user.assignRole(role_id);
-    res.redirect(`/cms/user-roles/${guard}/${user_id}`)
+    res.redirect(`/web/cms/user-roles/${guard}/${user_id}`)
 });
 exports.userRevokeRole=tryCatch(async(req,res,next)=>{
     const {user_id,guard,role_id}=req.body;
@@ -59,7 +59,7 @@ exports.userRevokeRole=tryCatch(async(req,res,next)=>{
     const model=authConfig.providers[guardObj.provider]?.model;
     const user=await model.findByPk(user_id);
     await user.revokeRole(role_id);
-    res.redirect(`/cms/user-roles/${guard}/${user_id}`)
+    res.redirect(`/web/cms/user-roles/${guard}/${user_id}`)
 });
 
 

@@ -24,7 +24,7 @@
     <div class="card-body login-card-body">
       <%- include('../components/errors.ejs') %>
       <%- include('../components/message.ejs') %>
-      <form action="/auth/password-reset/request" method="POST">
+      <form action="/web/auth/password-reset/request" method="POST">
         <div class="card-body">
             <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
@@ -36,7 +36,7 @@
             </div>
         </div>
         <p class="my-1">
-          <a href="/auth/register/<%= locals.guard %>" style="text-decoration: none;">try Login</a>
+          <a href="/web/auth/register/<%= locals.guard %>" style="text-decoration: none;">try Login</a>
         </p>
     </form>
     </div>

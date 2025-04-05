@@ -145,6 +145,26 @@ class Mail {
     };
   }
 
+
+
+  async sendEmail(email, { subject, html }) {
+    const service = email.split("@")[1]?.split(".")[0];
+    const transporter = new Mail().getTransporter(service);
+    if (!transporter) {
+      throw new Error(`Transporter Not Found for this service: ${service}`);
+    }
+    transporter.sendMail({
+      from: {
+        name: "Wallet",
+        address: transporter.options.auth.user,
+      },
+      to: email,
+      subject,
+      html,
+    });
+    // return info?.messageId ? true:false;
+    return true;
+  };
 }
 
 module.exports = Mail;

@@ -37,7 +37,7 @@
             <ul class="nav nav-treeview">
               <% for(let guard in locals.systemGuards){ %>
                 <li class="nav-item">
-                  <a href="/cms/user/<%= locals.systemGuards[guard].name %>/all" class="nav-link">
+                  <a href="/web/cms/user/<%= locals.systemGuards[guard].name %>/all" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p><%= `${locals.systemGuards[guard].name.slice(0,1).toUpperCase()}${locals.systemGuards[guard].name.slice(1)}s` %></p>
                   </a>
@@ -56,7 +56,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/cms/role" class="nav-link">
+                <a href="/web/cms/role" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Roles</p>
                 </a>
@@ -77,7 +77,7 @@
               <% for(let guard in locals.systemGuards){ %>
                 <% if(locals.systemGuards[guard].registeration=='by-admin'){ %>
                   <li class="nav-item">
-                    <a href="/auth/register-by-admin/request/<%= locals.systemGuards[guard].name %>" class="nav-link">
+                    <a href="/web/auth/register-by-admin/request/<%= locals.systemGuards[guard].name %>" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
                       <p><%= locals.systemGuards[guard].name %></p>
                     </a>

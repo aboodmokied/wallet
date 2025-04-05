@@ -9,7 +9,7 @@ const tryCatch = require("../../util/tryCatch");
 const transactionBuilder=new TransactionBuilder();
 
 exports.getCharging=(req,res,next)=>{
-    req.session.pagePath=req.path;
+    req.session.pagePath=req.originalUrl;
     res.render('wallet/charging/charge',{
         pageTitle:'Charging'
     });
@@ -18,7 +18,7 @@ exports.getCharging=(req,res,next)=>{
 exports.getConfirm=tryCatch(async(req,res,next)=>{
     const {amount,target_phone}=req.query;
     const userInstance=await User.findOne({where:{phone:target_phone}});
-    req.session.pagePath=req.path;
+    req.session.pagePath=req.originalUrl;
     res.render('wallet/charging/confirm',{
         pageTitle:'Confirm',
         user:userInstance,
@@ -29,12 +29,12 @@ exports.getConfirm=tryCatch(async(req,res,next)=>{
 exports.charging=tryCatch(async(req,res,next)=>{
     const opertaion=await transactionBuilder.build(req,'charging');
     // const transaction=await Transaction.findByPk(opertaion.transaction_id);
-    res.redirect(`/verify/${opertaion.transaction_id}`);
+    res.redirect(`/web/verify/${opertaion.transaction_id}`);
 });
 
 exports.getVerify=tryCatch(async(req,res,next)=>{
     const {transaction_id}=req.params;
-    req.session.pagePath=req.path;
+    req.session.pagePath=req.originalUrl;
     res.render('wallet/charging/verify',{
         transaction_id
     });

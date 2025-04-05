@@ -41,7 +41,7 @@
             </ul>
             <% if(user.guard=='chargingPoint'){ %>
                 <!-- <div style="display: flex; align-items: center; gap: 20px;"> -->
-                <form action="/charging-point/pending" method="POST">
+                <form action="/web/charging-point/pending" method="POST">
                     <input type="hidden" name="_method" value="PATCH">
                     <input type="hidden" name="ch_point_id" value="<%= locals.transactionUser.id %>">
                     <input type="hidden" name="url" value="<%= locals.currentUrl %>">

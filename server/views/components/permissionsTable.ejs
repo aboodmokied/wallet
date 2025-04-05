@@ -17,7 +17,7 @@
               <tr>
                 <td><%= permission.name %></td>
                 <td>
-                        <form method="POST" action="/cms/role/<%= type=='rolePermissions'?'revokePermission':'assignPermission' %>">
+                        <form method="POST" action="/web/cms/role/<%= type=='rolePermissions'?'revokePermission':'assignPermission' %>">
                             <input type="hidden" name="role_id" value="<%= locals.role.id %>">
                             <input type="hidden" name="permission_id" value="<%= permission.id %>">
                             <button type="submit" class="btn btn-block btn-<%= type=='rolePermissions'?'danger':'primary' %> m-0"><%= type=='rolePermissions'?'Revoke':'Assign' %></button>

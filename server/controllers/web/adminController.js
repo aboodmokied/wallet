@@ -18,21 +18,21 @@ exports.storeRequest=tryCatch(async(req,res,next)=>{
     const count=await CreateAdminRequest.count({where:{email,revoked:false}});
     if(count){
         // throw new BadRequestError('Create Admin Request already created for this email, the user should check his mailbox');
-        return res.with('errors',[{msg:'Create Admin Request already created for this email, the user should check his mailbox'}]).redirect('/auth/create-admin/request')
+        return res.with('errors',[{msg:'Create Admin Request already created for this email, the user should check his mailbox'}]).redirect('/web/auth/create-admin/request')
     }
     const token=crypto.randomBytes(32).toString('hex');
     const hashedToken=crypto.createHash('sha256').update(token).digest('hex');
     await CreateAdminRequest.create({email,token:hashedToken});
-    const url=`${process.env.APP_URL}:${process.env.PORT||3000}/auth/create-admin/${hashedToken}?email=${email}`;
-    // const mail=new Mail();
-    // await mail.sendEmail(email,{
-    //     subject:'Create Admin Account',
-    //     html:`<p>Hello Dear New Admin,</p>
-    //           <p>We choose you to be new admin in our application. Please click the link below to complete the process and create your account:</p>
-    //           <p>${url}</p>`
-    // })
-    console.log({url});
-    res.with('message','process was succeed, check user email for complete account creation').redirect('/auth/create-admin/request');
+    const url=`${process.env.APP_URL}:/web/auth/create-admin/${hashedToken}?email=${email}`;
+    const mail=new Mail();
+    await mail.sendEmail(email,{
+        subject:'Create Admin Account',
+        html:`<p>Hello Dear New Admin,</p>
+              <p>We choose you to be new admin in our application. Please click the link below to complete the process and create your account:</p>
+              <p>${url}</p>`
+    })
+    // console.log({url});
+    res.with('message','process was succeed, check user email for complete account creation').redirect('/web/auth/create-admin/request');
 });
 
 
@@ -65,5 +65,5 @@ exports.store=tryCatch(async(req,res,next)=>{
         guard:'admin'
     });
     req.session.targetUser=newAdmin;
-    res.redirect('/auth/quick-login');
+    res.redirect('/web/auth/quick-login');
 });

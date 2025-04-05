@@ -29,7 +29,7 @@
     
     <!-- /.lockscreen-image -->
     <!-- lockscreen credentials (contains the form) -->
-    <form method="POST" action="/auth/login" class="lockscreen-credentials" style="margin: 0;">
+    <form method="POST" action="/web/auth/login" class="lockscreen-credentials" style="margin: 0;">
       <div class="input-group">
         <input type="password" name="password" value="<%= locals.old?.password ?? ''%>" class="form-control" placeholder="password">
         <input type="hidden" name="email" value="<%= locals.email ?? locals.old?.email %>">
@@ -49,7 +49,7 @@
     Enter your password to start your session
   </div>
   <div class="text-center">
-    <a href="/auth/login/<%= locals.guard ?? locals.old?.guard %>">Or sign in as a different user</a>
+    <a href="/web/auth/login/<%= locals.guard ?? locals.old?.guard %>">Or sign in as a different user</a>
   </div>
 
 </div>

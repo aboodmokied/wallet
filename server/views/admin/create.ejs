@@ -24,7 +24,7 @@
   <div class="card">
     <div class="card-body register-card-body">
       <%- include('../components/errors.ejs') %>
-      <form action="/auth/create-admin" method="POST">
+      <form action="/web/auth/create-admin" method="POST">
         <div class="input-group mb-3">
           <input type="text" class="form-control" placeholder="Full name" name="name" value="<%= locals.old?.name ?? ''%>">
           <div class="input-group-append">

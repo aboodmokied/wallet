@@ -2,7 +2,7 @@
 const saveGetPageRequestPath=(req,res,next)=>{
     if(req.method=='GET'){
         if(!req.isApiRequest){
-            req.session.pagePath=req.path;
+            req.session.pagePath=req.originalUrl;
         }
     }
     next();

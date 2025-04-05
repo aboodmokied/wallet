@@ -41,20 +41,17 @@ class PasswordReset{
         const url=this.#generateUrl(token,hostUrl);
         const guardObj=authConfig.guards[this.#guard];
         const model=authConfig.providers[guardObj.provider].model;
-        // model.sendEmail(this.#email,{
-        //     subject: 'Password Reset',
-        //     html: `<p>You requested a password reset. Click the link below to reset your password:</p>
-        //     <p>${url}</p>
-        //     <p>If you did not request a password reset, please ignore this email.</p>`
-        // }) 
-        console.log({url});
+        model.sendEmail(this.#email,{
+            subject: 'Password Reset',
+            html: `<p>You requested a password reset. Click the link below to reset your password:</p>
+            <p>${url}</p>
+            <p>If you did not request a password reset, please ignore this email.</p>`
+        }) 
         return true;
     }
 
     #generateUrl(token,hostUrl){
-        return hostUrl
-        ?`${hostUrl}/password-reset/${token}?email=${this.#email}`
-        :`${process.env.APP_URL}:${process.env.PORT||3000}/auth/password-reset/${token}?email=${this.#email}`;
+        return `${process.env.APP_URL}/web/auth/password-reset/${token}?email=${this.#email}`;
     }
     #generateToken(){
         const token=crypto.randomBytes(32).toString('hex');

@@ -44,13 +44,12 @@ class CodePasswordReset{
         // const url=this.#generateUrl(token);
         const guardObj=authConfig.guards[this.#guard];
         const model=authConfig.providers[guardObj.provider].model;
-        // model.sendEmail(this.#email,{
-        //     subject: 'Password Reset',
-        //     html: `<p>You requested a password reset. Use the Verification Code Below To Reset Your Password:</p>
-        //     <p>${code}</p>
-        //     <p>If you did not request a password reset, please ignore this email.</p>`
-        // })
-        console.log({password_reset_code:code});
+        model.sendEmail(this.#email,{
+            subject: 'Password Reset',
+            html: `<p>You requested a password reset. Use the Verification Code Below To Reset Your Password:</p>
+            <p>${code}</p>
+            <p>If you did not request a password reset, please ignore this email.</p>`
+        })
         return true;
     }
 

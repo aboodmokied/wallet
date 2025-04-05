@@ -33,7 +33,7 @@
         <% } %>
       <p class="login-box-msg">Login to start your session</p>
       <%- include('../components/errors.ejs') %>
-      <form action="/auth/login" method="POST">
+      <form action="/web/auth/login" method="POST">
         <div class="input-group mb-3">
           <input type="email" class="form-control" placeholder="Email" name="email" value="<%= locals.old?.email ?? ''%>">
         </div>
@@ -53,17 +53,17 @@
       <hr>
       <% if(locals.guardObj.oauth){ %>
           <div class="social-auth-links text-center mt-2 mb-3">
-              <a href="/auth/google/login/<%= locals.currentGuard %>" class="btn btn-block btn-danger">
+              <a href="/web/auth/google/login/<%= locals.currentGuard %>" class="btn btn-block btn-danger">
                 <i class="fa-brands fa-google"></i> Login using Gmail
               </a>
           </div>
         <% } %>
       <p class="my-1">
-        <a href="/auth/password-reset/<%= locals.currentGuard %>/request" style="text-decoration: none;">I forgot my password</a>
+        <a href="/web/auth/password-reset/<%= locals.currentGuard %>/request" style="text-decoration: none;">I forgot my password</a>
       </p>
       <% if(locals.guardObj.registeration=='global'){ %>
         <p class="my-1">
-          <a href="/auth/register/<%= locals.currentGuard %>" style="text-decoration: none;">Create new account</a>
+          <a href="/web/auth/register/<%= locals.currentGuard %>" style="text-decoration: none;">Create new account</a>
         </p>
       <% } %>
     </div>

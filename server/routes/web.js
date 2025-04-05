@@ -43,9 +43,9 @@ webRoutes.get("/", isAuthenticated, async (req, res, next) => {
   const { guard } = req.user;
   if (guard == "admin") {
     if (req.user.isSuper) {
-      return res.redirect("/cms/role");
+      return res.redirect("/web/cms/role");
     }
-    return res.redirect(`/cms/user/${authConfig.defaults.defaultGuard}/all`);
+    return res.redirect(`/web/cms/user/${authConfig.defaults.defaultGuard}/all`);
   }
     throw new NotFoundError("Page Not Found For this guard");
 });

@@ -30,7 +30,7 @@
                 <td><%= new Date(transaction.date).toUTCString() %></td>
                 <td><%= new Date(transaction.date).toLocaleString() %></td>
                 <td>
-                  <a href="/transaction/<%= locals.transactionUser?.guard || 'user' %>/<%= transaction.id %>">
+                  <a href="/web/transaction/<%= locals.transactionUser?.guard || 'user' %>/<%= transaction.id %>">
                       <button type="button" class="btn btn-block btn-primary">View</button>
                   </a>
               </td>
