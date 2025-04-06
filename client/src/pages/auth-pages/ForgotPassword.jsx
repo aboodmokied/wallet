@@ -10,7 +10,7 @@ import {
   Grid,
 } from "@mui/material";
 import GuardTabs from '../../components/GuardTabs';
-import { passwordResetRequest } from '../../state/forgot-password-state/forgotPasswordSlice';
+import { passwordResetRequest, reset } from '../../state/forgot-password-state/forgotPasswordSlice';
 import { setError } from '../../state/error-state/errorSlice';
 
 
@@ -71,6 +71,7 @@ function ForgotPassword() {
         setFormErrors(validationErrors);
       }else{
         dispatch(setError({error}));
+        dispatch(reset())
       }
     }
   },[error]);

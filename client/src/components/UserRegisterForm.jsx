@@ -24,7 +24,7 @@ const registerNewUser=async(userData)=>{
 const UserRegisterForm = () => {
     const navigate=useNavigate();
     const dispatch=useDispatch();
-    const {mutate,isLoading,error}=useMutation({
+    const {mutate,isLoading,error,reset}=useMutation({
         mutationFn:registerNewUser
     });
 
@@ -90,6 +90,7 @@ const UserRegisterForm = () => {
           setFormErrors(validationErrors);
         }else{
           dispatch(setError({error}));
+          reset();
         }
       }
     },[error]);

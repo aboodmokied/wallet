@@ -11,6 +11,7 @@ const errorSlice = createSlice({
   reducers: {
     reset:(state)=>{
       // state=initialState;
+      console.log('Clear Error');
       state.error=null;
       state.hasError=false;
     },

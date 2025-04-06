@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { setError } from "../../state/error-state/errorSlice";
-import { transferRequest } from "../../state/transaction-state/transferSlice";
+import { reset, transferRequest } from "../../state/transaction-state/transferSlice";
 
 
 const Transfer = () => {
@@ -63,6 +63,7 @@ const Transfer = () => {
           setFormErrors(validationErrors);
         }else{
           dispatch(setError({error}));
+          dispatch(reset());
         }
       }
     },[error]);

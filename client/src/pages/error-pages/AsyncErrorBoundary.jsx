@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { reset } from "../../state/error-state/errorSlice";
 const AsyncErrorBoundary = ({children}) => {
     const {hasError,error}=useSelector(state=>state.error);
+    console.log('Error Boundary:',{error,hasError});
     const navigate=useNavigate();
     const dispatch=useDispatch();
     // const blackList=['Validation'];
-    const onRetryHandler=()=>{
-        dispatch(reset());
+    const onRetryHandler=async()=>{
+        await dispatch(reset())
+        console.log('Naviage to root')
         navigate("/");
     }
 

@@ -25,7 +25,8 @@ class TransactionBuilder {
       const sourceUser = req.user;
       const sourceUserWallet = await sourceUser.getWallet();
       if (sourceUserWallet.balance < amount) {
-        throw new BadRequestError("Your Balance Not Enough");
+        throw new ValidationError([{path:"amount",msg:'Your Balance Not Enough'}]);
+        // throw new BadRequestError();
       }
       const targetUser = await User.findOne({
         where: { phone: target_phone },
@@ -65,7 +66,7 @@ class TransactionBuilder {
       const sourceUser = req.user;
       const sourceUserWallet = await sourceUser.getWallet();
       if (sourceUserWallet.balance < amount) {
-        throw new BadRequestError("Your Balance Not Enough");
+        throw new ValidationError([{path:"amount",msg:'Your Balance Not Enough'}]);
       }
       const targetCompany = await Company.findOne({
         where: { phone: target_company_phone },
@@ -132,7 +133,7 @@ class TransactionBuilder {
       const sourceUser = await User.findByPk(source_id);
       const sourceWallet = await sourceUser.getWallet();
       if (amount > sourceWallet.balance) {
-        throw new BadRequestError("Your Balance Not Enough");
+        throw new ValidationError([{path:"amount",msg:'Your Balance Not Enough'}]);
       }
     }
   }

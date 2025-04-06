@@ -9,7 +9,7 @@ import {
   CssBaseline,
 } from "@mui/material";
 import { setError } from '../../state/error-state/errorSlice';
-import { verifyEmail } from '../../state/verify-email-state/verifyEmailSlice';
+import { reset, verifyEmail } from '../../state/verify-email-state/verifyEmailSlice';
 
 
 
@@ -67,6 +67,7 @@ function VerifyEmail() {
         setFormErrors(validationErrors);
       }else{
         dispatch(setError({error}));
+        dispatch(reset())
       }
     }
   },[error]);

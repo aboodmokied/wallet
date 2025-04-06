@@ -59,6 +59,7 @@ const VerifyPayment = () => {
           setFormErrors(validationErrors);
         }else{
           dispatch(setError({error}));
+          dispatch(reset());
         }
       }
     },[error]);

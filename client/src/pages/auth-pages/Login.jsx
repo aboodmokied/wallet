@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { login, togglePersist } from '../../state/auth-state/authSlice';
+import { login, resetError, togglePersist } from '../../state/auth-state/authSlice';
 import { setError } from '../../state/error-state/errorSlice';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
@@ -93,6 +93,7 @@ function Login() {
         } 
       }else{
         dispatch(setError({error}));
+        dispatch(resetError())
       }
     }
   },[error]);

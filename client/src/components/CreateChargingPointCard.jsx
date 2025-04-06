@@ -19,7 +19,7 @@ const registerChargingPoint=async(userData)=>{
 
 const CreateChargingPointCard = () => {
     const dispatch=useDispatch();
-    const {mutate,data,isLoading,error}=useMutation({
+    const {mutate,data,isLoading,error,reset}=useMutation({
         mutationFn:registerChargingPoint,
         onSuccess:()=>{
             setFormValues({
@@ -68,6 +68,7 @@ const CreateChargingPointCard = () => {
           setFormErrors(validationErrors);
         }else{
           dispatch(setError({error}));
+          reset();
         }
       }
     },[error]);    

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { setError } from "../../state/error-state/errorSlice";
-import { chargingRequest } from "../../state/transaction-state/chargingSlice";
+import { chargingRequest, reset } from "../../state/transaction-state/chargingSlice";
 
 
 const Charging = () => {
@@ -59,6 +59,7 @@ const Charging = () => {
           setFormErrors(validationErrors);
         }else{
           dispatch(setError({error}));
+          dispatch(reset());
         }
       }
     },[error]);

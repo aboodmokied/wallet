@@ -9,7 +9,7 @@ import {
   CssBaseline,
 } from "@mui/material";
 import GuardTabs from '../../components/GuardTabs';
-import { passwordReset } from '../../state/forgot-password-state/forgotPasswordSlice';
+import { passwordReset, reset } from '../../state/forgot-password-state/forgotPasswordSlice';
 import { setError } from '../../state/error-state/errorSlice';
 
 
@@ -69,6 +69,7 @@ function ResetPassword() {
         setFormErrors(validationErrors);
       }else{
         dispatch(setError({error}))
+        dispatch(reset());
       }
     }
   },[error]);

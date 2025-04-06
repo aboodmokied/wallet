@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, CssBaseline, TextField, Typography } from "@mui/material";
 import { setError } from "../../state/error-state/errorSlice";
-import { getChargingTargetUser } from "../../state/transaction-state/chargingSlice";
+import { getChargingTargetUser, reset } from "../../state/transaction-state/chargingSlice";
 
 
 const ChargingTargetUser = () => {
@@ -56,6 +56,7 @@ const ChargingTargetUser = () => {
           setFormErrors(validationErrors);
         }else{
           dispatch(setError({error}));
+          dispatch(reset())
         }
       }
     },[error]);

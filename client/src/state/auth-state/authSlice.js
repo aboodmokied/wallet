@@ -21,6 +21,10 @@ const authSlice = createSlice({
       state.error = null;
       state.status = "idle";
     },
+    resetError: (state) => {
+      state.error = null;
+      state.status = "idle";
+    },
     togglePersist:(state)=>{
       const newValue=!state.persist;
       state.persist=!state.persist;
@@ -146,6 +150,6 @@ export const logout = createAsyncThunk(
   }
 );
 
-export const { resetForNewPage, togglePersist, setAuthPagesGuard, verifyUser } = authSlice.actions;
+export const { resetForNewPage, togglePersist, setAuthPagesGuard, verifyUser, resetError } = authSlice.actions;
 
 export default authSlice.reducer;

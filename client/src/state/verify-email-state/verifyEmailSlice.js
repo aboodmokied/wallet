@@ -17,7 +17,12 @@ const VerifyEmailSlice = createSlice({
   name: "verifyEmail",
   initialState,
   reducers: {
-    
+    reset:(state)=>{
+      state.status=initialState.status;
+      state.error=initialState.error;
+      state.message=initialState.message;
+      state.codeWasSent=initialState.codeWasSent;
+    }
   },
   extraReducers: (builder) => {
     builder

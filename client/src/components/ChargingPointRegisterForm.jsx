@@ -10,6 +10,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import {setError} from '../state/error-state/errorSlice';
+import { reset } from '../state/transaction-state/chargingSlice';
 
 const registerNewUser=async(userData)=>{
   try {
@@ -89,6 +90,7 @@ const ChargingPointRegisterForm = () => {
           setFormErrors(validationErrors);
         }else{
           dispatch(setError({error}));
+          dispatch(reset());
         }
       }
     },[error]);

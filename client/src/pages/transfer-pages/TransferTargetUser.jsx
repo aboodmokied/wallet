@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getTargetUser } from "../../state/transaction-state/transferSlice";
+import { getTargetUser, reset } from "../../state/transaction-state/transferSlice";
 import { Box, Button, CssBaseline, TextField, Typography } from "@mui/material";
 import { setError } from "../../state/error-state/errorSlice";
 
@@ -56,6 +56,7 @@ const TranferTargetUser = () => {
           setFormErrors(validationErrors);
         }else{
           dispatch(setError({error}));
+          dispatch(reset());
         }
       }
     },[error]);

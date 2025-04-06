@@ -8,7 +8,7 @@ import {
   Typography,
   CssBaseline,
 } from "@mui/material";
-import { passwordResetVerify } from '../../state/forgot-password-state/forgotPasswordSlice';
+import { passwordResetVerify, reset } from '../../state/forgot-password-state/forgotPasswordSlice';
 import { setError } from '../../state/error-state/errorSlice';
 
 
@@ -67,6 +67,7 @@ function ForgotPassword() {
         setFormErrors(validationErrors);
       }else{
         dispatch(setError({error}));
+        dispatch(reset());
       }
     }
   },[error]);
