@@ -162,7 +162,14 @@ function Login() {
             disabled={isLoading}
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{
+              mt: 3,
+              mb: 2,
+              backgroundColor: mutation.isLoading ? 'grey.500' : 'primary.main',
+              '&:hover': {
+                backgroundColor: mutation.isLoading ? 'grey.500' : 'primary.dark',
+              },
+            }}
           >
             Login
           </Button>
