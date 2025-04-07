@@ -51,7 +51,7 @@ exports.payment = tryCatch(async (req, res, next) => {
   // send verification code
   const verificationCode=transaction.verification_code;
   delete transaction.verification_code;
-  req.user.sendEmail({subject: "Payment Verification",code:verificationCode});
+  req.user.verifyTransaction({subject: "Payment Verification",code:verificationCode});
   const {} = operation;
   const opertaionInfo = {};
   const users = await transaction.getUsers();
@@ -73,7 +73,7 @@ exports.charging = tryCatch(async (req, res, next) => {
   // send verification code
   const verificationCode=transaction.verification_code;
   delete transaction.verification_code;
-  req.user.sendEmail({subject: "Charging Verification",code:verificationCode});
+  req.user.verifyTransaction({subject: "Charging Verification",code:verificationCode});
   const {} = operation;
   const opertaionInfo = {};
   const users = await transaction.getUsers();
