@@ -24,4 +24,18 @@ An online financial system that allows users to perform transactions such as tra
 - **Backend**: Express.js
 - **Database**: MySQL
 
+## 🔐 Authentication Routes
+
+These are the main login endpoints for each role:
+
+| Role              | HTTP Method | Endpoint                   | Description                  |
+|-------------------|-------------|----------------------------|------------------------------|
+| **User**          | `POST`      | `/login`     | Login for standard users     |
+| **Charging Point**| `POST`      | `/login` | Login for charging points    |
+| **Company**| `POST`      | `/login` | Login for companies    |
+| **System Owner**  | `POST`      | `/cms/login`    | Login for system owners      |
+| **Admin**         | `POST`      | `/web/auth/login/admin`    | Login for admin users        |
+
+> ⚠️ **Important Note**: When registering a new user, make sure to use a **real Gmail account**. The system will send a **verification email** that must be confirmed before accessing your account.
+
 
