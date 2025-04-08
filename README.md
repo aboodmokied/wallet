@@ -44,7 +44,7 @@ These are the main login endpoints for each role:
 
 > ⚠️ **Important Note**: When registering a new user, make sure to use a **real Gmail account**. The system will send a **verification email** that must be confirmed before accessing your account.
 
-## ⚙️ How Runn Locally
+## ⚙️ How To Run Locally
 
 ### 1. Clone the Repository
 
