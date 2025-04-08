@@ -51,5 +51,14 @@ These are the main login endpoints for each role:
 ```bash
 git clone https://github.com/aboodmokied/wallet.git
 cd wallet
+```
+### 2. Install Dependencies
+```bash
 npm install
+```
+### 3. Add Required Env Variables
+create .env file in the root folder, fill it according to .env.examble file.
+### 4. Running
+```bash
 npm start
+```
