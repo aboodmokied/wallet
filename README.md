@@ -44,4 +44,12 @@ These are the main login endpoints for each role:
 
 > ⚠️ **Important Note**: When registering a new user, make sure to use a **real Gmail account**. The system will send a **verification email** that must be confirmed before accessing your account.
 
+## ⚙️ How Runn Locally
 
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/aboodmokied/wallet.git
+cd wallet
+npm install
+npm start
